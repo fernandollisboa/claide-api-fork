@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: root
+      POSTGRES_DB: claide_db
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data\
+    ports:
+      - '5432:5432'
+  api:
+    image: claide_api
+    depends_on:
+    - db
+    ports: 
+      - "3000:3000"
