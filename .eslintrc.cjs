@@ -1,29 +1,19 @@
+//prettier-ignore
 module.exports = {
-    "env": {
-        "browser": true,
-        "es2021": true
+    env: {
+        browser: true,
+        es2021: true,
     },
-    "extends": "eslint:recommended",
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module"
+    extends: ["eslint:recommended", "plugin:prettier/recommended"],
+    parserOptions: {
+        ecmaVersion: 12,
+        sourceType: "module",
     },
-    "rules": {
-        "indent": [
-            "error",
-            4
-        ],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
-        "quotes": [
-            "error",
-            "double"
-        ],
-        "semi": [
-            "error",
-            "always"
-        ]
-    }
-}
+    rules: {
+        indent: ["warn", 4],
+        "linebreak-style": ["warn", "unix"],
+        quotes: ["warn", "double"],
+        semi: ["warn", "always"],
+        "import/no-unresolved": "on",
+    },
+};
