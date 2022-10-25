@@ -1,0 +1,21 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+  "plugins": ["import", "prettier"],
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "rules": {
+    "eqeqeq": "warn",
+    "no-console": "warn",
+    "import/extensions": ["error", { "js": "ignorePackages" }],
+    "prefer-destructuring": ["warn", { "object": true, "array": false }],
+    "import/newline-after-import": ["warn", { "count": 1 }],
+    "prettier/prettier": "error"
+  }
+}
