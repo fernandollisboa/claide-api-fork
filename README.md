@@ -1,9 +1,18 @@
 
 
-### Running dev
-1. npm install.
-2. docker compose up
-3. npm run start
+### Run as dev: 
+
+- `npm i`
+- create and fill `.env.prod` file as shown in `.env.example`
+- `npx prima migrate dev`
+- `npm run dev`
+
+### Run as prod:
+
+- `npm i`
+- `npm run build`
+- create and fill `.env` file as shown in `.env.example`
+- `npm start`
 
 #### generate and run migrations
 
