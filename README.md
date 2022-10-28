@@ -5,9 +5,9 @@
 - `npx prisma migrate dev`
 - `npm run dev`
 
-## Run as dev with Docker:
-- npm i
-- docker-compose up // TO-DO
+### Run as dev with Docker:
+- `npm i`
+- `docker-compose up` // TO-DO
 
 ### Run as prod locally:
 
@@ -19,10 +19,10 @@
 ### Run tests:
 
 - `npm i`
-- `npm run test`
+- `npm run test` // TO-DO
 
 #### Generate and run migrations
 
-1. npx prisma migrate dev
+1. `npx prisma migrate dev`
 
 # cLaIdeApi
