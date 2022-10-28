@@ -1,10 +1,8 @@
-
-
-### Run as dev: 
+### Run as dev:
 
 - `npm i`
-- create and fill `.env.prod` file as shown in `.env.example`
-- `npx prima migrate dev`
+- create and fill `.env` file as shown in `.env.example`
+- `npx prisma migrate dev`
 - `npm run dev`
 
 ### Run as prod:
