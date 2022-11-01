@@ -1,7 +1,7 @@
 import { signupSchema } from "../schemas/signupSchema";
 import * as personService from "../services/personService";
 
-export async function createPerson(req, res) {
+async function createPerson(req, res) {
   const { body } = req;
   const joiValidation = signupSchema.validate(body);
 
@@ -13,3 +13,11 @@ export async function createPerson(req, res) {
 
   return res.status(201).send(createdPerson);
 }
+async function getPerson(req, res) {
+  const { id } = req.id;
+
+  const person = await personService.getPerson(id);
+
+  return res.status(200).send(person);
+}
+export { createPerson, getPerson };
