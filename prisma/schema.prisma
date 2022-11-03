@@ -21,14 +21,15 @@ model User {
 }
 
 model Member {
-  id             BigInt     @id @default(autoincrement())
+  id             Int        @id @default(autoincrement())
   name           String
   email          String     @unique
-  birthDate      DateTime
-  userame        String     @unique
+  birthDate      DateTime   
+  username       String     @unique
   cpf            String     @unique
   rg             String     @unique
   passport       String     @unique
+  phone          String     @unique
   lsdEmail       String     @unique
   secondaryEmail String?    @unique
   memberType     MemberType

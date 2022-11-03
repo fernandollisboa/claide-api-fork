@@ -10,10 +10,10 @@ async function insertMember({
   passport,
   phone,
   lsdEmail,
-  secondEmail,
-  personType,
+  secondaryEmail,
+  memberType,
   lattes,
-  room,
+  roomName,
   hasKey,
   isActive,
 }) {
@@ -28,10 +28,10 @@ async function insertMember({
       passport,
       phone,
       lsdEmail,
-      secondEmail,
-      personType,
+      secondaryEmail,
+      memberType,
       lattes,
-      room,
+      roomName,
       hasKey,
       isActive,
     },
@@ -39,15 +39,22 @@ async function insertMember({
   return member;
 }
 
-async function getMember(id) {
-  const member = await prisma.member.findOne({ where: { id: id } });
+async function getMemberById(id) {
+  const member = await prisma.member.findUnique({ where: { id: id } });
+  return member;
+}
+
+async function getMemberByCpf(cpf) {
+  const member = await prisma.member.findUnique({ where: { cpf: cpf } });
 
   return member;
 }
 
+async function updateMember() {}
+
 async function deleteMember(id) {
-  const member = await prisma.member.findOne({ where: { id: id } });
+  const member = await prisma.member.findUnique({ where: { id: id } });
   await prisma.member.delete({ where: { id: id } });
   return member;
 }
-export { insertMember, getMember, deleteMember };
+export { insertMember, getMemberById, getMemberByCpf, updateMember, deleteMember };

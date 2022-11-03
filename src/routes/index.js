@@ -6,7 +6,8 @@ const routes = Router();
 
 routes.post("/signup", userController.createUser);
 routes.post("/createMember", memberController.createMember);
-routes.post("/?id", memberController.getMember);
-routes.post("/deleteMember?id", memberController.deleteMember);
+routes.get("/:id", memberController.getMember);
+routes.put("/editMember=?id", memberController.updateMember);
+routes.delete("/deleteMember?id", memberController.deleteMember);
 
 export default routes;

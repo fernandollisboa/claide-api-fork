@@ -16,14 +16,15 @@ DROP TYPE "Role";
 
 -- CreateTable
 CREATE TABLE "members" (
-    "id" BIGSERIAL NOT NULL,
+    "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "birthDate" TIMESTAMP(3) NOT NULL,
-    "userame" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
     "cpf" TEXT NOT NULL,
     "rg" TEXT NOT NULL,
     "passport" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
     "lsdEmail" TEXT NOT NULL,
     "secondaryEmail" TEXT,
     "memberType" "MemberType" NOT NULL,
@@ -39,7 +40,7 @@ CREATE TABLE "members" (
 CREATE UNIQUE INDEX "members_email_key" ON "members"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "members_userame_key" ON "members"("userame");
+CREATE UNIQUE INDEX "members_username_key" ON "members"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "members_cpf_key" ON "members"("cpf");
@@ -49,6 +50,9 @@ CREATE UNIQUE INDEX "members_rg_key" ON "members"("rg");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "members_passport_key" ON "members"("passport");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "members_phone_key" ON "members"("phone");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "members_lsdEmail_key" ON "members"("lsdEmail");
