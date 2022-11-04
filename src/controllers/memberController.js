@@ -4,17 +4,13 @@ import * as memberService from "../services/memberService";
 async function createMember(req, res) {
   const { body } = req;
   const joiValidation = membersSchema.createMemberSchema.validate(body);
-  // try {
-  // } catch (error) {;
-  //   return res.status(400).;
-  // }
 
   if (joiValidation.error) {
     const typeError = joiValidation.error.details[0].type;
     if (typeError === "any.required" || typeError === "object.unknown") {
-      return res.status(422).send(joiValidation.error.details[0].message);
+      return res.status(400).send(joiValidation.error.details[0].message);
     }
-    return res.status(400).send(joiValidation.error.details[0].message);
+    return res.status(422).send(joiValidation.error.details[0].message);
   }
 
   try {
@@ -25,21 +21,47 @@ async function createMember(req, res) {
   }
 }
 
-async function getMember(req, res) {
-  const { id } = req.params.id;
+async function getMemberById(req, res) {
+  const id = parseInt(req.params.id);
 
-  const member = await memberService.getMember(id);
+  try {
+    const member = await memberService.getMemberById(id);
 
-  return res.status(200).send(member);
+    return res.status(200).send(member);
+  } catch (err) {
+    return res.status(404).send("NotFound");
+  }
 }
 
-async function updateMember() {}
+async function getAllMembers(req, res) {
+  const members = await memberService.getAllMembers();
+  return res.status(200).send(members);
+}
+
+async function updateMember(req, res) {
+  const { body } = req;
+  const joiValidation = membersSchema.updateMemberSchema.validate(body);
+
+  if (joiValidation.error) {
+    const typeError = joiValidation.error.details[0].type;
+    if (typeError === "any.required" || typeError === "object.unknown") {
+      return res.status(400).send(joiValidation.error.details[0].message);
+    }
+    return res.status(422).send(joiValidation.error.details[0].message);
+  }
+  try {
+    const member = await memberService.updateMember(body);
+    return res.status(200).send(member);
+  } catch (err) {
+    return res.status(422).send(err.message);
+  }
+}
 
 async function deleteMember(req, res) {
-  const { id } = req.params.id;
+  const id = parseInt(req.params.id);
 
   const member = await memberService.deleteMember(id);
 
   return res.status(200).send(member);
 }
-export { createMember, getMember, updateMember, deleteMember };
+export { createMember, getMemberById, getAllMembers, updateMember, deleteMember };

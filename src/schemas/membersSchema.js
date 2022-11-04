@@ -5,16 +5,12 @@ const memberTypes = ["ADMIN", "STUDENT", "SUPPORT", "PROFESSOR", "EXTERNAL"];
 const joi = joiBase.extend(extension);
 
 export const createMemberSchema = joi.object({
-  name: joi
-    .string()
-    .regex(/[a-zA-Z\u00C0-\u00FF ]/)
-    .required()
-    .messages({
-      "string.base": "Name should be a string",
-      "string.empty": `A name must contain value`,
-      "regex.base": "A name should have only letters",
-      "any.required": "Member should have a name",
-    }),
+  name: joi.string().regex(/\w/).required().messages({
+    "string.base": "Name should be a string",
+    "string.empty": `A name must contain value`,
+    "string.pattern.base": "Name should have only letters",
+    "any.required": "Member should have a name",
+  }),
   email: joi.string().required(),
   birthDate: joi.date().format("DD/MM/YYYY").required().messages({
     "date.format": "Date of birth should be in 'DD/MM/YYYY' format",
@@ -52,7 +48,7 @@ export const createMemberSchema = joi.object({
     "string.empty": `A lsd Email must contain value`,
     "any.required": "Member should have a lsd Email",
   }),
-  secondaryEmail: joi.string().messages({
+  secondaryEmail: joi.string().allow("").messages({
     "string.base": "Secondary Email should be a string",
   }),
   memberType: joi.string().required(),
@@ -74,6 +70,28 @@ export const createMemberSchema = joi.object({
     "boolean.base": "Information about active should be a string",
     "any.required": "Member should have information about active",
   }),
+});
+
+export const updateMemberSchema = joi.object({
+  id: joi.number().required().messages({
+    "any.required": "To update a member an id must be provided",
+  }),
+  name: joi.string().allow(""),
+  email: joi.string().allow(""),
+  birthDate: joi.date().allow("").format("DD/MM/YYYY").messages({
+    "date.format": "Date of birth should be in 'DD/MM/YYYY' format",
+  }),
+  username: joi.string().allow(""),
+  cpf: joi.string().allow(""),
+  rg: joi.string().allow(""),
+  passport: joi.string().allow(""),
+  phone: joi.string().allow(""),
+  lsdEmail: joi.string().allow(""),
+  secondaryEmail: joi.string().allow(""),
+  memberType: joi.string().allow(""),
+  lattes: joi.string().allow(""),
+  roomName: joi.string().allow(""),
+  hasKey: joi.boolean().allow(null, ""),
 });
 
 export async function validateMemberType(body) {
