@@ -1,6 +1,6 @@
 import * as projectRepository from "../repositories/projectRepository";
 import * as dateUtils from "../utils/dateUtils";
-import { endDateError } from "../utils/customErrorsProject";
+import { endDateError, invalidAtribute } from "../utils/customErrorsProject";
 
 export async function createProject(project) {
   let status = true;
@@ -11,7 +11,7 @@ export async function createProject(project) {
     const endDateProject = new Date(dateUtils.dateToIso(project.endDate));
 
     if (creationDate > endDateProject) {
-      throw endDateError(project.endDate);
+      throw new endDateError(project.endDate);
     }
 
     const dateNow = new Date();
@@ -36,20 +36,14 @@ export async function createProject(project) {
   return await projectRepository.insertProject(newProject);
 }
 
-export async function getProjectByName(name) {
-  const project = projectRepository.findByName(name);
-
-  if (!project) {
-    throw Error("Projeto não encontrado");
+export async function findById(id) {
+  if (isNaN(id)) {
+    throw new invalidAtribute("id", id);
   }
-}
 
-export async function getProjectByCode(code) {
-  const project = projectRepository.findByEmbrapiiCode(code);
+  const project = await projectRepository.findById(id);
 
-  if (!project) {
-    throw Error("Projeto não encontrado");
-  }
+  return project;
 }
 
 export async function findAll() {

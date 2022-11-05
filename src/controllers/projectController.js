@@ -27,3 +27,14 @@ export async function getProjects(req, res) {
 
   return res.status(200).send(projects);
 }
+
+export async function getProjectById(req, res) {
+  const { params } = req;
+  const id = parseInt(params.id);
+  try {
+    const project = await projectService.findById(id);
+    return res.status(200).send(project);
+  } catch (err) {
+    return res.status(422).send(err.message);
+  }
+}

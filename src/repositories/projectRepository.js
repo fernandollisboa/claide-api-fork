@@ -45,7 +45,7 @@ export async function findByEmbrapiiCode(code) {
 }
 
 export async function findById(id) {
-  const projectToFind = await prisma.project.findUnique({
+  const projectToFind = await prisma.project.findFirst({
     where: {
       id: id,
     },
