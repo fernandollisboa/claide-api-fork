@@ -8,5 +8,6 @@ routes.post("/signup", userController.createUser);
 routes.post("/project", projectController.createProject);
 routes.get("/project", projectController.getProjects);
 routes.get("/project/:id", projectController.getProjectById);
+routes.put("/project/", projectController.updateProject);
 
 export default routes;

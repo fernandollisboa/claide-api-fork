@@ -38,3 +38,14 @@ export async function getProjectById(req, res) {
     return res.status(422).send(err.message);
   }
 }
+
+export async function updateProject(req, res) {
+  const { body } = req;
+
+  try {
+    const project = await projectService.updateProject(body);
+    return res.status(200).send(project);
+  } catch (err) {
+    res.status(409).send(err.message);
+  }
+}
