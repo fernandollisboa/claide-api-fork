@@ -1,7 +1,6 @@
 import joiBase from "joi";
 import extension from "@joi/date";
 
-const memberTypes = ["ADMIN", "STUDENT", "SUPPORT", "PROFESSOR", "EXTERNAL"];
 const joi = joiBase.extend(extension);
 
 export const createMemberSchema = joi.object({
@@ -20,22 +19,16 @@ export const createMemberSchema = joi.object({
     "string.empty": `A username must contain value`,
     "any.required": "Member should have a username",
   }),
-  cpf: joi.string().trim().regex(/\d/).required().messages({
+  cpf: joi.string().allow("").regex(/\d/).messages({
     "string.base": "Cpf should be a string",
-    "string.empty": `A cpf must contain value`,
     "regex.base": "A cpf should have only digits",
-    "any.required": "Member should have a cpf",
   }),
-  rg: joi.string().trim().regex(/\d/).required().messages({
+  rg: joi.string().allow("").regex(/\d/).messages({
     "string.base": "Rg should be a string",
-    "string.empty": `A rg must contain value`,
     "regex.base": "A rg should have only digits",
-    "any.required": "Member should have a rg",
   }),
-  passport: joi.string().trim().required().messages({
+  passport: joi.string().allow("").messages({
     "string.base": "Passport should be a string",
-    "string.empty": `A passport must contain value`,
-    "any.required": "Member should have a passport",
   }),
   phone: joi.string().regex(/\d/).required().messages({
     "string.base": "phone should be a string",
@@ -51,7 +44,13 @@ export const createMemberSchema = joi.object({
   secondaryEmail: joi.string().allow("").messages({
     "string.base": "Secondary Email should be a string",
   }),
-  memberType: joi.string().required(),
+  memberType: joi
+    .string()
+    .valid("ADMIN", "STUDENT", "SUPPORT", "PROFESSOR", "EXTERNAL")
+    .required()
+    .messages({
+      "any.required": "Member should have a type",
+    }),
   lattes: joi.string().trim().required().messages({
     "string.base": "Curriculum lattes should be a string",
     "string.empty": `A curriculum lattes must contain value`,
@@ -66,9 +65,12 @@ export const createMemberSchema = joi.object({
     "boolean.base": "Information about key should be a boolean",
     "any.required": "Member should have information about key",
   }),
-  isActive: joi.boolean().default(true).required().messages({
-    "boolean.base": "Information about active should be a string",
-    "any.required": "Member should have information about active",
+  isActive: joi.boolean().default(false).messages({
+    "boolean.base": "Information about activity should a boolean",
+  }),
+  isBrazilian: joi.boolean().required().messages({
+    "boolean.base": "Information about being brazilian should be a boolean",
+    "any.required": "Member should have information about if is brazilian or not",
   }),
 });
 
@@ -82,8 +84,8 @@ export const updateMemberSchema = joi.object({
     "date.format": "Date of birth should be in 'DD/MM/YYYY' format",
   }),
   username: joi.string().allow(""),
-  cpf: joi.string().allow(""),
-  rg: joi.string().allow(""),
+  cpf: joi.string().allow("").regex(/\d/),
+  rg: joi.string().allow("").regex(/\d/),
   passport: joi.string().allow(""),
   phone: joi.string().allow(""),
   lsdEmail: joi.string().allow(""),
@@ -94,9 +96,23 @@ export const updateMemberSchema = joi.object({
   hasKey: joi.boolean().allow(null, ""),
 });
 
-export async function validateMemberType(body) {
-  const aux = body.memberType;
-  if (!memberTypes.includes(aux.toString())) {
+export async function validatePassportForGringos(body) {
+  if (
+    !body.isBrazilian &&
+    (body.passport === null || body.passport === undefined || body.passport === "")
+  ) {
     return false;
   }
+  return true;
+}
+
+export async function validateRgCpfForBrazilians(body) {
+  if (
+    body.isBrazilian &&
+    (body.cpf === null || body.cpf === "" || body.cpf === undefined) &&
+    (body.rg === null || body.rg === undefined || body.rg === "")
+  ) {
+    return false;
+  }
+  return true;
 }

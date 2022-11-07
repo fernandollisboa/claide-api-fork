@@ -1,0 +1,12 @@
+-- DropIndex
+DROP INDEX "members_phone_key";
+
+-- AlterTable
+ALTER TABLE "members" ADD COLUMN     "isBrazilian" BOOLEAN DEFAULT true,
+ALTER COLUMN "cpf" DROP NOT NULL,
+ALTER COLUMN "rg" DROP NOT NULL,
+ALTER COLUMN "passport" DROP NOT NULL,
+ALTER COLUMN "hasKey" DROP NOT NULL,
+ALTER COLUMN "hasKey" SET DEFAULT false,
+ALTER COLUMN "isActive" DROP NOT NULL,
+ALTER COLUMN "isActive" SET DEFAULT false;

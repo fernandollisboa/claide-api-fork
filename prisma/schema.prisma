@@ -26,17 +26,18 @@ model Member {
   email          String     @unique
   birthDate      DateTime   
   username       String     @unique
-  cpf            String     @unique
-  rg             String     @unique
-  passport       String     @unique
-  phone          String     @unique
+  cpf            String?    
+  rg             String?    
+  passport       String?    
+  phone          String     
   lsdEmail       String     @unique
-  secondaryEmail String?    @unique
+  secondaryEmail String?    
   memberType     MemberType
   lattes         String     @unique
   roomName       String
-  hasKey         Boolean    @default(true)
-  isActive       Boolean    @default(true)
+  hasKey         Boolean?   @default(false)
+  isActive       Boolean?   @default(false)
+  isBrazilian    Boolean?   @default(true)
 
   @@map("members")
 }

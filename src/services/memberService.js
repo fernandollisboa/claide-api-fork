@@ -1,11 +1,9 @@
 import * as memberRepository from "../repositories/memberRepository";
 import * as dateUtils from "../utils/dateUtils";
+import * as memberUtils from "../utils/memberUtils";
 
 async function createMember(body) {
-  const aux = await memberRepository.getMemberByCpf(body.cpf);
-  if (aux !== undefined && aux !== null) {
-    throw new Error("Member already exists");
-  }
+  await memberUtils.checkMemberAlreadyExists(body);
   const dateFormated = new Date(dateUtils.dateToIso(body.birthDate));
   if (dateFormated.getFullYear() >= 2007) {
     throw new Error("Invalid date");
@@ -18,26 +16,29 @@ async function createMember(body) {
       username: body.username,
       cpf: body.cpf,
       rg: body.rg,
-      passport: body.passport,
+      passport: body.passport || null,
       phone: body.phone,
       lsdEmail: body.lsdEmail,
-      secondaryEmail: body.secondaryEmail || null,
+      secondaryEmail: body.secondaryEmail,
       memberType: body.memberType,
       lattes: body.lattes,
       roomName: body.roomName,
       hasKey: body.hasKey,
-      isActive: body.isActive,
+      isBrazilian: body.isBrazilian,
     });
     return newMember;
   } catch (err) {
-    throw new Error("Already exists a member with some of this data, duplicate data!");
+    const errorColumn = err.message.substring(err.message.indexOf("(`"));
+    throw new Error(
+      `Already exists a member with this data on column ${errorColumn}, duplicate data!`
+    );
   }
 }
 
 async function getMemberById(id) {
   const member = await memberRepository.getMemberById(id);
   if (member === undefined || member === null) {
-    throw new Error().message("Member not found");
+    throw new Error("Member not found");
   }
   return member;
 }
@@ -51,6 +52,7 @@ async function updateMember(body) {
   if (aux === undefined && aux === null) {
     throw new Error("Member does not exist");
   }
+  await memberUtils.checkMemberAlreadyExists(body);
   let dateFormated = "";
   if (body.birthDate !== undefined && body.birthDate !== null && body.birthDate !== "") {
     dateFormated = new Date(dateUtils.dateToIso(body.birthDate));
@@ -75,6 +77,7 @@ async function updateMember(body) {
     lattes: body.lattes || aux.lattes,
     roomName: body.roomName || aux.roomName,
     hasKey: body.hasKey !== null && body.hasKey !== undefined ? body.hasKey : aux.hasKey,
+    isBrazilian: body.isBrazilian,
   });
 
   return updatedMember;

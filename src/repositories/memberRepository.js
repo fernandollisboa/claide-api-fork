@@ -15,7 +15,7 @@ async function insertMember({
   lattes,
   roomName,
   hasKey,
-  isActive,
+  isBrazilian,
 }) {
   const member = await prisma.member.create({
     data: {
@@ -25,7 +25,7 @@ async function insertMember({
       username,
       cpf,
       rg,
-      passport,
+      passport: passport || null,
       phone,
       lsdEmail,
       secondaryEmail,
@@ -33,7 +33,7 @@ async function insertMember({
       lattes,
       roomName,
       hasKey,
-      isActive,
+      isBrazilian: isBrazilian,
     },
   });
   return member;
@@ -44,7 +44,19 @@ async function getMemberById(id) {
 }
 
 async function getMemberByCpf(cpf) {
-  return await prisma.member.findUnique({ where: { cpf: cpf } });
+  return await prisma.member.findFirst({ where: { cpf: cpf } });
+}
+
+async function getMemberByRg(rg) {
+  return await prisma.member.findFirst({ where: { rg: rg } });
+}
+
+async function getMemberByPassport(passport) {
+  return await prisma.member.findFirst({ where: { passport: passport } });
+}
+
+async function getMemberBySecondaryEmail(secondaryEmail) {
+  return await prisma.member.findFirst({ where: { secondaryEmail: secondaryEmail } });
 }
 
 async function getAllMembers() {
@@ -92,4 +104,14 @@ async function deleteMember(id) {
   await prisma.member.delete({ where: { id: id } });
   return member;
 }
-export { insertMember, getMemberById, getMemberByCpf, getAllMembers, updateMember, deleteMember };
+export {
+  insertMember,
+  getMemberById,
+  getMemberByCpf,
+  getMemberByRg,
+  getMemberByPassport,
+  getMemberBySecondaryEmail,
+  getAllMembers,
+  updateMember,
+  deleteMember,
+};
