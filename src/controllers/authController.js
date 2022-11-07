@@ -23,7 +23,7 @@ export async function login(req, res) {
       });
     }
   } catch (err) {
-    return res.status(403).json({
+    return res.status(401).json({
       error: err,
     });
   }

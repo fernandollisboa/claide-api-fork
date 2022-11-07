@@ -3,7 +3,7 @@ import ldap from "ldapjs";
 
 export async function authenticateUser({ userName, password }) {
   const client = ldap.createClient({
-    url: "ldap://ldap.lsd.ufcg.edu.br",
+    url: process.env.LDAP_URL,
   });
 
   client.on("error", (err) => {
@@ -28,7 +28,7 @@ export async function authenticateUser({ userName, password }) {
             const jwToken = jwt.sign({ id: entry.objectName }, process.env.JWT_SECRET, {
               expiresIn: process.env.JWT_EXPIRATION,
             });
-            resolve({ userName: userName, jwToken: jwToken, err: null });
+            resolve({ userName: userName, jwToken: jwToken });
           }
         });
       });
