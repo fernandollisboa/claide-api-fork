@@ -21,15 +21,15 @@ export async function createProject(project) {
     }
     const newProject = {
       ...project,
-      status: status,
-      creationDate: creationDate,
+      status,
+      creationDate,
       endDate: endDateProject,
     };
     return await projectRepository.insertProject(newProject);
   }
   const newProject = {
     ...project,
-    status: status,
+    status,
     creationDate: creationDate,
   };
 
