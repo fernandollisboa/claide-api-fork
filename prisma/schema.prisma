@@ -49,3 +49,24 @@ enum MemberType {
   PROFESSOR
   EXTERNAL
 }
+
+model Project{
+  id  Int @id @default(autoincrement())
+  name String
+  creationDate DateTime
+  endDate DateTime? 
+  building String?
+  room String?
+  embrapii_code String?
+  financier String? 
+  status Boolean @default(true)
+
+}
+
+enum Role {
+  ADMIN
+  STUDENT
+  SUPPORT
+  PROFESSOR
+  EXTERNAL
+}
