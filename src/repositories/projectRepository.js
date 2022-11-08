@@ -47,11 +47,40 @@ export async function findByEmbrapiiCode(code) {
 export async function findById(id) {
   const projectToFind = await prisma.project.findFirst({
     where: {
-      id: id,
+      id: parseInt(id),
     },
   });
 
   return projectToFind;
+}
+
+export async function updateProject({
+  id,
+  name,
+  creationDate,
+  endDate,
+  building,
+  room,
+  embrapii_code,
+  financier,
+  status,
+}) {
+  const project = await prisma.project.update({
+    where: {
+      id: parseInt(id),
+    },
+    data: {
+      name: name || undefined,
+      creationDate: creationDate || undefined,
+      endDate: endDate || undefined,
+      building: building || undefined,
+      room: room || undefined,
+      embrapii_code: embrapii_code || undefined,
+      financier: financier || undefined,
+      status: status,
+    },
+  });
+  return project;
 }
 
 export async function findAll() {

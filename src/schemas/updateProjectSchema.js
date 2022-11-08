@@ -3,14 +3,15 @@ import extension from "@joi/date";
 
 const joi = joiBase.extend(extension);
 
-export const createProjectSchema = joi.object({
+export const updateProjectSchema = joi.object({
+  id: joi.number().integer().messages({
+    "number.base": "Id deve ser um número",
+  }),
   name: joi.string().messages({
     "string.base": "Nome deve ser em formato de texto",
-    "any.required": "Projeto deve ter um nome",
   }),
   creationDate: joi.date().format("DD/MM/YYYY").messages({
     "date.format": "Data de início do projeto deve ser no formato 'DD/MM/YYYY'",
-    "any.required": "Projeto deve ter uma data de início",
   }),
   endDate: joi.date().format("DD/MM/YYYY").messages({
     "date.format": "Data de fim do projeto deve ser no formato 'DD/MM/YYYY'",
@@ -21,7 +22,7 @@ export const createProjectSchema = joi.object({
   building: joi.string().messages({
     "string.base": "Prédio deve ser em formato de texto",
   }),
-  embrapii_code: joi.string().messages({
+  embrapii_code: joi.string().allow("").messages({
     "string.base": "Código Embrapii deve ser em formato de texto",
   }),
   financier: joi.string().messages({

@@ -1,4 +1,5 @@
 import { createProjectSchema } from "../schemas/createProjectSchema";
+import { updateProjectSchema } from "../schemas/updateProjectSchema";
 import * as projectService from "../services/projectService";
 
 export async function createProject(req, res) {
@@ -42,9 +43,19 @@ export async function getProjectById(req, res) {
 export async function updateProject(req, res) {
   const { body } = req;
 
+  const joiValidation = updateProjectSchema.validate(body);
+
+  if (joiValidation.error) {
+    const typeError = joiValidation.error.details[0].type;
+    if (typeError === "object.unknown") {
+      return res.status(422).send(joiValidation.error.details[0].message);
+    }
+    return res.status(400).send(joiValidation.error.details[0].message);
+  }
+
   try {
     const project = await projectService.updateProject(body);
-    return res.status(200).send(project);
+    return res.status(201).send(project);
   } catch (err) {
     res.status(409).send(err.message);
   }

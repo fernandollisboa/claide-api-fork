@@ -1,13 +1,10 @@
 import { Router } from "express";
 import * as userController from "../controllers/userController";
-import * as projectController from "../controllers/projectController";
+import projectsRouter from "./projectsRouter";
 
 const routes = Router();
 
 routes.post("/signup", userController.createUser);
-routes.post("/project", projectController.createProject);
-routes.get("/project", projectController.getProjects);
-routes.get("/project/:id", projectController.getProjectById);
-routes.put("/project/", projectController.updateProject);
+routes.use("/projects", projectsRouter);
 
 export default routes;

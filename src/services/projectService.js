@@ -1,7 +1,6 @@
 import * as projectRepository from "../repositories/projectRepository";
 import * as dateUtils from "../utils/dateUtils";
-import { endDateError, invalidAtribute } from "../utils/customErrorsProject";
-import { NotFoundError } from "@prisma/client/runtime";
+import { endDateError, invalidAtribute, notFoundError } from "../utils/customErrorsProject";
 
 export async function createProject(project) {
   let status = true;
@@ -12,7 +11,7 @@ export async function createProject(project) {
     status = checkStatus(creationDate, endDateProject);
     const newProject = {
       ...project,
-      status: status,
+      status,
       creationDate: creationDate,
       endDate: endDateProject,
     };
@@ -20,7 +19,7 @@ export async function createProject(project) {
   }
   const newProject = {
     ...project,
-    status: status,
+    status,
     creationDate: creationDate,
   };
 
@@ -38,10 +37,49 @@ export async function findById(id) {
 }
 
 export async function updateProject(project) {
-  const projectToChange = findById(project.id);
+  const projectToChange = await projectRepository.findById(project.id);
+
   if (!projectToChange) {
-    throw new NotFoundError("id", project.id);
+    throw new notFoundError("id", project.id);
   }
+  let { status } = projectToChange;
+  let { endDate } = projectToChange;
+  let { creationDate } = projectToChange;
+
+  let newProject = {
+    ...project,
+  };
+
+  // Verificação das datas de criação e datas de término do projeto
+  // Caso alguma dessas sejam alteradas, é preciso fazer toda a lógica que ativa ou desativa o projeto
+  // Primeiramente é checada se a data de criação é inserida e é válida, após isso checa-se se existe a data
+  // de término, ou se ela foi inserida e é válida.
+  if (typeof project.creationDate !== "undefined") {
+    creationDate = new Date(dateUtils.dateToIso(project.creationDate));
+
+    if (project.endDate) {
+      endDate = new Date(dateUtils.dateToIso(project.endDate));
+      status = checkStatus(creationDate, endDate);
+    } else if (projectToChange.endDate) {
+      status = checkStatus(creationDate, endDate);
+    }
+    newProject = {
+      ...project,
+      status: status,
+      creationDate: creationDate,
+      endDate: endDate,
+    };
+  } else if (typeof project.endDate !== "undefined") {
+    endDate = new Date(dateUtils.dateToIso(project.endDate));
+    status = checkStatus(creationDate, endDate);
+
+    newProject = {
+      ...project,
+      status: status,
+      endDate: endDate,
+    };
+  }
+  return await projectRepository.updateProject(newProject);
 }
 
 function checkStatus(creationDate, endDateProject) {
