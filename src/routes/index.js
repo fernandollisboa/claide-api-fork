@@ -1,14 +1,10 @@
 import { Router } from "express";
 import * as userController from "../controllers/userController";
-import * as memberController from "../controllers/memberController";
+import memberRouter from "./memberRoutes";
 
 const routes = Router();
 
 routes.post("/signup", userController.createUser);
-routes.post("/createMember", memberController.createMember);
-routes.get("/member=:id", memberController.getMemberById);
-routes.get("/members", memberController.getAllMembers);
-routes.put("/editMember", memberController.updateMember);
-routes.delete("/deleteMember=:id", memberController.deleteMember);
+routes.use("/members", memberRouter);
 
 export default routes;
