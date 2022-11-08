@@ -10,16 +10,18 @@ export const createMemberSchema = joi.object({
     "string.pattern.base": "Name should have only letters",
     "any.required": "Member should have a name",
   }),
-  email: joi.string().required(),
+  email: joi.string().required().email(),
   birthDate: joi.date().format("DD/MM/YYYY").required().messages({
     "date.format": "Date of birth should be in 'DD/MM/YYYY' format",
   }),
-  username: joi.string().trim().required().messages({
+  username: joi.string().alphanum().min(3).max(20).required().messages({
     "string.base": "Username should be a string",
+    "string.min": "Username must have at least 3 characters",
+    "string.max": "Username must have at most 20 characters",
     "string.empty": `A username must contain value`,
     "any.required": "Member should have a username",
   }),
-  cpf: joi.string().allow("").regex(/\d/).messages({
+  cpf: joi.string().allow("").max(11).regex(/\d/).messages({
     "string.base": "Cpf should be a string",
     "regex.base": "A cpf should have only digits",
   }),
@@ -36,12 +38,17 @@ export const createMemberSchema = joi.object({
     "regex.base": "A phone should have only digits",
     "any.required": "Member should have a phone",
   }),
-  lsdEmail: joi.string().trim().required().messages({
-    "string.base": "Lsd Email should be a string",
-    "string.empty": `A lsd Email must contain value`,
-    "any.required": "Member should have a lsd Email",
-  }),
-  secondaryEmail: joi.string().allow("").messages({
+  lsdEmail: joi
+    .string()
+    .email({ minDomainSegments: 4 })
+    .pattern(/^\w+([.-]?\w+)*@(lsd\.ufcg\.edu\.br)/)
+    .required()
+    .messages({
+      "string.base": "Lsd Email should be a string",
+      "string.empty": `A lsd Email must contain value`,
+      "any.required": "Member should have a lsd Email",
+    }),
+  secondaryEmail: joi.string().allow("").email().messages({
     "string.base": "Secondary Email should be a string",
   }),
   memberType: joi
@@ -79,7 +86,7 @@ export const updateMemberSchema = joi.object({
     "any.required": "To update a member an id must be provided",
   }),
   name: joi.string().allow(""),
-  email: joi.string().allow(""),
+  email: joi.string().allow("").email(),
   birthDate: joi.date().allow("").format("DD/MM/YYYY").messages({
     "date.format": "Date of birth should be in 'DD/MM/YYYY' format",
   }),
@@ -88,12 +95,17 @@ export const updateMemberSchema = joi.object({
   rg: joi.string().allow("").regex(/\d/),
   passport: joi.string().allow(""),
   phone: joi.string().allow(""),
-  lsdEmail: joi.string().allow(""),
-  secondaryEmail: joi.string().allow(""),
-  memberType: joi.string().allow(""),
+  lsdEmail: joi
+    .string()
+    .allow("")
+    .email({ minDomainSegments: 4 })
+    .pattern(/^\w+([.-]?\w+)*@(lsd\.ufcg\.edu\.br)/),
+  secondaryEmail: joi.string().allow("").email(),
+  memberType: joi.string().allow("").valid("ADMIN", "STUDENT", "SUPPORT", "PROFESSOR", "EXTERNAL"),
   lattes: joi.string().allow(""),
   roomName: joi.string().allow(""),
   hasKey: joi.boolean().allow(null, ""),
+  isBrazilian: joi.boolean().allow(null, "").default(false),
 });
 
 export async function validatePassportForGringos(body) {

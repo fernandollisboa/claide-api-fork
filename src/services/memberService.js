@@ -53,6 +53,9 @@ async function updateMember(body) {
     throw new Error("Member does not exist");
   }
   await memberUtils.checkMemberAlreadyExists(body);
+  if (body.isBrazilian !== undefined && body.isBrazilian !== null && body.isBrazilian !== "") {
+    await memberUtils.checkCpfRgPassportOnUpdate(body, aux);
+  }
   let dateFormated = "";
   if (body.birthDate !== undefined && body.birthDate !== null && body.birthDate !== "") {
     dateFormated = new Date(dateUtils.dateToIso(body.birthDate));
@@ -60,27 +63,35 @@ async function updateMember(body) {
       throw new Error("Invalid date");
     }
   }
-
-  const updatedMember = await memberRepository.updateMember({
-    id: parseInt(body.id),
-    name: body.name || aux.name,
-    email: body.email || aux.email,
-    birthDate: dateFormated || aux.birthDate,
-    username: body.username || aux.username,
-    cpf: body.cpf || aux.cpf,
-    rg: body.rg || aux.rg,
-    passport: body.passport || aux.passport,
-    phone: body.phone || aux.phone,
-    lsdEmail: body.lsdEmail || aux.lsdEmail,
-    secondaryEmail: body.secondaryEmail || aux.secondaryEmail,
-    memberType: body.memberType || aux.memberType,
-    lattes: body.lattes || aux.lattes,
-    roomName: body.roomName || aux.roomName,
-    hasKey: body.hasKey !== null && body.hasKey !== undefined ? body.hasKey : aux.hasKey,
-    isBrazilian: body.isBrazilian,
-  });
-
-  return updatedMember;
+  try {
+    const updatedMember = await memberRepository.updateMember({
+      id: parseInt(body.id),
+      name: body.name || aux.name,
+      email: body.email || aux.email,
+      birthDate: dateFormated || aux.birthDate,
+      username: body.username || aux.username,
+      cpf: body.cpf || aux.cpf,
+      rg: body.rg || aux.rg,
+      passport: body.passport || aux.passport,
+      phone: body.phone || aux.phone,
+      lsdEmail: body.lsdEmail || aux.lsdEmail,
+      secondaryEmail: body.secondaryEmail || aux.secondaryEmail,
+      memberType: body.memberType || aux.memberType,
+      lattes: body.lattes || aux.lattes,
+      roomName: body.roomName || aux.roomName,
+      hasKey: body.hasKey !== null && body.hasKey !== undefined ? body.hasKey : aux.hasKey,
+      isBrazilian:
+        body.isBrazilian !== null && body.isBrazilian !== undefined
+          ? body.isBrazilian
+          : aux.isBrazilian,
+    });
+    return updatedMember;
+  } catch (err) {
+    const errorColumn = err.message.substring(err.message.indexOf("(`"));
+    throw new Error(
+      `Already exists a member with this data on column ${errorColumn}, duplicate data!`
+    );
+  }
 }
 
 async function deleteMember(id) {
