@@ -21,7 +21,7 @@ export const createMemberSchema = joi.object({
     "string.empty": `A username must contain value`,
     "any.required": "Member should have a username",
   }),
-  cpf: joi.string().allow("").max(11).regex(/\d/).messages({
+  cpf: joi.string().allow("").regex(/\d/).messages({
     "string.base": "Cpf should be a string",
     "regex.base": "A cpf should have only digits",
   }),
@@ -108,22 +108,15 @@ export const updateMemberSchema = joi.object({
   isBrazilian: joi.boolean().allow(null, "").default(false),
 });
 
-export async function validatePassportForGringos(body) {
-  if (
-    !body.isBrazilian &&
-    (body.passport === null || body.passport === undefined || body.passport === "")
-  ) {
+export async function validatePassportForForeigners(body) {
+  if (!body.isBrazilian && !body.passport.trim()) {
     return false;
   }
   return true;
 }
 
 export async function validateRgCpfForBrazilians(body) {
-  if (
-    body.isBrazilian &&
-    (body.cpf === null || body.cpf === "" || body.cpf === undefined) &&
-    (body.rg === null || body.rg === undefined || body.rg === "")
-  ) {
+  if (body.isBrazilian && !body.cpf.trim() && !body.rg.trim()) {
     return false;
   }
   return true;

@@ -2,29 +2,45 @@ import * as memberRepository from "../repositories/memberRepository";
 import * as dateUtils from "../utils/dateUtils";
 import * as memberUtils from "../utils/memberUtils";
 
-async function createMember(body) {
-  await memberUtils.checkMemberAlreadyExists(body);
-  const dateFormated = new Date(dateUtils.dateToIso(body.birthDate));
-  if (dateFormated.getFullYear() >= 2007) {
-    throw new Error("Invalid date");
+async function createMember({
+  name,
+  email,
+  birthDate,
+  username,
+  cpf,
+  rg,
+  passport,
+  phone,
+  lsdEmail,
+  secondaryEmail,
+  memberType,
+  lattes,
+  roomName,
+  hasKey,
+  isBrazilian,
+}) {
+  await memberUtils.checkMemberAlreadyExists(null, cpf, rg, passport, secondaryEmail);
+  const dateFormated = new Date(dateUtils.dateToIso(birthDate));
+  if (new Date().getFullYear() - dateFormated.getFullYear() <= 15) {
+    throw new Error("Invalid date, the member must have more than 15 years!");
   }
   try {
     const newMember = await memberRepository.insertMember({
-      name: body.name,
-      email: body.email,
+      name,
+      email,
       birthDate: dateFormated,
-      username: body.username,
-      cpf: body.cpf,
-      rg: body.rg,
-      passport: body.passport || null,
-      phone: body.phone,
-      lsdEmail: body.lsdEmail,
-      secondaryEmail: body.secondaryEmail,
-      memberType: body.memberType,
-      lattes: body.lattes,
-      roomName: body.roomName,
-      hasKey: body.hasKey,
-      isBrazilian: body.isBrazilian,
+      username,
+      cpf,
+      rg,
+      passport,
+      phone,
+      lsdEmail,
+      secondaryEmail,
+      memberType,
+      lattes,
+      roomName,
+      hasKey,
+      isBrazilian,
     });
     return newMember;
   } catch (err) {
@@ -47,43 +63,60 @@ async function getAllMembers() {
   return await memberRepository.getAllMembers();
 }
 
-async function updateMember(body) {
-  const aux = await memberRepository.getMemberById(parseInt(body.id));
-  if (aux === undefined && aux === null) {
+async function updateMember({
+  id,
+  name,
+  email,
+  birthDate,
+  username,
+  cpf,
+  rg,
+  passport,
+  phone,
+  lsdEmail,
+  secondaryEmail,
+  memberType,
+  lattes,
+  roomName,
+  hasKey,
+  isBrazilian,
+}) {
+  const toUpdateMember = await memberRepository.getMemberById(id);
+  if (!toUpdateMember) {
     throw new Error("Member does not exist");
   }
-  await memberUtils.checkMemberAlreadyExists(body);
-  if (body.isBrazilian !== undefined && body.isBrazilian !== null && body.isBrazilian !== "") {
-    await memberUtils.checkCpfRgPassportOnUpdate(body, aux);
+  await memberUtils.checkMemberAlreadyExists(id, cpf, rg, passport, secondaryEmail);
+  if (isBrazilian !== null && isBrazilian !== undefined) {
+    await memberUtils.checkCpfRgPassportOnUpdate(isBrazilian, cpf, rg, passport, toUpdateMember);
   }
   let dateFormated = "";
-  if (body.birthDate !== undefined && body.birthDate !== null && body.birthDate !== "") {
-    dateFormated = new Date(dateUtils.dateToIso(body.birthDate));
-    if (dateFormated.getFullYear() >= 2007) {
-      throw new Error("Invalid date");
+  if (birthDate) {
+    dateFormated = new Date(dateUtils.dateToIso(birthDate));
+    if (new Date().getFullYear() - dateFormated.getFullYear() <= 15) {
+      throw new Error("Invalid date, the member must have more than 15 years!");
     }
   }
   try {
     const updatedMember = await memberRepository.updateMember({
-      id: parseInt(body.id),
-      name: body.name || aux.name,
-      email: body.email || aux.email,
-      birthDate: dateFormated || aux.birthDate,
-      username: body.username || aux.username,
-      cpf: body.cpf || aux.cpf,
-      rg: body.rg || aux.rg,
-      passport: body.passport || aux.passport,
-      phone: body.phone || aux.phone,
-      lsdEmail: body.lsdEmail || aux.lsdEmail,
-      secondaryEmail: body.secondaryEmail || aux.secondaryEmail,
-      memberType: body.memberType || aux.memberType,
-      lattes: body.lattes || aux.lattes,
-      roomName: body.roomName || aux.roomName,
-      hasKey: body.hasKey !== null && body.hasKey !== undefined ? body.hasKey : aux.hasKey,
+      id,
+      name: name || toUpdateMember.name,
+      email: email || toUpdateMember.email,
+      birthDate: dateFormated || toUpdateMember.birthDate,
+      username: username || toUpdateMember.username,
+      cpf: cpf || toUpdateMember.cpf,
+      rg: rg || toUpdateMember.rg,
+      passport: passport || toUpdateMember.passport,
+      phone: phone || toUpdateMember.phone,
+      lsdEmail: lsdEmail || toUpdateMember.lsdEmail,
+      secondaryEmail: secondaryEmail || toUpdateMember.secondaryEmail,
+      memberType: memberType || toUpdateMember.memberType,
+      lattes: lattes || toUpdateMember.lattes,
+      roomName: roomName || toUpdateMember.roomName,
+      hasKey: hasKey !== null && hasKey !== undefined ? hasKey : toUpdateMember.hasKey,
       isBrazilian:
-        body.isBrazilian !== null && body.isBrazilian !== undefined
-          ? body.isBrazilian
-          : aux.isBrazilian,
+        isBrazilian !== null && isBrazilian !== undefined
+          ? isBrazilian
+          : toUpdateMember.isBrazilian,
     });
     return updatedMember;
   } catch (err) {
@@ -95,6 +128,7 @@ async function updateMember(body) {
 }
 
 async function deleteMember(id) {
-  return memberRepository.deleteMember(id);
+  const deletedMember = await memberRepository.deleteMember(id);
+  return deletedMember;
 }
 export { createMember, getMemberById, getAllMembers, updateMember, deleteMember };

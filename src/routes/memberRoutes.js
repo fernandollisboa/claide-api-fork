@@ -3,10 +3,10 @@ import * as memberController from "../controllers/memberController";
 
 const memberRouter = Router();
 
-memberRouter.post("/createMember", memberController.createMember);
-memberRouter.get("/member=:id", memberController.getMemberById);
+memberRouter.post("/", memberController.createMember);
+memberRouter.get("/:id", memberController.getMemberById);
 memberRouter.get("/", memberController.getAllMembers);
-memberRouter.put("/editMember", memberController.updateMember);
-memberRouter.delete("/deleteMember=:id", memberController.deleteMember);
+memberRouter.put("/", memberController.updateMember);
+memberRouter.delete("/:id", memberController.deleteMember);
 
 export default memberRouter;
