@@ -5,7 +5,7 @@ export async function login(req, res) {
   const joiValidation = loginSchema.validate(req.body);
   if (joiValidation.error)
     return res.status(403).json({
-      msg: "formato invalido",
+      msg: "Invalid format",
     });
 
   const { userName, password } = req.body;
