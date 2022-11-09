@@ -55,7 +55,7 @@ export async function updateProject(req, res) {
 
   try {
     const project = await projectService.updateProject(body);
-    return res.status(201).send(project);
+    return res.status(200).send(project);
   } catch (err) {
     res.status(409).send(err.message);
   }

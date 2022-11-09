@@ -27,7 +27,7 @@ model Project{
   room String?
   embrapii_code String?
   financier String? 
-  status Boolean @default(true)
+  isActive Boolean @default(true)
 
 }
 

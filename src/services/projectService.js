@@ -3,15 +3,15 @@ import * as dateUtils from "../utils/dateUtils";
 import { endDateError, invalidAtribute, notFoundError } from "../utils/customErrorsProject";
 
 export async function createProject(project) {
-  let status = true;
+  let isActive = true;
   const creationDate = new Date(dateUtils.dateToIso(project.creationDate));
 
   if (typeof project.endDate !== "undefined") {
     const endDateProject = new Date(dateUtils.dateToIso(project.endDate));
-    status = checkStatus(creationDate, endDateProject);
+    isActive = isProjectActive(creationDate, endDateProject);
     const newProject = {
       ...project,
-      status,
+      isActive,
       creationDate: creationDate,
       endDate: endDateProject,
     };
@@ -19,7 +19,7 @@ export async function createProject(project) {
   }
   const newProject = {
     ...project,
-    status,
+    isActive,
     creationDate: creationDate,
   };
 
@@ -42,9 +42,7 @@ export async function updateProject(project) {
   if (!projectToChange) {
     throw new notFoundError("id", project.id);
   }
-  let { status } = projectToChange;
-  let { endDate } = projectToChange;
-  let { creationDate } = projectToChange;
+  let { isActive, endDate, creationDate } = projectToChange;
 
   let newProject = {
     ...project,
@@ -59,43 +57,38 @@ export async function updateProject(project) {
 
     if (project.endDate) {
       endDate = new Date(dateUtils.dateToIso(project.endDate));
-      status = checkStatus(creationDate, endDate);
+      isActive = isProjectActive(creationDate, endDate);
     } else if (projectToChange.endDate) {
-      status = checkStatus(creationDate, endDate);
+      isActive = isProjectActive(creationDate, endDate);
     }
     newProject = {
       ...project,
-      status: status,
+      isActive,
       creationDate: creationDate,
       endDate: endDate,
     };
   } else if (typeof project.endDate !== "undefined") {
     endDate = new Date(dateUtils.dateToIso(project.endDate));
-    status = checkStatus(creationDate, endDate);
+    isActive = isProjectActive(creationDate, endDate);
 
     newProject = {
       ...project,
-      status: status,
+      isActive,
       endDate: endDate,
     };
   }
   return await projectRepository.updateProject(newProject);
 }
 
-function checkStatus(creationDate, endDateProject) {
-  let status = true;
-
-  if (creationDate > endDateProject) {
-    throw new endDateError(endDateProject);
+function isProjectActive(creationDate, endDate) {
+  if (creationDate > endDate) {
+    throw new endDateError(endDate);
   }
 
-  const dateNow = new Date();
+  const today = new Date();
+  const isActive = endDate >= today;
 
-  if (endDateProject <= dateNow) {
-    status = false;
-  }
-
-  return status;
+  return isActive;
 }
 
 export async function findAll() {

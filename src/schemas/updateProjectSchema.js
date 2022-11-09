@@ -4,8 +4,9 @@ import extension from "@joi/date";
 const joi = joiBase.extend(extension);
 
 export const updateProjectSchema = joi.object({
-  id: joi.number().integer().messages({
+  id: joi.number().integer().required().messages({
     "number.base": "Id deve ser um número",
+    "any.required": "Project must have an Id",
   }),
   name: joi.string().messages({
     "string.base": "Nome deve ser em formato de texto",

@@ -8,7 +8,7 @@ export async function insertProject({
   room,
   embrapii_code,
   financier,
-  status,
+  isActive,
 }) {
   const project = await prisma.project.create({
     data: {
@@ -19,7 +19,7 @@ export async function insertProject({
       room,
       embrapii_code,
       financier,
-      status,
+      isActive,
     },
   });
   return project;
@@ -63,7 +63,7 @@ export async function updateProject({
   room,
   embrapii_code,
   financier,
-  status,
+  isActive,
 }) {
   const project = await prisma.project.update({
     where: {
@@ -77,7 +77,7 @@ export async function updateProject({
       room: room || undefined,
       embrapii_code: embrapii_code || undefined,
       financier: financier || undefined,
-      status: status,
+      isActive: isActive,
     },
   });
   return project;
