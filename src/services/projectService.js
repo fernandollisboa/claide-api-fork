@@ -1,35 +1,25 @@
 import * as projectRepository from "../repositories/projectRepository";
 import * as dateUtils from "../utils/dateUtils";
-import { endDateError, invalidAtribute } from "../utils/customErrorsProject";
+import { endDateError, invalidAtribute, notFoundError } from "../utils/customErrorsProject";
 
 export async function createProject(project) {
-  let status = true;
-
+  let isActive = true;
   const creationDate = new Date(dateUtils.dateToIso(project.creationDate));
 
   if (typeof project.endDate !== "undefined") {
     const endDateProject = new Date(dateUtils.dateToIso(project.endDate));
-
-    if (creationDate > endDateProject) {
-      throw new endDateError(project.endDate);
-    }
-
-    const dateNow = new Date();
-
-    if (endDateProject <= dateNow) {
-      status = false;
-    }
+    isActive = isProjectActive(creationDate, endDateProject);
     const newProject = {
       ...project,
-      status,
-      creationDate,
+      isActive,
+      creationDate: creationDate,
       endDate: endDateProject,
     };
     return await projectRepository.insertProject(newProject);
   }
   const newProject = {
     ...project,
-    status,
+    isActive,
     creationDate: creationDate,
   };
 
@@ -44,6 +34,61 @@ export async function findById(id) {
   const project = await projectRepository.findById(id);
 
   return project;
+}
+
+export async function updateProject(project) {
+  const projectToChange = await projectRepository.findById(project.id);
+
+  if (!projectToChange) {
+    throw new notFoundError("id", project.id);
+  }
+  let { isActive, endDate, creationDate } = projectToChange;
+
+  let newProject = {
+    ...project,
+  };
+
+  // Verificação das datas de criação e datas de término do projeto
+  // Caso alguma dessas sejam alteradas, é preciso fazer toda a lógica que ativa ou desativa o projeto
+  // Primeiramente é checada se a data de criação é inserida e é válida, após isso checa-se se existe a data
+  // de término, ou se ela foi inserida e é válida.
+  if (typeof project.creationDate !== "undefined") {
+    creationDate = new Date(dateUtils.dateToIso(project.creationDate));
+
+    if (project.endDate) {
+      endDate = new Date(dateUtils.dateToIso(project.endDate));
+      isActive = isProjectActive(creationDate, endDate);
+    } else if (projectToChange.endDate) {
+      isActive = isProjectActive(creationDate, endDate);
+    }
+    newProject = {
+      ...project,
+      isActive,
+      creationDate,
+      endDate,
+    };
+  } else if (typeof project.endDate !== "undefined") {
+    endDate = new Date(dateUtils.dateToIso(project.endDate));
+    isActive = isProjectActive(creationDate, endDate);
+
+    newProject = {
+      ...project,
+      isActive,
+      endDate,
+    };
+  }
+  return await projectRepository.updateProject(newProject);
+}
+
+function isProjectActive(creationDate, endDate) {
+  if (creationDate > endDate) {
+    throw new endDateError(endDate);
+  }
+
+  const today = new Date();
+  const isActive = endDate >= today;
+
+  return isActive;
 }
 
 export async function findAll() {
