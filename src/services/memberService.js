@@ -2,6 +2,7 @@ import * as memberRepository from "../repositories/memberRepository";
 import * as dateUtils from "../utils/dateUtils";
 import * as memberUtils from "../utils/memberUtils";
 
+const MINIMUM_REQUIRED_AGE = 15;
 async function createMember({
   name,
   email,
@@ -21,7 +22,7 @@ async function createMember({
 }) {
   await memberUtils.checkMemberAlreadyExists(null, cpf, rg, passport, secondaryEmail);
   const dateFormated = new Date(dateUtils.dateToIso(birthDate));
-  if (new Date().getFullYear() - dateFormated.getFullYear() <= 15) {
+  if (new Date().getFullYear() - dateFormated.getFullYear() <= MINIMUM_REQUIRED_AGE) {
     throw new Error("Invalid date, the member must have more than 15 years!");
   }
   try {
@@ -92,8 +93,8 @@ async function updateMember({
   let dateFormated = "";
   if (birthDate) {
     dateFormated = new Date(dateUtils.dateToIso(birthDate));
-    if (new Date().getFullYear() - dateFormated.getFullYear() <= 15) {
-      throw new Error("Invalid date, the member must have more than 15 years!");
+    if (new Date().getFullYear() - dateFormated.getFullYear() <= MINIMUM_REQUIRED_AGE) {
+      throw new Error("Invalid date, the member must be older than 15 years!");
     }
   }
   try {

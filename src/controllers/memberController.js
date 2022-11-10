@@ -4,7 +4,7 @@ import * as memberService from "../services/memberService";
 async function createMember(req, res) {
   const { body } = req;
   const joiValidation = membersSchema.createMemberSchema.validate(body);
-  const validationPassportGringos = await membersSchema.validatePassportForForeigners(body);
+  const validationPassportForeigners = await membersSchema.validatePassportForForeigners(body);
   const validationCpfRgForBrazilians = await membersSchema.validateRgCpfForBrazilians(body);
 
   if (joiValidation.error) {
@@ -18,7 +18,7 @@ async function createMember(req, res) {
   if (!validationCpfRgForBrazilians) {
     return res.status(422).send("CPF or RG is necessary for brazilians!");
   }
-  if (!validationPassportGringos) {
+  if (!validationPassportForeigners) {
     return res.status(422).send("Passport is necessary for foreigners!");
   }
 
