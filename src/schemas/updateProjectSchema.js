@@ -3,14 +3,16 @@ import extension from "@joi/date";
 
 const joi = joiBase.extend(extension);
 
-export const createProjectSchema = joi.object({
-  name: joi.string().required().messages({
-    "string.base": "Name must be in text format",
-    "any.required": "Project must have a name",
+export const updateProjectSchema = joi.object({
+  id: joi.number().integer().required().messages({
+    "number.base": "Id must be a number",
+    "any.required": "Project must have an Id",
   }),
-  creationDate: joi.date().format("DD/MM/YYYY").required().messages({
+  name: joi.string().messages({
+    "string.base": "Name must be in text format",
+  }),
+  creationDate: joi.date().format("DD/MM/YYYY").messages({
     "date.format": "Project start date must be in 'DD/MM/YYYY' format",
-    "any.required": "Project must have a start date",
   }),
   endDate: joi.date().format("DD/MM/YYYY").messages({
     "date.format": "Project end date must be in 'DD/MM/YYYY' format",
@@ -21,7 +23,7 @@ export const createProjectSchema = joi.object({
   building: joi.string().messages({
     "string.base": "Building must be in text format",
   }),
-  embrapii_code: joi.string().messages({
+  embrapii_code: joi.string().allow("").messages({
     "string.base": "Embrapii code must be in text format",
   }),
   financier: joi.string().messages({
