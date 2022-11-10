@@ -16,6 +16,6 @@
     "import/extensions": ["error", { "js": "ignorePackages" }],
     "prefer-destructuring": ["warn", { "object": true, "array": false }],
     "import/newline-after-import": ["warn", { "count": 1 }],
-    "prettier/prettier": "error"
+    "prettier/prettier": ["error", {"endOfLine": "auto"}]
   }
 }

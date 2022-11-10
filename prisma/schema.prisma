@@ -9,13 +9,45 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model User {
-  id      Int      @id @default(autoincrement())
-  name    String  
-  email   String  @unique
+  id       Int        @id @default(autoincrement())
+  name     String
+  email    String     @unique
   password String
-  role Role @default(STANDARD)
+  role     MemberType
+
   @@map("users")
+}
+
+model Member {
+  id             Int        @id @default(autoincrement())
+  name           String
+  email          String     @unique
+  birthDate      DateTime   
+  username       String     @unique
+  cpf            String?    
+  rg             String?    
+  passport       String?    
+  phone          String     
+  lsdEmail       String     @unique
+  secondaryEmail String?    
+  memberType     MemberType
+  lattes         String     @unique
+  roomName       String
+  hasKey         Boolean?   @default(false)
+  isActive       Boolean?   @default(false)
+  isBrazilian    Boolean?   @default(true)
+
+  @@map("members")
+}
+
+enum MemberType {
+  ADMIN
+  STUDENT
+  SUPPORT
+  PROFESSOR
+  EXTERNAL
 }
 
 model Project{
@@ -31,15 +63,10 @@ model Project{
 
 }
 
-enum PersonType {
-  PROFESSOR
-  STUDENT
-  PROFISSIONAL
-  EXTERNAL
-}
-
 enum Role {
   ADMIN
-  STANDARD
+  STUDENT
   SUPPORT
+  PROFESSOR
+  EXTERNAL
 }
