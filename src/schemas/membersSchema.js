@@ -4,12 +4,17 @@ import extension from "@joi/date";
 const joi = joiBase.extend(extension);
 
 export const createMemberSchema = joi.object({
-  name: joi.string().regex(/\w/).required().messages({
-    "string.base": "Name should be a string",
-    "string.empty": `A name must contain value`,
-    "string.pattern.base": "Name should have only letters",
-    "any.required": "Member should have a name",
-  }),
+  name: joi
+    .string()
+    .regex(/^([a-zA-Z]{2,}\s[a-zA-Z]{1,}[a-zA-Z]*)/)
+    .required()
+    .messages({
+      "string.base": "Name should be a string",
+      "string.empty": `A name must contain value`,
+      "string.pattern.base":
+        "Name should have only letters, with at least two names (first name and surname)",
+      "any.required": "Member should have a name",
+    }),
   email: joi.string().required().email(),
   birthDate: joi.date().format("DD/MM/YYYY").required().messages({
     "date.format": "Date of birth should be in 'DD/MM/YYYY' format",
@@ -21,23 +26,40 @@ export const createMemberSchema = joi.object({
     "string.empty": `A username must contain value`,
     "any.required": "Member should have a username",
   }),
-  cpf: joi.string().allow("").regex(/\d/).messages({
-    "string.base": "Cpf should be a string",
-    "regex.base": "A cpf should have only digits",
-  }),
-  rg: joi.string().allow("").regex(/\d/).messages({
-    "string.base": "Rg should be a string",
-    "regex.base": "A rg should have only digits",
-  }),
-  passport: joi.string().allow("").messages({
-    "string.base": "Passport should be a string",
-  }),
-  phone: joi.string().regex(/\d/).required().messages({
-    "string.base": "phone should be a string",
-    "string.empty": `A phone must contain value`,
-    "regex.base": "A phone should have only digits",
-    "any.required": "Member should have a phone",
-  }),
+  cpf: joi
+    .string()
+    .allow("")
+    .regex(/^[/0-9]{11}$/)
+    .messages({
+      "string.base": "Cpf should be a string",
+      "string.pattern.base": "CPF should have only digits, and 11 of them!",
+    }),
+  rg: joi
+    .string()
+    .allow("")
+    .regex(/^[/0-9]{7,10}$/)
+    .messages({
+      "string.base": "Rg should be a string",
+      "string.pattern.base": "A rg should have only digits, and at least 7 of them!",
+    }),
+  passport: joi
+    .string()
+    .regex(/^[A-Z]{2}[0-9]{7}/)
+    .allow("")
+    .messages({
+      "string.base": "Passport should be a string",
+      "string.pattern.base": "A passport must be in the pattern XX0000000",
+    }),
+  phone: joi
+    .string()
+    .regex(/^[/0-9]{11,13}$/)
+    .required()
+    .messages({
+      "string.base": "phone should be a string",
+      "string.empty": `A phone must contain value`,
+      "string.pattern.base": "A phone should have only digits and 11 - 13 of them!",
+      "any.required": "Member should have a phone",
+    }),
   lsdEmail: joi
     .string()
     .email({ minDomainSegments: 4 })
@@ -85,16 +107,51 @@ export const updateMemberSchema = joi.object({
   id: joi.number().required().messages({
     "any.required": "To update a member an id must be provided",
   }),
-  name: joi.string().allow(""),
+  name: joi
+    .string()
+    .regex(/^([a-zA-Z]{2,}\s[a-zA-Z]{1,}\s[a-zA-Z]*)/)
+    .allow("")
+    .messages({
+      "string.pattern.base":
+        "Name should have only letters, with at least two names (first name and surname)",
+    }),
   email: joi.string().allow("").email(),
   birthDate: joi.date().allow("").format("DD/MM/YYYY").messages({
     "date.format": "Date of birth should be in 'DD/MM/YYYY' format",
   }),
-  username: joi.string().allow(""),
-  cpf: joi.string().allow("").regex(/\d/),
-  rg: joi.string().allow("").regex(/\d/),
-  passport: joi.string().allow(""),
-  phone: joi.string().allow(""),
+  username: joi.string().alphanum().min(3).max(20).allow("").messages({
+    "string.base": "Username should be a string",
+    "string.min": "Username must have at least 3 characters",
+    "string.max": "Username must have at most 20 characters",
+  }),
+  cpf: joi
+    .string()
+    .allow("")
+    .regex(/^[/0-9]{11}$/)
+    .messages({
+      "string.pattern.base": "CPF should have only digits, and 11 of them!",
+    }),
+  rg: joi
+    .string()
+    .allow("")
+    .regex(/^[/0-9]{7,10}$/)
+    .messages({
+      "string.pattern.base": "A rg should have only digits, and at least 7 of them!",
+    }),
+  passport: joi
+    .string()
+    .regex(/^[A-Z]{2}[/0-9]{7}/)
+    .allow("")
+    .messages({
+      "string.pattern.base": "A passport must be in the pattern XX0000000",
+    }),
+  phone: joi
+    .string()
+    .allow("")
+    .regex(/^[/0-9]{11,13}$/)
+    .messages({
+      "string.pattern.base": "A phone should have only digits and 11 - 13 of them!",
+    }),
   lsdEmail: joi
     .string()
     .allow("")
