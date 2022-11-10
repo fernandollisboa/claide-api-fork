@@ -64,8 +64,8 @@ export async function updateProject(project) {
     newProject = {
       ...project,
       isActive,
-      creationDate: creationDate,
-      endDate: endDate,
+      creationDate,
+      endDate,
     };
   } else if (typeof project.endDate !== "undefined") {
     endDate = new Date(dateUtils.dateToIso(project.endDate));
@@ -74,7 +74,7 @@ export async function updateProject(project) {
     newProject = {
       ...project,
       isActive,
-      endDate: endDate,
+      endDate,
     };
   }
   return await projectRepository.updateProject(newProject);

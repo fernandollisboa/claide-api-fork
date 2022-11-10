@@ -5,26 +5,26 @@ const joi = joiBase.extend(extension);
 
 export const createProjectSchema = joi.object({
   name: joi.string().required().messages({
-    "string.base": "Nome deve ser em formato de texto",
-    "any.required": "Projeto deve ter um nome",
+    "string.base": "Name must be in text format",
+    "any.required": "Project must have a name",
   }),
   creationDate: joi.date().format("DD/MM/YYYY").required().messages({
-    "date.format": "Data de início do projeto deve ser no formato 'DD/MM/YYYY'",
-    "any.required": "Projeto deve ter uma data de início",
+    "date.format": "Project start date must be in 'DD/MM/YYYY' format",
+    "any.required": "Project must have a start date",
   }),
   endDate: joi.date().format("DD/MM/YYYY").messages({
-    "date.format": "Data de fim do projeto deve ser no formato 'DD/MM/YYYY'",
+    "date.format": "Project end date must be in 'DD/MM/YYYY' format",
   }),
   room: joi.string().messages({
-    "string.base": "Sala deve ser em formato de texto",
+    "string.base": "Room must be in text format",
   }),
   building: joi.string().messages({
-    "string.base": "Prédio deve ser em formato de texto",
+    "string.base": "Building must be in text format",
   }),
   embrapii_code: joi.string().messages({
-    "string.base": "Código Embrapii deve ser em formato de texto",
+    "string.base": "Embrapii code must be in text format",
   }),
   financier: joi.string().messages({
-    "string.base": "Financiador deve ser em formato de texto",
+    "string.base": "Financier must be in text format",
   }),
 });
