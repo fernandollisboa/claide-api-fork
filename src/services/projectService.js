@@ -91,6 +91,6 @@ function isProjectActive(creationDate, endDate) {
   return isActive;
 }
 
-export async function findAll() {
-  return projectRepository.findAll();
+export async function findAll(isActive, order) {
+  return projectRepository.findAll(isActive, order);
 }

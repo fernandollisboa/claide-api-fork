@@ -24,7 +24,12 @@ export async function createProject(req, res) {
 }
 
 export async function getProjects(req, res) {
-  const projects = await projectService.findAll();
+  const { isActive, order } = req.query;
+  let isActiveBoolean;
+  if (isActive) {
+    isActiveBoolean = isActive === "true";
+  }
+  const projects = await projectService.findAll(isActiveBoolean, order);
 
   return res.status(200).send(projects);
 }

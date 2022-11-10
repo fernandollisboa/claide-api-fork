@@ -83,7 +83,14 @@ export async function updateProject({
   return project;
 }
 
-export async function findAll() {
-  const projects = await prisma.project.findMany();
+export async function findAll(isActive, order) {
+  const projects = await prisma.project.findMany({
+    where: {
+      isActive: isActive,
+    },
+    orderBy: {
+      name: order,
+    },
+  });
   return projects;
 }
