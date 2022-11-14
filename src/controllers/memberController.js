@@ -43,7 +43,16 @@ async function getMemberById(req, res) {
 }
 
 async function getAllMembers(req, res) {
-  const members = await memberService.getAllMembers();
+  const { isActive, desc } = req.query;
+  let isActiveBoolean;
+  let organization;
+  if (isActive) {
+    isActiveBoolean = isActive === "true";
+  }
+  if (desc) {
+    organization = desc === "true" ? "desc" : "asc";
+  }
+  const members = await memberService.getAllMembers(isActiveBoolean, organization);
   return res.status(200).send(members);
 }
 
