@@ -60,8 +60,8 @@ async function getMemberById(id) {
   return member;
 }
 
-async function getAllMembers() {
-  return await memberRepository.getAllMembers();
+async function getAllMembers(isActive, orderBy) {
+  return await memberRepository.getAllMembers(isActive, orderBy);
 }
 
 async function updateMember({
