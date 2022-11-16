@@ -31,12 +31,13 @@ export async function getProjects(req, res) {
     isActiveBoolean = isActive === "true";
   }
   const projects = await projectService.findAll(isActiveBoolean, order);
+
   try {
     return res.status(200).send(projects);
   } catch (err) {
     return err.status(500).send(err.message);
   }
-}
+
 
 export async function getProjectById(req, res) {
   const { params } = req;
