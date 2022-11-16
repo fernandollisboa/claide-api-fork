@@ -1,5 +1,5 @@
 {
-  "name": "rhlsd",
+  "name": "claide",
   "version": "1.0.0",
   "description": "",
   "main": "src/server.js",
@@ -8,7 +8,8 @@
     "start": "NODE_ENV=PROD node dist/server.js",
     "dev": "NODE_ENV=DEV nodemon src/server.js",
     "build": "npx prisma migrate deploy && sucrase ./src -d ./dist --transforms imports",
-    "commit": "cz"
+    "commit": "cz",
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -27,11 +28,13 @@
     "@commitlint/config-conventional": "^17.1.0",
     "commitizen": "^4.2.5",
     "cz-conventional-changelog": "^3.3.0",
+    "dotenv-cli": "^6.0.0",
     "eslint": "^8.24.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.1",
+    "jest": "^29.3.1",
     "jsonwebtoken": "^8.5.1",
     "ldapjs": "^2.3.3",
     "nodemon": "^2.0.20",
