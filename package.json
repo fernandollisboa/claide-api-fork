@@ -9,7 +9,7 @@
     "dev": "NODE_ENV=DEV nodemon src/server.js",
     "build": "npx prisma migrate deploy && sucrase ./src -d ./dist --transforms imports",
     "commit": "cz",
-    "test": "jest"
+    "test": "jest --coverage --testPathPattern=tests/unit"
   },
   "author": "",
   "license": "ISC",
@@ -24,8 +24,12 @@
     "joi": "^17.6.4"
   },
   "devDependencies": {
+    "@babel/core": "^7.20.2",
+    "@babel/preset-env": "^7.20.2",
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",
+    "@faker-js/faker": "^7.6.0",
+    "babel-jest": "^29.3.1",
     "commitizen": "^4.2.5",
     "cz-conventional-changelog": "^3.3.0",
     "dotenv-cli": "^6.0.0",
