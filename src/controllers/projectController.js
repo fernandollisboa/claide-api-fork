@@ -24,8 +24,9 @@ export async function createProject(req, res) {
 }
 
 export async function getProjects(req, res) {
-  const { isActive, order } = req.query;
+  const { isActive, desc } = req.query;
   let isActiveBoolean;
+  let order = desc === "true" ? "desc" : "asc";
   if (isActive) {
     isActiveBoolean = isActive === "true";
   }
