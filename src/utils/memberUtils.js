@@ -11,13 +11,13 @@ export async function checkMemberAlreadyExists(id, cpf, rg, passport, secondaryE
     checkSecondaryEmail = await memberRepository.getMemberBySecondaryEmail(secondaryEmail);
 
   if (checkCpf && checkCpf.id !== id) {
-    throw new Error(" Already exists a Member with this cpf");
+    throw new Error("Already exists a Member with this cpf");
   } else if (checkPassport && checkPassport.id !== id) {
-    throw new Error(" Already exists a Member with this passport");
+    throw new Error("Already exists a Member with this passport");
   } else if (checkRg && checkRg.id !== id) {
-    throw new Error(" Already exists a Member with this RG");
+    throw new Error("Already exists a Member with this RG");
   } else if (checkSecondaryEmail && checkSecondaryEmail.id !== id) {
-    throw new Error(" Already exists a Member with this secondary email");
+    throw new Error("Already exists a Member with this secondary email");
   }
 }
 
