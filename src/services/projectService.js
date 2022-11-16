@@ -6,7 +6,7 @@ export async function createProject(project) {
   let isActive = true;
   const creationDate = new Date(dateUtils.dateToIso(project.creationDate));
 
-  if (typeof project.endDate !== "undefined") {
+  if (project.endDate) {
     const endDateProject = new Date(dateUtils.dateToIso(project.endDate));
     isActive = isProjectActive(creationDate, endDateProject);
     const newProject = {
@@ -67,7 +67,7 @@ export async function updateProject(project) {
       creationDate,
       endDate,
     };
-  } else if (typeof project.endDate !== "undefined") {
+  } else if (project.endDate) {
     endDate = new Date(dateUtils.dateToIso(project.endDate));
     isActive = isProjectActive(creationDate, endDate);
 
