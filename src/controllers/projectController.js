@@ -32,8 +32,12 @@ export async function getProjects(req, res) {
   }
   const projects = await projectService.findAll(isActiveBoolean, order);
 
-  return res.status(200).send(projects);
-}
+  try {
+    return res.status(200).send(projects);
+  } catch (err) {
+    return err.status(500).send(err.message);
+  }
+
 
 export async function getProjectById(req, res) {
   const { params } = req;

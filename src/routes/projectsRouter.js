@@ -4,6 +4,7 @@ import auth from "../middlewares/auth";
 
 const projectsRouter = Router();
 
+
 projectsRouter.post("/", auth, projectController.createProject);
 projectsRouter.get("/", auth, projectController.getProjects);
 projectsRouter.get("/:id", auth, projectController.getProjectById);
