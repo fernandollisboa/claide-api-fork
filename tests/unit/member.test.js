@@ -1,8 +1,11 @@
 import { jest } from "@jest/globals";
 import { faker } from "@faker-js/faker";
+import dayjs from "dayjs";
 import * as memberService from "../../src/services/memberService";
 import * as memberRepository from "../../src/repositories/memberRepository";
 import { createValidMember } from "../factories/memberFactory";
+
+const MINIMUM_REQUIRED_AGE = 15;
 
 describe("member service", () => {
   describe("insert funcion", () => {
@@ -18,11 +21,12 @@ describe("member service", () => {
           return [{ id: faker.datatype.uuid(), ...validMember }];
         });
 
-        const result = await memberService.createMember(validMember);
+        const result = memberService.createMember(validMember);
 
-        expect(result.length > 0).toBeTruthy();
+        expect(result).resolves.toMatchObject([validMember]);
       });
     });
+
     describe("given the member's cpf is already taken", () => {
       it("should not allow to create a duplicate", async () => {
         expect.assertions(2);
@@ -69,6 +73,7 @@ describe("member service", () => {
         );
       });
     });
+
     describe("given the member's secondary email is already taken", () => {
       it("should not allow to create a duplicate", async () => {
         expect.assertions(2);
@@ -88,19 +93,17 @@ describe("member service", () => {
         );
       });
     });
-    describe("given the member's age is fewer than 15", () => {
+
+    describe(`given the member's age is younger than ${MINIMUM_REQUIRED_AGE}`, () => {
       it("should not allow to create a new member, because he/she is too young", async () => {
         expect.assertions(2);
-        const mockBirthDate = "11/11/2010";
-        const tooYoungMember = createValidMember({ birthDate: mockBirthDate });
+        const now = dayjs();
+        const mockBirthDate = now
+          .subtract(MINIMUM_REQUIRED_AGE, "years")
+          .subtract(1, "day")
+          .format("DD/MM/YYYY");
 
-        jest.spyOn(memberRepository, "getMemberByCpf").mockResolvedValueOnce(null);
-        jest.spyOn(memberRepository, "getMemberByRg").mockResolvedValueOnce(null);
-        jest.spyOn(memberRepository, "getMemberByPassport").mockResolvedValueOnce(null);
-        jest.spyOn(memberRepository, "getMemberBySecondaryEmail").mockResolvedValueOnce(null);
-        jest.spyOn(memberRepository, "insertMember").mockImplementationOnce(() => {
-          return [{ id: faker.datatype.uuid(), ...validMember }];
-        });
+        const tooYoungMember = createValidMember({ birthDate: mockBirthDate });
 
         const result = memberService.createMember(tooYoungMember);
 
