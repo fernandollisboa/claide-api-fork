@@ -37,7 +37,7 @@ export async function getProjects(req, res) {
   } catch (err) {
     return err.status(500).send(err.message);
   }
-
+}
 
 export async function getProjectById(req, res) {
   const { params } = req;
