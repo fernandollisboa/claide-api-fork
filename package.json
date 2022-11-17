@@ -8,7 +8,8 @@
     "start": "NODE_ENV=PROD node dist/server.js",
     "dev": "NODE_ENV=DEV nodemon src/server.js",
     "build": "npx prisma migrate deploy && sucrase ./src -d ./dist --transforms imports",
-    "commit": "cz"
+    "commit": "cz",
+    "lint": "eslint . --ext .js --fix"
   },
   "author": "",
   "license": "ISC",
