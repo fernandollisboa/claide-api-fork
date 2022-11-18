@@ -14,19 +14,19 @@ export const updateProjectSchema = joi.object({
   creationDate: joi.date().format("DD/MM/YYYY").messages({
     "date.format": "Project start date must be in 'DD/MM/YYYY' format",
   }),
-  endDate: joi.date().format("DD/MM/YYYY").messages({
+  endDate: joi.date().allow(null).format("DD/MM/YYYY").messages({
     "date.format": "Project end date must be in 'DD/MM/YYYY' format",
   }),
-  room: joi.string().messages({
+  room: joi.string().allow(null).messages({
     "string.base": "Room must be in text format",
   }),
-  building: joi.string().messages({
+  building: joi.string().allow(null).messages({
     "string.base": "Building must be in text format",
   }),
-  embrapii_code: joi.string().allow("").messages({
+  embrapii_code: joi.string().allow(null).messages({
     "string.base": "Embrapii code must be in text format",
   }),
-  financier: joi.string().messages({
+  financier: joi.string().allow(null).messages({
     "string.base": "Financier must be in text format",
   }),
 });
