@@ -64,24 +64,26 @@ async function getAllMembers(isActive, orderBy) {
   return await memberRepository.getAllMembers(isActive, orderBy);
 }
 
-async function updateMember({
-  id,
-  name,
-  email,
-  birthDate,
-  username,
-  cpf,
-  rg,
-  passport,
-  phone,
-  lsdEmail,
-  secondaryEmail,
-  memberType,
-  lattes,
-  roomName,
-  hasKey,
-  isBrazilian,
-}) {
+async function updateMember({ ...memberData }) {
+  const {
+    id,
+    name,
+    email,
+    birthDate,
+    username,
+    cpf,
+    rg,
+    passport,
+    phone,
+    lsdEmail,
+    secondaryEmail,
+    memberType,
+    lattes,
+    roomName,
+    hasKey,
+    isBrazilian,
+  } = memberData;
+
   const toUpdateMember = await memberRepository.getMemberById(id);
   if (!toUpdateMember) {
     throw new Error("Member does not exist");
