@@ -3,25 +3,28 @@ import * as dateUtils from "../utils/dateUtils";
 import * as memberUtils from "../utils/memberUtils";
 
 const MINIMUM_REQUIRED_AGE = 15;
-async function createMember({
-  name,
-  email,
-  birthDate,
-  username,
-  cpf,
-  rg,
-  passport,
-  phone,
-  lsdEmail,
-  secondaryEmail,
-  memberType,
-  lattes,
-  roomName,
-  hasKey,
-  isBrazilian,
-}) {
-  await memberUtils.checkMemberAlreadyExists(null, cpf, rg, passport, secondaryEmail);
-  const dateFormated = new Date(dateUtils.dateToIso(birthDate));
+async function createMember(memberData) {
+  const {
+    name,
+    email,
+    birthDate,
+    username,
+    cpf,
+    rg,
+    passport,
+    phone,
+    lsdEmail,
+    secondaryEmail,
+    memberType,
+    lattes,
+    roomName,
+    hasKey,
+    isBrazilian,
+  } = memberData;
+  await memberUtils.checkMemberAlreadyExists(null, cpf, rg, passport, secondaryEmail); // TO-DO refatorar, um pouco feio mandar null, poderia ser desestruturado
+
+  const dateFormated = new Date(dateUtils.dateToIso(birthDate)); // TO-DO refatorar isso para dayjs
+
   if (new Date().getFullYear() - dateFormated.getFullYear() <= MINIMUM_REQUIRED_AGE) {
     throw new Error("Invalid date, the member must have more than 15 years!");
   }
@@ -64,24 +67,26 @@ async function getAllMembers(isActive, orderBy) {
   return await memberRepository.getAllMembers(isActive, orderBy);
 }
 
-async function updateMember({
-  id,
-  name,
-  email,
-  birthDate,
-  username,
-  cpf,
-  rg,
-  passport,
-  phone,
-  lsdEmail,
-  secondaryEmail,
-  memberType,
-  lattes,
-  roomName,
-  hasKey,
-  isBrazilian,
-}) {
+async function updateMember({ ...memberData }) {
+  const {
+    id,
+    name,
+    email, // TO-DO tirar email
+    birthDate,
+    username,
+    cpf,
+    rg,
+    passport,
+    phone,
+    lsdEmail,
+    secondaryEmail,
+    memberType,
+    lattes,
+    roomName,
+    hasKey,
+    isBrazilian,
+  } = memberData;
+
   const toUpdateMember = await memberRepository.getMemberById(id);
   if (!toUpdateMember) {
     throw new Error("Member does not exist");

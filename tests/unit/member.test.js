@@ -115,4 +115,10 @@ describe("member service", () => {
       });
     });
   });
+
+  describe("update function", () => {
+    describe("given the member data is valid", () => {
+      it("should create a new member", async () => {});
+    });
+  });
 });
