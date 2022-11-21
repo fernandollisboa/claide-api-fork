@@ -19,7 +19,7 @@ export const createMemberSchema = joi.object({
   birthDate: joi.date().format("DD/MM/YYYY").required().messages({
     "date.format": "Date of birth should be in 'DD/MM/YYYY' format",
   }),
-  username: joi.string().alphanum().min(3).max(20).required().messages({
+  username: joi.string().min(3).max(20).required().messages({
     "string.base": "Username should be a string",
     "string.min": "Username must have at least 3 characters",
     "string.max": "Username must have at most 20 characters",
@@ -29,7 +29,7 @@ export const createMemberSchema = joi.object({
   cpf: joi
     .string()
     .allow("")
-    .regex(/^[/0-9]{11}$/)
+    .regex(/^[0-9]{11}$/)
     .messages({
       "string.base": "Cpf should be a string",
       "string.pattern.base": "CPF should have only digits, and 11 of them!",
@@ -37,7 +37,7 @@ export const createMemberSchema = joi.object({
   rg: joi
     .string()
     .allow("")
-    .regex(/^[/0-9]{7,10}$/)
+    .regex(/^[0-9]{7,10}$/)
     .messages({
       "string.base": "Rg should be a string",
       "string.pattern.base": "A rg should have only digits, and at least 7 of them!",
@@ -52,7 +52,7 @@ export const createMemberSchema = joi.object({
     }),
   phone: joi
     .string()
-    .regex(/^[/0-9]{11,13}$/)
+    .regex(/^[0-9]{11,13}$/)
     .required()
     .messages({
       "string.base": "phone should be a string",
@@ -109,7 +109,7 @@ export const updateMemberSchema = joi.object({
   }),
   name: joi
     .string()
-    .regex(/^([a-zA-Z]{2,}\s[a-zA-Z]{1,}\s[a-zA-Z]*)/)
+    .regex(/^([a-zA-Z]{2,}\s[a-zA-Z]{1,}[\sa-zA-Z]*)/)
     .allow("")
     .messages({
       "string.pattern.base":
@@ -119,7 +119,7 @@ export const updateMemberSchema = joi.object({
   birthDate: joi.date().allow("").format("DD/MM/YYYY").messages({
     "date.format": "Date of birth should be in 'DD/MM/YYYY' format",
   }),
-  username: joi.string().alphanum().min(3).max(20).allow("").messages({
+  username: joi.string().min(3).max(20).allow("").messages({
     "string.base": "Username should be a string",
     "string.min": "Username must have at least 3 characters",
     "string.max": "Username must have at most 20 characters",
@@ -127,20 +127,20 @@ export const updateMemberSchema = joi.object({
   cpf: joi
     .string()
     .allow("")
-    .regex(/^[/0-9]{11}$/)
+    .regex(/^[0-9]{11}$/)
     .messages({
       "string.pattern.base": "CPF should have only digits, and 11 of them!",
     }),
   rg: joi
     .string()
     .allow("")
-    .regex(/^[/0-9]{7,10}$/)
+    .regex(/^[0-9]{7,10}$/)
     .messages({
       "string.pattern.base": "A rg should have only digits, and at least 7 of them!",
     }),
   passport: joi
     .string()
-    .regex(/^[A-Z]{2}[/0-9]{7}/)
+    .regex(/^[A-Z]{2}[0-9]{7}/)
     .allow("")
     .messages({
       "string.pattern.base": "A passport must be in the pattern XX0000000",
@@ -148,7 +148,7 @@ export const updateMemberSchema = joi.object({
   phone: joi
     .string()
     .allow("")
-    .regex(/^[/0-9]{11,13}$/)
+    .regex(/^[0-9]{11,13}$/)
     .messages({
       "string.pattern.base": "A phone should have only digits and 11 - 13 of them!",
     }),

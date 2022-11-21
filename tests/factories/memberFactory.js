@@ -45,3 +45,7 @@ export function createValidMember({
     isBrazilian: isBrazilian || true,
   };
 }
+export function createValidMemberWithId({ id, ...props }) {
+  return { id, ...createValidMember({ ...props }) };
+}
+

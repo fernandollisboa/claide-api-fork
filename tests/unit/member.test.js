@@ -3,12 +3,12 @@ import { faker } from "@faker-js/faker";
 import dayjs from "dayjs";
 import * as memberService from "../../src/services/memberService";
 import * as memberRepository from "../../src/repositories/memberRepository";
-import { createValidMember } from "../factories/memberFactory";
+import { createValidMember,createValidMemberWithId } from "../factories/memberFactory";
 
 const MINIMUM_REQUIRED_AGE = 15;
 
 describe("member service", () => {
-  describe("insert funcion", () => {
+  describe("insert function", () => {
     describe("given the member data is valid", () => {
       it("should create a new member", async () => {
         const validMember = createValidMember();
@@ -112,6 +112,55 @@ describe("member service", () => {
           "message",
           "Invalid date, the member must have more than 15 years!"
         );
+      });
+    });
+  });
+ 
+  describe("get member by id function", () => {
+    describe("given the member's id is valid", () => {
+      it("should return the member's data", async () => {
+        expect.assertions(3);
+        const memberGeneratedId = faker.datatype.uuid();
+        const validMemberWithId = createValidMemberWithId({ id: memberGeneratedId });
+
+        jest.spyOn(memberRepository, "getMemberById").mockImplementationOnce(() => { return validMemberWithId });
+
+        const result = await memberService.getMemberById(memberGeneratedId);
+        
+        expect(memberRepository.getMemberById).toBeCalledTimes(1);
+        expect(memberRepository.getMemberById).toBeCalledWith(memberGeneratedId);
+        expect(result).toEqual(validMemberWithId);
+      });
+    });
+    describe("given member's id is not found", () => {
+      it("should not allow to get a inexistent member", async () => {
+        expect.assertions(3);
+        const memberInvalidId = faker.datatype.uuid();
+
+        jest.spyOn(memberRepository, "getMemberById").mockResolvedValueOnce();
+        const result = memberService.getMemberById(memberInvalidId);
+
+        expect(memberRepository.getMemberById).toBeCalledWith(memberInvalidId);
+        expect(result).rejects.toThrow(Error);
+        expect(result).rejects.toHaveProperty("message", "Member not found");
+      });
+    });
+  });
+  describe("get all members function", () => {
+    describe("given getAllMembers is called", () => {
+      it("should return all members created", async () => {
+        expect.assertions(3);
+        const memberGeneratedId = faker.datatype.uuid();
+        const validMemberWithId = createValidMemberWithId({ id: memberGeneratedId });
+        const memberGeneratedId2 = faker.datatype.uuid();
+        const validMemberWithId2 = createValidMemberWithId({ id: memberGeneratedId2 });
+
+        jest.spyOn(memberRepository, "getAllMembers").mockImplementationOnce(() =>  [validMemberWithId, validMemberWithId2]);
+        const result = await memberService.getAllMembers();
+
+        expect(memberRepository.getAllMembers).toBeCalledTimes(1);
+        expect(memberRepository.getAllMembers).toBeCalledWith(undefined,undefined);
+        expect(result).toEqual([validMemberWithId, validMemberWithId2]);
       });
     });
   });
