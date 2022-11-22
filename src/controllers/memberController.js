@@ -69,6 +69,7 @@ async function updateMember(req, res) {
     }
     return res.status(422).send(joiValidation.error.details[0].message);
   }
+
   try {
     const member = await memberService.updateMember(body);
     return res.status(200).send(member);

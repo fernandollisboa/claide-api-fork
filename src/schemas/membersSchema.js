@@ -2,7 +2,7 @@ import joiBase from "joi";
 import extension from "@joi/date";
 
 const joi = joiBase.extend(extension);
-
+//TO-DO padronizar mensagens de falha de validação
 export const createMemberSchema = joi.object({
   name: joi
     .string()
@@ -109,11 +109,11 @@ export const updateMemberSchema = joi.object({
   }),
   name: joi
     .string()
-    .regex(/^([a-zA-Z]{2,}\s[a-zA-Z]{1,}[\sa-zA-Z]*)/)
+    .regex(/^([a-zA-Z]{2,}\s[a-zA-Z])/)
     .allow("")
     .messages({
       "string.pattern.base":
-        "Name should have only letters, with at least two names (first name and surname)",
+        "Name should have only letters and spaces, with at least a name and a last name",
     }),
   email: joi.string().allow("").email(),
   birthDate: joi.date().allow("").format("DD/MM/YYYY").messages({
@@ -129,28 +129,28 @@ export const updateMemberSchema = joi.object({
     .allow("")
     .regex(/^[0-9]{11}$/)
     .messages({
-      "string.pattern.base": "CPF should have only digits, and 11 of them!",
+      "string.pattern.base": "'cpf' must have 11 digits",
     }),
   rg: joi
     .string()
     .allow("")
     .regex(/^[0-9]{7,10}$/)
     .messages({
-      "string.pattern.base": "A rg should have only digits, and at least 7 of them!",
+      "string.pattern.base": "'rg' must have 7 digits",
     }),
   passport: joi
     .string()
     .regex(/^[A-Z]{2}[0-9]{7}/)
     .allow("")
     .messages({
-      "string.pattern.base": "A passport must be in the pattern XX0000000",
+      "string.pattern.base": "'passport' must be in the pattern XX0000000",
     }),
   phone: joi
     .string()
     .allow("")
     .regex(/^[0-9]{11,13}$/)
     .messages({
-      "string.pattern.base": "A phone should have only digits and 11 - 13 of them!",
+      "string.pattern.base": "'phone' must have [11,13] digits",
     }),
   lsdEmail: joi
     .string()

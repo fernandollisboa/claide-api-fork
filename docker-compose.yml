@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   db:
@@ -10,10 +10,10 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql/data\
     ports:
-      - '5432:5432'
+      - "5432:5432"
   api:
     image: claide_api
     depends_on:
-    - db
-    ports: 
+      - db
+    ports:
       - "3000:3000"
