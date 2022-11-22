@@ -4,7 +4,7 @@ import { createProjectAssociationSchema } from "../schemas/createProjectAssociat
 import { updateProjectAssociationSchema } from "../schemas/updateProjectAssociationSchema";
 import * as projectService from "../services/projectService";
 import * as projectAssociationService from "../services/projectAssociationService";
-import { getMemberByUserName } from "../services/memberService";
+import { activeMember } from "../services/memberService";
 
 export async function createProject(req, res) {
   const { body } = req;
@@ -37,7 +37,7 @@ export async function getProjects(req, res) {
   const projects = await projectService.findAll(isActiveBoolean, order);
 
   try {
-    return res.status(20).send(projects);
+    return res.status(200).send(projects);
   } catch (err) {
     return err.status(500).send(err.message);
   }
@@ -93,12 +93,13 @@ export async function createProjectAssociation(req, res) {
     return res.status(400).send(joiValidation.error.details[0].message);
   }
 
-  let user = await getMemberByUserName(body.username);
-  if (!user.isActive) {
-    return res.status(400).send("User is disabled");
+  try {
+    await activeMember(body.username);
+  } catch (err) {
+    return res.status(400).send(err.message);
   }
 
-  let project = await getProjectById(projectId);
+  let project = await projectService.findById(projectId);
   if (!project.isActive) {
     return res.status(400).send("Project is disabled");
   }
