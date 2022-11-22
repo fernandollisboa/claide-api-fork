@@ -8,5 +8,17 @@ projectsRouter.post("/", auth, projectController.createProject);
 projectsRouter.get("/", auth, projectController.getProjects);
 projectsRouter.get("/:id", auth, projectController.getProjectById);
 projectsRouter.put("/", auth, projectController.updateProject);
+projectsRouter.post("/:projectId", auth, projectController.createProjectAssociation);
+projectsRouter.get(
+  "/:projectId/members",
+  auth,
+  projectController.getProjectAssociationsByProjectId
+);
+projectsRouter.get(
+  "/:projectId/members/:username",
+  auth,
+  projectController.getProjectAssociationsByProjectIdAndUsername
+);
+projectsRouter.put("/members", auth, projectController.updateProjectAssociation);
 
 export default projectsRouter;
