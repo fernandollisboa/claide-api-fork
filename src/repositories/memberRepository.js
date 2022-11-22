@@ -59,6 +59,10 @@ async function getMemberBySecondaryEmail(secondaryEmail) {
   return await prisma.member.findFirst({ where: { secondaryEmail: secondaryEmail } });
 }
 
+async function getMemberByUsername(username) {
+  return await prisma.member.findFirst({ where: { username: username } });
+}
+
 async function getAllMembers(isActive, orderBy) {
   return await prisma.member.findMany({
     where: { isActive: isActive },
@@ -119,4 +123,5 @@ export {
   getAllMembers,
   updateMember,
   deleteMember,
+  getMemberByUsername,
 };

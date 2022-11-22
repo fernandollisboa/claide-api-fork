@@ -8,7 +8,7 @@ projectsRouter.post("/", auth, projectController.createProject);
 projectsRouter.get("/", auth, projectController.getProjects);
 projectsRouter.get("/:id", auth, projectController.getProjectById);
 projectsRouter.put("/", auth, projectController.updateProject);
-projectsRouter.post("/:projectId", auth, projectController.createProjectAssociation);
+projectsRouter.post("/:projectId/members", auth, projectController.createProjectAssociation);
 projectsRouter.get(
   "/:projectId/members",
   auth,
