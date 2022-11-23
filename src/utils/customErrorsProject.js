@@ -1,22 +1,24 @@
-export function endDateError(date) {
-  return {
-    type: "error_date",
-    message: `Data ${date.getDate()}/${
-      date.getMonth() + 1
-    }/${date.getFullYear()} de encerramento anterior a data de início do projeto`,
-  };
+export class EndDateError extends Error {
+  constructor(date) {
+    super(
+      `Creation date ${date.getDate()}/${
+        date.getMonth() + 1
+      }/${date.getFullYear()} older than end date`
+    );
+    this.type = "EndDateError";
+  }
 }
 
-export function notFoundError(atribute, value) {
-  return {
-    type: "not_found",
-    message: `Projeto com ${atribute}: ${value} não encontrado`,
-  };
+export class NotFoundError extends Error {
+  constructor(atribute, value) {
+    super(`Project with ${atribute}: ${value} not found`);
+    this.type = "NotFoundError";
+  }
 }
 
-export function invalidAtribute(atribute, value) {
-  return {
-    type: "invalid_type",
-    message: `Atributo ${atribute}: ${value} inválido`,
-  };
+export class InvalidAttribute extends Error {
+  constructor(attribute, value) {
+    super(`Invalid attribute ${attribute}: ${value}`);
+    this.type = "InvalidAttribute";
+  }
 }
