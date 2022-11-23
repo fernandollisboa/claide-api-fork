@@ -8,9 +8,9 @@ export async function login(req, res) {
       msg: "Invalid format",
     });
 
-  const { userName, password } = req.body;
+  const { username, password } = req.body;
   try {
-    const result = await authenticateUser({ userName, password });
+    const result = await authenticateUser({ username, password });
     if (result.err) {
       return res.status(result.status).json({
         error: true,
@@ -18,7 +18,7 @@ export async function login(req, res) {
       });
     } else {
       return res.status(200).json({
-        userName: result.userName,
+        username: result.username,
         jwToken: result.jwToken,
       });
     }

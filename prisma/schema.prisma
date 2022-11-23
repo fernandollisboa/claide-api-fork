@@ -21,23 +21,24 @@ model User {
 }
 
 model Member {
-  id             Int        @id @default(autoincrement())
-  name           String
-  email          String     @unique
-  birthDate      DateTime   
-  username       String     @unique
-  cpf            String?    
-  rg             String?    
-  passport       String?    
-  phone          String     
-  lsdEmail       String     @unique
-  secondaryEmail String?    
-  memberType     MemberType
-  lattes         String     @unique
-  roomName       String
-  hasKey         Boolean?   @default(false)
-  isActive       Boolean?   @default(false)
-  isBrazilian    Boolean?   @default(true)
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  email              String               @unique
+  birthDate          DateTime
+  username           String               @unique
+  cpf                String?
+  rg                 String?
+  passport           String?
+  phone              String
+  lsdEmail           String               @unique
+  secondaryEmail     String?
+  memberType         MemberType
+  lattes             String               @unique
+  roomName           String
+  hasKey             Boolean?             @default(false)
+  isActive           Boolean?             @default(false)
+  isBrazilian        Boolean?             @default(true)
+  ProjectAssociation ProjectAssociation[]
 
   @@map("members")
 }
@@ -50,17 +51,18 @@ enum MemberType {
   EXTERNAL
 }
 
-model Project{
-  id  Int @id @default(autoincrement())
-  name String
-  creationDate DateTime
-  endDate DateTime? 
-  building String?
-  room String?
+model Project {
+  id            Int       @id @default(autoincrement())
+  name          String
+  creationDate  DateTime
+  endDate       DateTime?
+  building      String?
+  room          String?
   embrapii_code String?
-  financier String? 
-  isActive Boolean @default(true)
+  financier     String?
+  isActive      Boolean   @default(true)
 
+  ProjectAssociation ProjectAssociation[]
 }
 
 enum Role {
@@ -69,4 +71,16 @@ enum Role {
   SUPPORT
   PROFESSOR
   EXTERNAL
+}
+
+model ProjectAssociation {
+  id        Int       @id @default(autoincrement())
+  project   Project   @relation(fields: [projectId], references: [id])
+  member    Member    @relation(fields: [username], references: [username])
+  projectId Int
+  username  String
+  startDate DateTime
+  endDate   DateTime?
+
+  @@unique([projectId, username])
 }
