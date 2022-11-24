@@ -22,7 +22,7 @@ export async function authenticateUser({ username, password }) {
       reject(members);
     }
     client.search(process.env.LDAP_SEARCHBASE, opts, (err, resp) => {
-      let users = [];
+      const users = [];
       resp.on("searchEntry", (entry) => {
         users.push(entry.object);
         if (members.member.includes(entry.object.dn)) {
@@ -57,7 +57,7 @@ async function getMembers(client) {
   };
   return new Promise((resolve, reject) => {
     client.search(process.env.LDAP_GROUP, opts, (err, resp) => {
-      let users = [];
+      const users = [];
       resp.on("searchEntry", (entry) => {
         users.push(entry.object);
         resolve(entry.object);

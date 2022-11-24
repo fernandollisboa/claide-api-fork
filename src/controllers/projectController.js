@@ -30,7 +30,7 @@ export async function createProject(req, res) {
 export async function getProjects(req, res) {
   const { isActive, desc } = req.query;
   let isActiveBoolean;
-  let order = desc === "true" ? "desc" : "asc";
+  const order = desc === "true" ? "desc" : "asc";
   if (isActive) {
     isActiveBoolean = isActive === "true";
   }
@@ -78,7 +78,7 @@ export async function updateProject(req, res) {
 export async function createProjectAssociation(req, res) {
   const { params, body } = req;
   const projectId = parseInt(params.projectId);
-  let association = {
+  const association = {
     ...body,
     projectId,
   };
@@ -99,7 +99,7 @@ export async function createProjectAssociation(req, res) {
     return res.status(400).send(err.message);
   }
 
-  let project = await projectService.findById(projectId);
+  const project = await projectService.findById(projectId);
   if (!project.isActive) {
     return res.status(400).send("Project is disabled");
   }

@@ -73,7 +73,7 @@ export async function updateProjectAssociation(projectAssociation) {
     endDate = new Date(dateUtils.dateToIso(projectAssociation.endDate));
   }
 
-  let newProjectAssociation = {
+  const newProjectAssociation = {
     ...projectAssociation,
     endDate,
     startDate,
