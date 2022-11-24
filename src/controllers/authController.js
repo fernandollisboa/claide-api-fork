@@ -1,16 +1,22 @@
+import httpStatusCode from "../enum/httpStatusCode";
 import { loginSchema } from "../schemas/authSchema";
+import BaseError from "../errors/BaseError";
 import { authenticateUser } from "../services/authService";
+// import mockAuthenticateUser from "../mockLdap/mockAuthenticateUser";
 
-export async function login(req, res) {
-  const joiValidation = loginSchema.validate(req.body);
-  if (joiValidation.error)
-    return res.status(403).json({
-      msg: "Invalid format",
-    });
+export async function login(req, res, next) {
+  const { body } = req;
 
-  const { username, password } = req.body;
+  const joiValidation = loginSchema.validate(body);
+  if (joiValidation.error) {
+    const errorMessage = joiValidation.error.details.map((err) => err.message);
+    return res.status(httpStatusCode.BAD_REQUEST).send(errorMessage);
+  }
+
+  const { username, password } = body;
   try {
     const result = await authenticateUser({ username, password });
+
     if (result.err) {
       return res.status(result.status).json({
         error: true,
@@ -18,13 +24,13 @@ export async function login(req, res) {
       });
     } else {
       return res.status(200).json({
-        username: result.username,
-        jwToken: result.jwToken,
+        token: result.jwToken,
       });
     }
   } catch (err) {
-    return res.status(401).json({
-      error: err,
-    });
+    if (err instanceof BaseError) {
+      return res.status(err.statusCode).send(err.message);
+    }
+    next(err);
   }
 }

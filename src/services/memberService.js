@@ -83,7 +83,7 @@ async function updateMember({ ...memberData }) {
   const {
     id,
     name,
-    email, // TO-DO tirar email
+    email,
     birthDate,
     username,
     cpf,
