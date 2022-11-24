@@ -12,6 +12,6 @@ export default class ProjectInvalidEndDateError extends BaseError {
     super(message, statusCode);
     this.message = message;
     this.statusCode = statusCode;
-    this.name = "ProjectInvalidaEndDateError";
+    this.name = "ProjectInvalidEndDateError";
   }
 }
