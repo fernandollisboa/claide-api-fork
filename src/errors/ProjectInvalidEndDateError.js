@@ -7,7 +7,7 @@ export default class ProjectInvalidEndDateError extends BaseError {
     message = `Creation date ${date.getDate()}/${
       date.getMonth() + 1
     }/${date.getFullYear()} older than end date`,
-    statusCode = httpStatusCode.NOT_FOUND
+    statusCode = httpStatusCode.UNPROCESSABLE_ENTITY
   ) {
     super(message, statusCode);
     this.message = message;
