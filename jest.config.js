@@ -6,7 +6,7 @@ module.exports = {
   },
 
   clearMocks: true,
-  resetMocks: true,
+  // resetMocks: true,
 
   testPathIgnorePatterns: ["/node_modules/", "/factories/"],
 
