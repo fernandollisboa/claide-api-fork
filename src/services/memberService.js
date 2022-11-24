@@ -1,6 +1,7 @@
 import * as memberRepository from "../repositories/memberRepository";
 import * as dateUtils from "../utils/dateUtils";
 import * as memberUtils from "../utils/memberUtils";
+import MemberTooYoungError from "../errors/MemberTooYoungError";
 
 const MINIMUM_REQUIRED_AGE = 15;
 async function createMember(memberData) {
@@ -26,7 +27,7 @@ async function createMember(memberData) {
   const dateFormated = new Date(dateUtils.dateToIso(birthDate)); // TO-DO refatorar isso para dayjs
 
   if (new Date().getFullYear() - dateFormated.getFullYear() <= MINIMUM_REQUIRED_AGE) {
-    throw new Error("Invalid date, the member must have more than 15 years!");
+    throw new MemberTooYoungError();
   }
   try {
     const newMember = await memberRepository.insertMember({
@@ -63,6 +64,7 @@ async function getMemberById(id) {
   return member;
 }
 
+//TO-DO essa função não deveria ser activateMember?
 async function activeMember(username) {
   try {
     const member = await memberRepository.activeMember(username);
@@ -103,13 +105,19 @@ async function updateMember({ ...memberData }) {
   }
   await memberUtils.checkMemberAlreadyExists(id, cpf, rg, passport, secondaryEmail);
   if (isBrazilian !== null && isBrazilian !== undefined) {
-    await memberUtils.checkCpfRgPassportOnUpdate(isBrazilian, cpf, rg, passport, toUpdateMember);
+    await memberUtils.checkMemberDocumentsOnUpdate({
+      isBrazilian,
+      cpf,
+      rg,
+      passport,
+      existingMember: toUpdateMember,
+    });
   }
   let dateFormated = "";
   if (birthDate) {
-    dateFormated = new Date(dateUtils.dateToIso(birthDate));
+    dateFormated = new Date(dateUtils.dateToIso(birthDate)); // TO-DO trocar pra dayjs
     if (new Date().getFullYear() - dateFormated.getFullYear() <= MINIMUM_REQUIRED_AGE) {
-      throw new Error("Invalid date, the member must be older than 15 years!");
+      throw new MemberTooYoungError();
     }
   }
   try {
@@ -128,11 +136,8 @@ async function updateMember({ ...memberData }) {
       memberType: memberType || toUpdateMember.memberType,
       lattes: lattes || toUpdateMember.lattes,
       roomName: roomName || toUpdateMember.roomName,
-      hasKey: hasKey !== null && hasKey !== undefined ? hasKey : toUpdateMember.hasKey,
-      isBrazilian:
-        isBrazilian !== null && isBrazilian !== undefined
-          ? isBrazilian
-          : toUpdateMember.isBrazilian,
+      hasKey: hasKey ?? toUpdateMember.hasKey,
+      isBrazilian: isBrazilian ?? toUpdateMember.isBrazilian,
     });
     return updatedMember;
   } catch (err) {
