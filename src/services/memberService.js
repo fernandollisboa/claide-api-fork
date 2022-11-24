@@ -63,6 +63,16 @@ async function getMemberById(id) {
   return member;
 }
 
+async function activeMember(username) {
+  try {
+    const member = await memberRepository.activeMember(username);
+
+    return member;
+  } catch (err) {
+    throw new Error("Member not found");
+  }
+}
+
 async function getAllMembers(isActive, orderBy) {
   return await memberRepository.getAllMembers(isActive, orderBy);
 }
@@ -137,4 +147,4 @@ async function deleteMember(id) {
   const deletedMember = await memberRepository.deleteMember(id);
   return deletedMember;
 }
-export { createMember, getMemberById, getAllMembers, updateMember, deleteMember };
+export { createMember, getMemberById, getAllMembers, updateMember, deleteMember, activeMember };

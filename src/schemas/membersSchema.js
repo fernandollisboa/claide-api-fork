@@ -19,7 +19,7 @@ export const createMemberSchema = joi.object({
   birthDate: joi.date().format("DD/MM/YYYY").required().messages({
     "date.format": "Date of birth should be in 'DD/MM/YYYY' format",
   }),
-  username: joi.string().alphanum().min(3).max(20).required().messages({
+  username: joi.string().min(3).max(20).required().messages({
     "string.base": "Username should be a string",
     "string.min": "Username must have at least 3 characters",
     "string.max": "Username must have at most 20 characters",
@@ -119,7 +119,7 @@ export const updateMemberSchema = joi.object({
   birthDate: joi.date().allow("").format("DD/MM/YYYY").messages({
     "date.format": "Date of birth should be in 'DD/MM/YYYY' format",
   }),
-  username: joi.string().alphanum().min(3).max(20).allow("").messages({
+  username: joi.string().min(3).max(20).allow("").messages({
     "string.base": "Username should be a string",
     "string.min": "Username must have at least 3 characters",
     "string.max": "Username must have at most 20 characters",

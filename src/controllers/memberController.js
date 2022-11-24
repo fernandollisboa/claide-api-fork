@@ -32,7 +32,9 @@ async function createMember(req, res) {
 
 async function getMemberById(req, res) {
   const id = parseInt(req.params.id);
-
+  if (isNaN(id)) {
+    return res.status(400).send("The member's Id parameter must be a number");
+  }
   try {
     const member = await memberService.getMemberById(id);
 
