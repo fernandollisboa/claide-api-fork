@@ -4,8 +4,12 @@ import BaseError from "./BaseError";
 const MINIMUM_REQUIRED_AGE = 15;
 
 export default class MemberTooYoungError extends BaseError {
-  constructor(message = `"birthDate" is invalid, member must be at least ${MINIMUM_REQUIRED_AGE}`) {
+  constructor(
+    message = `"birthDate" is invalid, member must be at least ${MINIMUM_REQUIRED_AGE}`,
+    statusCode = httpStatusCode.BAD_REQUEST
+  ) {
     super(message, httpStatusCode.BAD_REQUEST);
     this.message = message;
+    this.statusCode = statusCode;
   }
 }
