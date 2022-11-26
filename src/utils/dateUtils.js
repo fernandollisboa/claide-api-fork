@@ -1,5 +1,5 @@
 export function dateToIso(date) {
-  let [day, month, year] = date.split("/");
+  let [day, month, year] = date.toString().split("/");
   return `${month}/${day}/${year}`;
 }
 
