@@ -1,6 +1,7 @@
 import * as projectAssociationRepository from "../repositories/projectAssociationRepository";
 import * as dateUtils from "../utils/dateUtils";
-import { invalidAtribute, notFoundError } from "../utils/customErrorsProject";
+import ProjectInvalidAtributeError from "../errors/ProjectInvalidAtributeError";
+import ProjectNotFoundError from "../errors/ProjectInvalidEndDateError";
 
 export async function createProjectAssociation(projectAssociation) {
   const startDate = new Date(dateUtils.dateToIso(projectAssociation.startDate));
@@ -9,14 +10,14 @@ export async function createProjectAssociation(projectAssociation) {
     const endDate = new Date(dateUtils.dateToIso(projectAssociation.endDate));
     const newProjectAssociation = {
       ...projectAssociation,
-      startDate: startDate,
-      endDate: endDate,
+      startDate,
+      endDate,
     };
     return await projectAssociationRepository.insertProjectAssociation(newProjectAssociation);
   }
   const newProjectAssociation = {
     ...projectAssociation,
-    startDate: startDate,
+    startDate,
   };
 
   return await projectAssociationRepository.insertProjectAssociation(newProjectAssociation);
@@ -24,7 +25,7 @@ export async function createProjectAssociation(projectAssociation) {
 
 export async function findByProjectId(projectId) {
   if (isNaN(projectId)) {
-    throw new invalidAtribute("projectId", projectId);
+    throw new ProjectInvalidAtributeError("projectId", projectId);
   }
 
   const project = await projectAssociationRepository.findByProjectId(projectId);
@@ -40,7 +41,7 @@ export async function findByUsername(username) {
 
 export async function findByProjectIdAndUsername(projectId, username) {
   if (isNaN(projectId)) {
-    throw new invalidAtribute("projectId", projectId);
+    throw new ProjectInvalidAtributeError("projectId", projectId);
   }
 
   const project = await projectAssociationRepository.findByProjectIdAndUsername(
@@ -58,11 +59,10 @@ export async function updateProjectAssociation(projectAssociation) {
   );
 
   if (!associationToChange) {
-    throw new notFoundError(
-      "projectId and username",
+    throw new ProjectNotFoundError("projectId and username", [
       projectAssociation.projectId,
-      projectAssociation.username
-    );
+      projectAssociation.username,
+    ]);
   }
   let { endDate, startDate } = associationToChange;
 
@@ -73,7 +73,7 @@ export async function updateProjectAssociation(projectAssociation) {
     endDate = new Date(dateUtils.dateToIso(projectAssociation.endDate));
   }
 
-  let newProjectAssociation = {
+  const newProjectAssociation = {
     ...projectAssociation,
     endDate,
     startDate,
