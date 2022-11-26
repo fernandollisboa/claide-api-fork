@@ -22,8 +22,6 @@ export async function checkMemberAlreadyExists(id, cpf, rg, passport, secondaryE
   }
 }
 
-//TO-DO refatorar/renomear essa função,
-//      que tal checkMemberDocumentsOnUpdate({ isBrazilian, cpf, rg, passport, existingMember })
 export async function checkMemberDocumentsOnUpdate({
   isBrazilian,
   cpf,
