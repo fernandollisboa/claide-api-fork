@@ -1,7 +1,6 @@
 import { Router } from "express";
 import * as memberController from "../controllers/memberController";
 import auth from "../middlewares/auth";
-// import mockAuth from "../mockLdap/mockAuth";
 
 const memberRouter = Router();
 
