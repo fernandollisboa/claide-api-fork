@@ -2,7 +2,6 @@ import httpStatusCode from "../enum/httpStatusCode";
 import { loginSchema } from "../schemas/authSchema";
 import BaseError from "../errors/BaseError";
 import { authenticateUser } from "../services/authService";
-// import mockAuthenticateUser from "../mockLdap/mockAuthenticateUser";
 
 export async function login(req, res, next) {
   const { body } = req;
