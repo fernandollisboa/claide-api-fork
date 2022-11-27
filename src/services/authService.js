@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import ldap from "ldapjs";
 
-export async function authenticateUser({ userName, password }) {
+export async function authenticateUser({ username, password }) {
   const client = ldap.createClient({
     url: process.env.LDAP_URL,
   });
@@ -11,7 +11,7 @@ export async function authenticateUser({ userName, password }) {
   });
 
   const opts = {
-    filter: "(uid=" + userName + ")",
+    filter: "(uid=" + username + ")",
     scope: "sub",
     attributes: ["dn", "sn", "cn"],
     timeLimit: 10,
@@ -22,7 +22,7 @@ export async function authenticateUser({ userName, password }) {
       reject(members);
     }
     client.search(process.env.LDAP_SEARCHBASE, opts, (err, resp) => {
-      let users = [];
+      const users = [];
       resp.on("searchEntry", (entry) => {
         users.push(entry.object);
         if (members.member.includes(entry.object.dn)) {
@@ -33,7 +33,7 @@ export async function authenticateUser({ userName, password }) {
               const jwToken = jwt.sign({ id: entry.objectName }, process.env.JWT_SECRET, {
                 expiresIn: process.env.JWT_EXPIRATION,
               });
-              resolve({ userName, jwToken });
+              resolve({ username, jwToken });
             }
           });
         } else {
@@ -57,7 +57,7 @@ async function getMembers(client) {
   };
   return new Promise((resolve, reject) => {
     client.search(process.env.LDAP_GROUP, opts, (err, resp) => {
-      let users = [];
+      const users = [];
       resp.on("searchEntry", (entry) => {
         users.push(entry.object);
         resolve(entry.object);

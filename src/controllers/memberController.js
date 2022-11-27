@@ -26,7 +26,7 @@ async function createMember(req, res) {
     const createdMember = await memberService.createMember(body);
     return res.status(201).send(createdMember);
   } catch (err) {
-    return res.status(409).send(err.message);
+    return res.status(409).send(err);
   }
 }
 

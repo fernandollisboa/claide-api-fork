@@ -22,12 +22,21 @@ export async function checkMemberAlreadyExists(id, cpf, rg, passport, secondaryE
   }
 }
 
-export async function checkCpfRgPassportOnUpdate(isBrazilian, cpf, rg, passport, dbInfo) {
-  if (isBrazilian && !dbInfo.rg.trim() && !dbInfo.cpf.trim() && !rg.trim() && !cpf.trim()) {
+export async function checkMemberDocumentsOnUpdate({
+  isBrazilian,
+  cpf,
+  rg,
+  passport,
+  existingMember,
+}) {
+  if (
+    isBrazilian &&
+    (!existingMember.rg.trim() || !existingMember.cpf.trim() || !rg.trim() || !cpf.trim())
+  ) {
     throw new Error("A brazilian must have cpf or rg");
   }
 
-  if (!isBrazilian && !dbInfo.passport.trim() && !passport.trim()) {
+  if (!isBrazilian && (!existingMember.passport.trim() || !passport.trim())) {
     throw new Error("A foreigner must have a passport");
   }
 }
