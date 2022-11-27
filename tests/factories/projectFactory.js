@@ -59,16 +59,16 @@ export function createValidProjectWithoutCreationDate({
     };
 }
 
-export function createValidProjectWithoutEndDateWithId({id,status, ...props}){
-    return {id, status, ...createValidProjectWithoutEndDate({...props})};
+export function createValidProjectWithoutEndDateWithId({id,isActive, ...props}){
+    return {id, isActive, ...createValidProjectWithoutEndDate({...props})};
 }
 
-export function createValidProjectWithoutCreationDateWithId({id,status, ...props}){
-    return {id, status, ...createValidProjectWithoutCreationDate({...props})};
+export function createValidProjectWithoutCreationDateWithId({id,isActive, ...props}){
+    return {id, isActive, ...createValidProjectWithoutCreationDate({...props})};
 }
 
-export function createValidProjectWithId({id, status, ...props}){
-    return {id, status, ...createValidProject({...props})};
+export function createValidProjectWithId({id, isActive, ...props}){
+    return {id, isActive, ...createValidProject({...props})};
 }
 
 function dateToIso(date) {
