@@ -1,12 +1,14 @@
+import dayjs from "dayjs";
 import httpStatusCode from "../enum/httpStatusCode";
 import BaseError from "./BaseError";
 
-export default class ProjectInvalidEndDateError extends BaseError {
+export default class ProjectInvalidCreationOrEndDateError extends BaseError {
   constructor(
-    date,
-    message = `Creation date ${date.getDate()}/${
-      date.getMonth() + 1
-    }/${date.getFullYear()} older than end date`,
+    creationDate,
+    endDate,
+    message = `Error: creationDate (${dayjs(creationDate).format(
+      "DD/MM/YYYY"
+    )}) must be before endDate (${dayjs(endDate).format("DD/MM/YYYY")})`,
     statusCode = httpStatusCode.UNPROCESSABLE_ENTITY
   ) {
     super(message, statusCode);

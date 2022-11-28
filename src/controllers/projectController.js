@@ -47,7 +47,7 @@ export async function getProjectById(req, res) {
   const { params } = req;
   const id = parseInt(params.id);
   try {
-    const project = await projectService.findById(id);
+    const project = await projectService.findProjectById(id);
     return res.status(200).send(project);
   } catch (err) {
     return res.status(422).send(err.message);
@@ -99,7 +99,7 @@ export async function createProjectAssociation(req, res) {
     return res.status(400).send(err.message);
   }
 
-  const project = await projectService.findById(projectId);
+  const project = await projectService.findProjectById(projectId);
   if (!project.isActive) {
     return res.status(400).send("Project is disabled");
   }

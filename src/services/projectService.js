@@ -1,6 +1,6 @@
 import * as projectRepository from "../repositories/projectRepository";
 import * as dateUtils from "../utils/dateUtils";
-import ProjectInvalidEndDateError from "../errors/ProjectInvalidEndDateError";
+import ProjectInvalidCreationOrEndDateError from "../errors/ProjectInvalidCreationOrEndDateError";
 import ProjectInvalidAtributeError from "../errors/ProjectInvalidAtributeError";
 import ProjectNotFoundError from "../errors/ProjectNotFoundError";
 
@@ -15,7 +15,7 @@ export async function createProject(project) {
     const newProject = {
       ...project,
       isActive,
-      creationDate: creationDate,
+      creationDate,
       endDate: endDateProject,
     };
     return await projectRepository.insertProject(newProject);
@@ -23,7 +23,7 @@ export async function createProject(project) {
   const newProject = {
     ...project,
     isActive,
-    creationDate: creationDate,
+    creationDate,
   };
 
   return await projectRepository.insertProject(newProject);
@@ -37,7 +37,7 @@ export async function findProjectById(id) {
   const project = await projectRepository.findById(id);
 
   if (!project) {
-    throw new NotFoundError("id", id);
+    throw new ProjectNotFoundError("id", id);
   }
 
   return project;
@@ -89,10 +89,10 @@ export async function updateProject(project) {
 
 function isProjectActive(creationDate, endDate) {
   if (creationDate > endDate) {
-    throw new ProjectInvalidEndDateError(endDate);
+    throw new ProjectInvalidCreationOrEndDateError(creationDate, endDate);
   }
-
   const today = new Date();
+
   const isActive = endDate >= today;
 
   return isActive;
