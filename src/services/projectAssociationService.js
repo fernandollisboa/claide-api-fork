@@ -1,6 +1,6 @@
 import * as projectAssociationRepository from "../repositories/projectAssociationRepository";
 import * as dateUtils from "../utils/dateUtils";
-import ProjectInvalidAtributeError from "../errors/ProjectInvalidAtributeError";
+import InvalidAtributeError from "../errors/InvalidAtributeError";
 import ProjectNotFoundError from "../errors/ProjectInvalidEndDateError";
 
 export async function createProjectAssociation(projectAssociation) {
@@ -25,7 +25,7 @@ export async function createProjectAssociation(projectAssociation) {
 
 export async function findByProjectId(projectId) {
   if (isNaN(projectId)) {
-    throw new ProjectInvalidAtributeError("projectId", projectId);
+    throw new InvalidAtributeError("projectId", projectId);
   }
 
   const project = await projectAssociationRepository.findByProjectId(projectId);
@@ -41,7 +41,7 @@ export async function findByUsername(username) {
 
 export async function findByProjectIdAndUsername(projectId, username) {
   if (isNaN(projectId)) {
-    throw new ProjectInvalidAtributeError("projectId", projectId);
+    throw new InvalidAtributeError("projectId", projectId);
   }
 
   const project = await projectAssociationRepository.findByProjectIdAndUsername(

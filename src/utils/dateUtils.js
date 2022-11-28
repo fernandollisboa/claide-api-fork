@@ -1,9 +1,10 @@
-export function dateToIso(date) {
-  const [day, month, year] = date.split("/");
-  return `${month}/${day}/${year}`;
-}
+import InvalidAtributeError from "../errors/InvalidAtributeError";
 
-export function dateIsoToDate(date) {
-  const [month, day, year] = date.split("/");
-  return `${day}/${month}/${year}`;
+export function parseBrDateToStandardDate(date) {
+  try {
+    const [day, month, year] = date.split("/");
+    return `${month}/${day}/${year}`;
+  } catch (err) {
+    throw new InvalidAtributeError("date", date);
+  }
 }

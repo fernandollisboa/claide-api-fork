@@ -1,7 +1,9 @@
+import BaseError from "../errors/BaseError";
 import * as membersSchema from "../schemas/membersSchema";
 import * as memberService from "../services/memberService";
+import { parseBrDateToStandardDate } from "../utils/dateUtils";
 
-async function createMember(req, res) {
+export async function createMember(req, res) {
   const { body } = req;
   const joiValidation = membersSchema.createMemberSchema.validate(body);
   const validationPassportForeigners = await membersSchema.validatePassportForForeigners(body);
@@ -23,14 +25,22 @@ async function createMember(req, res) {
   }
 
   try {
-    const createdMember = await memberService.createMember(body);
+    const { birthDate } = req.body;
+    const birthDateFormatted = parseBrDateToStandardDate(birthDate);
+
+    const memberData = { ...body, birthDate: birthDateFormatted };
+
+    const createdMember = await memberService.createMember(memberData);
     return res.status(201).send(createdMember);
   } catch (err) {
+    if (err instanceof BaseError) {
+      return res.status(err.status).send(err.message);
+    }
     return res.status(409).send(err);
   }
 }
 
-async function getMemberById(req, res) {
+export async function getMemberById(req, res) {
   const id = parseInt(req.params.id);
   if (isNaN(id)) {
     return res.status(400).send("The member's Id parameter must be a number");
@@ -44,7 +54,7 @@ async function getMemberById(req, res) {
   }
 }
 
-async function getAllMembers(req, res) {
+export async function getAllMembers(req, res) {
   const { isActive, desc } = req.query;
   let isActiveBoolean;
   let organization;
@@ -58,7 +68,7 @@ async function getAllMembers(req, res) {
   return res.status(200).send(members);
 }
 
-async function updateMember(req, res) {
+export async function updateMember(req, res) {
   const { body } = req;
   const joiValidation = membersSchema.updateMemberSchema.validate(body);
 
@@ -78,11 +88,10 @@ async function updateMember(req, res) {
   }
 }
 
-async function deleteMember(req, res) {
+export async function deleteMember(req, res) {
   const id = parseInt(req.params.id);
 
   const member = await memberService.deleteMember(id);
 
   return res.status(200).send(member);
 }
-export { createMember, getMemberById, getAllMembers, updateMember, deleteMember };

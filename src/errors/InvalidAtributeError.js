@@ -1,6 +1,6 @@
 import httpStatusCode from "../enum/httpStatusCode";
 
-export default class ProjectInvalidAtributeError extends Error {
+export default class InvalidAtributeError extends Error {
   constructor(
     attribute,
     value,
@@ -10,6 +10,6 @@ export default class ProjectInvalidAtributeError extends Error {
     super(message, statusCode);
     this.message = message;
     this.statusCode = statusCode;
-    this.name = "ProjectInvalidAtributeError";
+    this.name = "InvalidAtributeError";
   }
 }
