@@ -5,6 +5,7 @@ import { updateProjectAssociationSchema } from "../schemas/updateProjectAssociat
 import * as projectService from "../services/projectService";
 import * as projectAssociationService from "../services/projectAssociationService";
 import { activeMember } from "../services/memberService";
+import { parseBrDateToStandardDate } from "../utils/dateUtils";
 
 export async function createProject(req, res) {
   const { body } = req;
@@ -67,8 +68,19 @@ export async function updateProject(req, res) {
     return res.status(400).send(joiValidation.error.details[0].message);
   }
 
+  let { creationDate, endDate } = body;
+
+  if (creationDate) {
+    creationDate = parseBrDateToStandardDate(creationDate);
+  }
+  if (endDate) {
+    endDate = parseBrDateToStandardDate(endDate);
+  }
+
+  const projectData = { ...body, creationDate, endDate };
+
   try {
-    const project = await projectService.updateProject(body);
+    const project = await projectService.updateProject(projectData);
     return res.status(200).send(project);
   } catch (err) {
     res.status(409).send(err.message);

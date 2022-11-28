@@ -5,7 +5,7 @@ import * as projectService from "../../src/services/projectService";
 import * as projectRepository from "../../src/repositories/projectRepository";
 import * as projectFactory from "../factories/projectFactory";
 import ProjectInvalidCreationOrEndDateError from "../../src/errors/ProjectInvalidCreationOrEndDateError";
-import ProjectInvalidAtributeError from "../../src/errors/ProjectInvalidAtributeError";
+import InvalidAtributeError from "../../src/errors/InvalidAtributeError";
 import ProjectNotFoundError from "../../src/errors/ProjectNotFoundError";
 
 describe("project service", () => {
@@ -18,7 +18,7 @@ describe("project service", () => {
         jest.spyOn(projectRepository, "findByName").mockResolvedValueOnce(null);
         jest.spyOn(projectRepository, "findByEmbrapiiCode").mockResolvedValueOnce(null);
         jest.spyOn(projectRepository, "insertProject").mockImplementationOnce(() => {
-          return [{ id: faker.datatype.uuid(), ...validProject }];
+          return [{ ...validProject, id: faker.datatype.number() }];
         });
 
         const result = projectService.createProject(validProject);
@@ -30,12 +30,13 @@ describe("project service", () => {
 
     describe("given project is given only with creationDate", () => {
       it("should only be able to create it if isActive is true", async () => {
+        const creationDate = faker.date.past();
         const newProject = projectFactory.createValidProjectWithoutEndDate({
-          creationDate: "15/01/2020",
+          creationDate,
         });
 
         jest.spyOn(projectRepository, "insertProject").mockImplementationOnce(() => {
-          return [{ id: faker.datatype.uuid(), isActive: true, ...newProject }];
+          return [{ ...newProject, id: faker.datatype.number(), isActive: true }];
         });
 
         const result = projectService.createProject(newProject);
@@ -49,8 +50,8 @@ describe("project service", () => {
         const creationDate = faker.date.past(1, endDate);
 
         const finalizedProject = projectFactory.createValidProject({
-          creationDate: dayjs(creationDate).format("DD/MM/YYYY"),
-          endDate: dayjs(endDate).format("DD/MM/YYYY"),
+          creationDate,
+          endDate,
         });
 
         jest.spyOn(projectRepository, "insertProject").mockImplementationOnce(() => {
@@ -68,11 +69,10 @@ describe("project service", () => {
 
         const endDate = faker.date.future();
         const creationDate = faker.date.future(1, endDate);
-        console.log({ endDate, creationDate });
 
         const finalizedProject = projectFactory.createValidProject({
-          creationDate: dayjs(creationDate).format("DD/MM/YYYY"),
-          endDate: dayjs(endDate).format("DD/MM/YYYY"),
+          creationDate: creationDate,
+          endDate: endDate,
         });
 
         const result = projectService.createProject(finalizedProject);
@@ -118,7 +118,7 @@ describe("project service", () => {
 
         const result = projectService.findProjectById("a");
 
-        await expect(result).rejects.toThrow(ProjectInvalidAtributeError);
+        await expect(result).rejects.toThrow(InvalidAtributeError);
         expect(result).rejects.toHaveProperty("message", "Invalid attribute id: a"); //TO-DO refatorar isso
       });
     });
@@ -143,15 +143,18 @@ describe("project service", () => {
   });
 
   describe("updateProject function", () => {
+    const mockCreationDate = faker.date.past();
+    const mockEndDate = faker.date.future(1, mockCreationDate);
+
     const existingProject = projectFactory.createValidProjectWithId({
       id: 10,
-      creationDate: "01/01/2010",
-      endDate: "02/02/2020",
+      creationDate: mockCreationDate,
+      endDate: mockEndDate,
     });
     const updateProjectWrongId = projectFactory.createValidProjectWithId({
+      ...existingProject,
       id: 13,
       name: "changed",
-      ...existingProject,
     });
 
     describe("given project's id is not found", () => {
@@ -171,17 +174,16 @@ describe("project service", () => {
       });
     });
 
-    describe("given update project's endDate is before creationDate", () => {
+    describe("given update project's endDate is before original creationDate", () => {
       it("should not allow to update the endDate", async () => {
         expect.assertions(3);
         const { creationDate } = existingProject;
 
         const endDate = faker.date.past(1, creationDate);
-        console.log({ endDate });
 
         const newProject = projectFactory.createValidProjectWithId({
           ...existingProject,
-          endDate: dayjs(endDate).format("DD/MM/YYYY"),
+          endDate,
         });
 
         jest.spyOn(projectRepository, "findById").mockReturnValueOnce(existingProject);
@@ -197,18 +199,18 @@ describe("project service", () => {
       });
     });
 
-    //TO-DO rever o que quer dizer isso aqui embaixo
-    describe("given update project's creationDate is before orinal endDate", () => {
+    describe("given update project's creationDate is after original endDate", () => {
       it("should not allow to update creationDate", async () => {
         expect.assertions(2);
-        const creationDate = faker.date.past();
+        const { endDate } = existingProject;
+        const creationDate = faker.date.future(1, endDate);
 
         const newProject = projectFactory.createValidProjectWithoutEndDateWithId({
           ...existingProject,
-          creationDate: dayjs(creationDate).format("DD/MM/YYYY"),
+          creationDate,
         });
 
-        jest.spyOn(projectRepository, "findById").mockResolvedValueOnce(existingProject);
+        jest.spyOn(projectRepository, "findById").mockReturnValueOnce(existingProject);
 
         const result = projectService.updateProject(newProject);
 
@@ -217,15 +219,15 @@ describe("project service", () => {
       });
     });
 
-    describe("given update project endDate is before original creationDate", () => {
+    describe("given update project's endDate is before original creationDate", () => {
       it("should not allow to update project's endDate", async () => {
         expect.assertions(3);
-        const { creationDate } = existingProject;
+        const { creationDate, id } = existingProject;
         const endDate = faker.date.past(1, creationDate);
 
         const newProject = projectFactory.createValidProjectWithoutCreationDateWithId({
-          id: 10,
-          endDate: dayjs(endDate).format("DD/MM/YYYY"),
+          id,
+          endDate,
         });
 
         jest.spyOn(projectRepository, "findById").mockReturnValueOnce(existingProject);
@@ -233,28 +235,28 @@ describe("project service", () => {
         const result = projectService.updateProject(newProject);
 
         expect(projectRepository.findById).toBeCalledWith(newProject.id);
-        console.log({ result });
-        await expect(result).rejects.toHaveProperty(
-          "message",
+        await expect(result).rejects.toMatchObject(
           new ProjectInvalidCreationOrEndDateError(creationDate, endDate)
         );
         expect(result).rejects.toThrow(ProjectInvalidCreationOrEndDateError);
       });
     });
+
     describe("given valid creationDate and endDates to change isActive atribute", () => {
       it("should update isActive to false and the creationDate and endDates", async () => {
         expect.assertions(4);
+        const creationDate = faker.date.past();
+        const endDate = faker.date.future();
         const newProject = projectFactory.createValidProjectWithId({
           ...existingProject,
-          creationDate: "01/01/2010",
-          endDate: "02/02/2020",
+          creationDate,
+          endDate,
         });
 
         jest.spyOn(projectRepository, "findById").mockResolvedValueOnce(existingProject);
-        jest.spyOn(projectRepository, "updateProject").mockImplementationOnce(() => {
-          newProject.isActive = false;
-          return newProject;
-        });
+        jest
+          .spyOn(projectRepository, "updateProject")
+          .mockResolvedValueOnce({ ...newProject, isActive: false });
 
         const result = await projectService.updateProject(newProject);
         expect(projectRepository.findById).toBeCalledWith(newProject.id);
@@ -267,17 +269,16 @@ describe("project service", () => {
     describe("given valid end date to change the status of the project", () => {
       it("should update the status to false and the end date", async () => {
         expect.assertions(4);
+        const endDate = faker.date.future(5);
         const newProject = projectFactory.createValidProjectWithoutCreationDateWithId({
           ...existingProject,
-          endDate: "15/10/2026",
+          endDate,
           creationDate: undefined,
         });
 
         jest.spyOn(projectRepository, "findById").mockResolvedValueOnce(existingProject);
         jest.spyOn(projectRepository, "updateProject").mockImplementationOnce(() => {
-          newProject.isActive = true;
-          newProject.creationDate = existingProject.creationDate;
-          return newProject;
+          return { ...newProject, isActive: true, creationDate: existingProject.creationDate };
         });
 
         const result = await projectService.updateProject(newProject);

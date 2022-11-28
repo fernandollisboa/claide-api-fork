@@ -43,7 +43,6 @@ export async function findByProjectIdAndUsername(projectId, username) {
 }
 
 export async function updateAssociation({ projectId, username, startDate, endDate }) {
-  projectId = parseInt(projectId);
   const association = await prisma.projectAssociation.update({
     where: {
       projectId_username: { projectId, username },

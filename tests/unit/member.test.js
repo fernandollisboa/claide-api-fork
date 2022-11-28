@@ -5,7 +5,6 @@ import dayjs from "dayjs";
 import * as memberService from "../../src/services/memberService";
 import * as memberRepository from "../../src/repositories/memberRepository";
 import { createValidMember, createValidMemberWithId } from "../factories/memberFactory";
-import { dateToIso } from "../../src/utils/dateUtils";
 import MemberTooYoungError from "../../src/errors/MemberTooYoungError";
 
 const MINIMUM_REQUIRED_AGE = 15;
@@ -21,7 +20,7 @@ describe("member service", () => {
         jest.spyOn(memberRepository, "getMemberByPassport").mockResolvedValueOnce(null);
         jest.spyOn(memberRepository, "getMemberBySecondaryEmail").mockResolvedValueOnce(null);
         jest.spyOn(memberRepository, "insertMember").mockImplementationOnce(() => {
-          return [{ id: faker.datatype.uuid(), ...validMember }];
+          return [{ ...validMember, id: faker.datatype.number() }];
         });
 
         const result = memberService.createMember(validMember);
@@ -100,11 +99,10 @@ describe("member service", () => {
     describe(`given member is younger than ${MINIMUM_REQUIRED_AGE}`, () => {
       it("should not allow to create a new member, because he/she is too young", async () => {
         expect.assertions(2);
-        const now = dayjs();
-        const mockBirthDate = now
+        const mockBirthDate = dayjs()
           .subtract(MINIMUM_REQUIRED_AGE, "years")
-          .subtract(1, "day")
-          .format("DD/MM/YYYY");
+          .add(1, "days")
+          .toISOString();
 
         const tooYoungMember = createValidMember({ birthDate: mockBirthDate });
 
@@ -276,12 +274,15 @@ describe("member service", () => {
     describe("given member is too young", () => {
       it("should not allow to update member's age", async () => {
         expect.assertions(2);
+        const { id } = existingMember;
+
         const mockBirthDate = dayjs()
           .subtract(MINIMUM_REQUIRED_AGE, "years")
-          .subtract(1, "day")
-          .format("DD/MM/YYYY");
+          .add(1, "days")
+          .toISOString();
+
         const tooYoungMember = createValidMemberWithId({
-          id: existingMember.id,
+          id,
           birthDate: mockBirthDate,
         });
 
@@ -295,18 +296,17 @@ describe("member service", () => {
     describe("given member data is valid", () => {
       it("should call update function", async () => {
         expect.assertions(3);
+        const { birthDate } = newMember;
 
-        jest.spyOn(memberRepository, "updateMember").mockImplementationOnce(() => newMember);
+        jest.spyOn(memberRepository, "updateMember").mockResolvedValueOnce(newMember);
 
         const result = memberService.updateMember(newMember);
-
-        const formatedBirthDate = new Date(dateToIso(newMember.birthDate));
 
         await expect(result).resolves.toEqual(newMember);
         expect(memberRepository.updateMember).toBeCalledTimes(1);
         expect(memberRepository.updateMember).toBeCalledWith({
           ...newMember,
-          birthDate: formatedBirthDate,
+          birthDate,
         });
       });
     });
