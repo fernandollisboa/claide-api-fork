@@ -1,96 +1,72 @@
 import * as projectRepository from "../repositories/projectRepository";
-import * as dateUtils from "../utils/dateUtils";
-import ProjectInvalidEndDateError from "../errors/ProjectInvalidEndDateError";
-import ProjectInvalidAtributeError from "../errors/ProjectInvalidAtributeError";
+import ProjectInvalidCreationOrEndDateError from "../errors/ProjectInvalidCreationOrEndDateError";
 import ProjectNotFoundError from "../errors/ProjectNotFoundError";
+import dayjs from "dayjs";
 
-export async function createProject(project) {
-  let isActive = true;
-  const creationDate = new Date(dateUtils.dateToIso(project.creationDate));
+export async function createProject(projectData) {
+  const { creationDate, endDate } = projectData;
 
-  if (project.endDate) {
-    const endDateProject = new Date(dateUtils.dateToIso(project.endDate));
-    isActive = isProjectActive(creationDate, endDateProject);
-    const newProject = {
-      ...project,
-      isActive,
-      creationDate: creationDate,
-      endDate: endDateProject,
-    };
-    return await projectRepository.insertProject(newProject);
-  }
-  const newProject = {
-    ...project,
+  const isActive = isProjectActive(projectData);
+
+  const project = {
+    ...projectData,
     isActive,
-    creationDate: creationDate,
+    creationDate,
+    endDate,
   };
 
-  return await projectRepository.insertProject(newProject);
+  return await projectRepository.insertProject(project);
 }
 
 export async function findProjectById(id) {
-  if (isNaN(id)) {
-    throw new ProjectInvalidAtributeError("id", id);
-  }
-
   const project = await projectRepository.findById(id);
+
+  if (!project) {
+    throw new ProjectNotFoundError("id", id);
+  }
 
   return project;
 }
 
-export async function updateProject(project) {
-  const projectToChange = await projectRepository.findById(project.id);
+export async function updateProject(updateProject) {
+  const { id } = updateProject;
+  const originalProject = await projectRepository.findById(id);
 
-  if (!projectToChange) {
-    throw new ProjectNotFoundError("id", project.id);
+  if (!originalProject) {
+    throw new ProjectNotFoundError("id", id);
   }
-  let { isActive, endDate, creationDate } = projectToChange;
 
-  let newProject = {
-    ...project,
+  const { endDate: originalEndDate, creationDate: originalCreationDate } = originalProject;
+
+  const { endDate: updateEndDate, creationDate: updateCreationDate } = updateProject;
+
+  const endDate = updateEndDate ?? originalEndDate;
+  const creationDate = updateCreationDate ?? originalCreationDate;
+
+  const isActive = isProjectActive({ endDate, creationDate });
+
+  const newProject = {
+    ...updateProject,
+    creationDate,
+    endDate,
+    isActive,
   };
 
-  // Verificação das datas de criação e datas de término do projeto
-  // Caso alguma dessas sejam alteradas, é preciso fazer toda a lógica que ativa ou desativa o projeto
-  // Primeiramente é checada se a data de criação é inserida e é válida, após isso checa-se se existe a data
-  // de término, ou se ela foi inserida e é válida.
-  if (typeof project.creationDate !== "undefined") {
-    creationDate = new Date(dateUtils.dateToIso(project.creationDate));
-
-    if (project.endDate) {
-      endDate = new Date(dateUtils.dateToIso(project.endDate));
-      isActive = isProjectActive(creationDate, endDate);
-    } else if (projectToChange.endDate) {
-      isActive = isProjectActive(creationDate, endDate);
-    }
-    newProject = {
-      ...project,
-      isActive,
-      creationDate,
-      endDate,
-    };
-  } else if (project.endDate) {
-    endDate = new Date(dateUtils.dateToIso(project.endDate));
-    isActive = isProjectActive(creationDate, endDate);
-
-    newProject = {
-      ...project,
-      isActive,
-      endDate,
-    };
-  }
   return await projectRepository.updateProject(newProject);
 }
 
-function isProjectActive(creationDate, endDate) {
-  if (creationDate > endDate) {
-    throw new ProjectInvalidEndDateError(endDate);
+export function isProjectActive({ creationDate, endDate }) {
+  const today = dayjs().toISOString();
+
+  if (!endDate) {
+    return creationDate <= today;
   }
 
-  const today = new Date();
-  const isActive = endDate >= today;
+  if (creationDate > endDate) {
+    throw new ProjectInvalidCreationOrEndDateError(creationDate, endDate);
+  }
 
-  return isActive;
+  return endDate >= today;
 }
 
 export async function findAll(isActive, order) {

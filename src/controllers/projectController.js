@@ -1,97 +1,80 @@
-import { createProjectSchema } from "../schemas/createProjectSchema";
-import { updateProjectSchema } from "../schemas/updateProjectSchema";
-import { createProjectAssociationSchema } from "../schemas/createProjectAssociationSchema";
-import { updateProjectAssociationSchema } from "../schemas/updateProjectAssociationSchema";
 import * as projectService from "../services/projectService";
 import * as projectAssociationService from "../services/projectAssociationService";
 import { activeMember } from "../services/memberService";
+import { parseBrDateToStandardDate } from "../utils/dateUtils";
+import InvalidParamError from "../errors/InvalidParamError";
 
-export async function createProject(req, res) {
+export async function createProject(req, res, next) {
   const { body } = req;
-
-  const joiValidation = createProjectSchema.validate(body);
-
-  if (joiValidation.error) {
-    const typeError = joiValidation.error.details[0].type;
-    if (typeError === "any.required" || typeError === "object.unknown") {
-      return res.status(422).send(joiValidation.error.details[0].message);
-    }
-    return res.status(400).send(joiValidation.error.details[0].message);
-  }
-
   try {
-    const createdProject = await projectService.createProject(body);
+    let { creationDate, endDate } = body;
+    creationDate = parseBrDateToStandardDate(creationDate);
+    if (endDate) endDate = parseBrDateToStandardDate(endDate);
+
+    const projectData = { ...body, creationDate, endDate };
+    const createdProject = await projectService.createProject(projectData);
+
     return res.status(201).send(createdProject);
   } catch (err) {
-    return res.status(400).send(err.message);
+    next(err);
   }
 }
 
-export async function getProjects(req, res) {
+export async function getAllProjects(req, res, next) {
   const { isActive, desc } = req.query;
   let isActiveBoolean;
   const order = desc === "true" ? "desc" : "asc";
+
   if (isActive) {
     isActiveBoolean = isActive === "true";
   }
-  const projects = await projectService.findAll(isActiveBoolean, order);
 
   try {
+    const projects = await projectService.findAll(isActiveBoolean, order);
     return res.status(200).send(projects);
   } catch (err) {
-    return err.status(500).send(err.message);
+    next(err);
   }
 }
 
-export async function getProjectById(req, res) {
-  const { params } = req;
-  const id = parseInt(params.id);
+export async function getProjectById(req, res, next) {
+  const { id: idToken } = req.params;
+  const id = Number(idToken);
   try {
-    const project = await projectService.findById(id);
-    return res.status(200).send(project);
-  } catch (err) {
-    return res.status(422).send(err.message);
-  }
-}
-
-export async function updateProject(req, res) {
-  const { body } = req;
-
-  const joiValidation = updateProjectSchema.validate(body);
-
-  if (joiValidation.error) {
-    const typeError = joiValidation.error.details[0].type;
-    if (typeError === "object.unknown") {
-      return res.status(422).send(joiValidation.error.details[0].message);
+    if (isNaN(id)) {
+      throw new InvalidParamError("projectId", idToken);
     }
-    return res.status(400).send(joiValidation.error.details[0].message);
-  }
 
-  try {
-    const project = await projectService.updateProject(body);
+    const project = await projectService.findProjectById(id);
     return res.status(200).send(project);
   } catch (err) {
-    res.status(409).send(err.message);
+    next(err);
+  }
+}
+
+export async function updateProject(req, res, next) {
+  const { body } = req;
+  try {
+    let { creationDate, endDate } = body;
+    if (creationDate) creationDate = parseBrDateToStandardDate(creationDate);
+    if (endDate) endDate = parseBrDateToStandardDate(endDate);
+
+    const projectData = { ...body, creationDate, endDate };
+    const project = await projectService.updateProject(projectData);
+
+    return res.status(200).send(project);
+  } catch (err) {
+    next(err);
   }
 }
 
 export async function createProjectAssociation(req, res) {
   const { params, body } = req;
-  const projectId = parseInt(params.projectId);
+  const projectId = Number(params.projectId);
   const association = {
     ...body,
     projectId,
   };
-
-  const joiValidation = createProjectAssociationSchema.validate(association);
-
-  if (joiValidation.error) {
-    const typeError = joiValidation.error.details[0].type;
-    if (typeError === "any.required" || typeError === "object.unknown") {
-      return res.status(422).send(joiValidation.error.details[0].message);
-    }
-    return res.status(400).send(joiValidation.error.details[0].message);
-  }
 
   try {
     await activeMember(body.username);
@@ -99,7 +82,7 @@ export async function createProjectAssociation(req, res) {
     return res.status(400).send(err.message);
   }
 
-  const project = await projectService.findById(projectId);
+  const project = await projectService.findProjectById(projectId);
   if (!project.isActive) {
     return res.status(400).send("Project is disabled");
   }
@@ -114,60 +97,56 @@ export async function createProjectAssociation(req, res) {
   }
 }
 
-export async function getProjectAssociationsByProjectId(req, res) {
-  const { params } = req;
-  const projectId = parseInt(params.projectId);
+export async function getProjectAssociationsByProjectId(req, res, next) {
+  const { projectId: projectIdToken } = req.params;
+  const projectId = Number(projectIdToken);
   try {
+    if (isNaN(projectId)) {
+      throw new InvalidParamError("projectId", projectId);
+    }
     const associations = await projectAssociationService.findByProjectId(projectId);
+
     return res.status(200).send(associations);
   } catch (err) {
-    return res.status(422).send(err.message);
+    next(err);
   }
 }
 
-export async function getProjectAssociationsByUsername(req, res) {
-  const { params } = req;
-  const { username } = params;
+export async function getProjectAssociationsByUsername(req, res, next) {
+  const { username } = req.params;
   try {
     const associations = await projectAssociationService.findByUsername(username);
     return res.status(200).send(associations);
   } catch (err) {
-    return res.status(422).send(err.message);
+    next(err);
   }
 }
 
-export async function getProjectAssociationsByProjectIdAndUsername(req, res) {
-  const { params } = req;
-  const projectId = parseInt(params.projectId);
-  const { username } = params;
+export async function getProjectAssociationsByProjectIdAndUsername(req, res, next) {
+  const { projectId: projectIdToken, username } = req.params;
+  const projectId = Number(projectIdToken);
   try {
+    if (isNaN(projectId)) {
+      throw new InvalidParamError("projectId", projectId);
+    }
     const associations = await projectAssociationService.findByProjectIdAndUsername(
       projectId,
       username
     );
+
     return res.status(200).send(associations);
   } catch (err) {
-    return res.status(404).send(err.message);
+    next(err);
   }
 }
 
-export async function updateProjectAssociation(req, res) {
+export async function updateProjectAssociation(req, res, next) {
   const { body } = req;
-
-  const joiValidation = updateProjectAssociationSchema.validate(body);
-
-  if (joiValidation.error) {
-    const typeError = joiValidation.error.details[0].type;
-    if (typeError === "object.unknown") {
-      return res.status(422).send(joiValidation.error.details[0].message);
-    }
-    return res.status(400).send(joiValidation.error.details[0].message);
-  }
 
   try {
     const projectAssociation = await projectAssociationService.updateProjectAssociation(body);
     return res.status(200).send(projectAssociation);
   } catch (err) {
-    res.status(404).send(err.message);
+    next(err);
   }
 }

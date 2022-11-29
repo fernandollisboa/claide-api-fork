@@ -1,17 +1,16 @@
 import httpStatusCode from "../enum/httpStatusCode";
 import BaseError from "./BaseError";
 
-export default class ProjectInvalidEndDateError extends BaseError {
+export default class InvalidAtributeError extends BaseError {
   constructor(
-    date,
-    message = `Creation date ${date.getDate()}/${
-      date.getMonth() + 1
-    }/${date.getFullYear()} older than end date`,
+    attribute,
+    value,
+    message = `Invalid attribute ${attribute}: ${value}`,
     statusCode = httpStatusCode.UNPROCESSABLE_ENTITY
   ) {
     super(message, statusCode);
     this.message = message;
     this.statusCode = statusCode;
-    this.name = "ProjectInvalidEndDateError";
+    this.name = "InvalidAtributeError";
   }
 }

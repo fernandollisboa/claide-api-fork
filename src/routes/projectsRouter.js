@@ -1,24 +1,38 @@
 import { Router } from "express";
-import * as projectController from "../controllers/projectController";
-import auth from "../middlewares/auth";
+import {
+  createProject,
+  getAllProjects,
+  getProjectById,
+  updateProject,
+  createProjectAssociation,
+  getProjectAssociationsByProjectId,
+  getProjectAssociationsByProjectIdAndUsername,
+  updateProjectAssociation,
+} from "../controllers/projectController";
+import validateSchema from "../middlewares/schemaValidationMiddleware";
+import createProjectAssociationSchema from "../schemas/createProjectAssociationSchema";
+import createProjectSchema from "../schemas/createProjectSchema";
+import updateProjectAssociationSchema from "../schemas/updateProjectAssociationSchema";
+import updateProjectSchema from "../schemas/updateProjectSchema";
 
 const projectsRouter = Router();
 
-projectsRouter.post("/", auth, projectController.createProject);
-projectsRouter.get("/", auth, projectController.getProjects);
-projectsRouter.get("/:id", auth, projectController.getProjectById);
-projectsRouter.put("/", auth, projectController.updateProject);
-projectsRouter.post("/:projectId/members", auth, projectController.createProjectAssociation);
-projectsRouter.get(
+projectsRouter.post("/", validateSchema(createProjectSchema), createProject);
+projectsRouter.get("/", getAllProjects);
+projectsRouter.get("/:id", getProjectById);
+projectsRouter.put("/", validateSchema(updateProjectSchema), updateProject);
+projectsRouter.post(
   "/:projectId/members",
-  auth,
-  projectController.getProjectAssociationsByProjectId
+  validateSchema(createProjectAssociationSchema),
+  createProjectAssociation
 );
-projectsRouter.get(
-  "/:projectId/members/:username",
-  auth,
-  projectController.getProjectAssociationsByProjectIdAndUsername
+projectsRouter.get("/:projectId/members", getProjectAssociationsByProjectId);
+//TO-DO verificar se é isso mesmo aqui embaixo, normalmente se utilizaria /members/:memberId
+projectsRouter.get("/:projectId/members/:username", getProjectAssociationsByProjectIdAndUsername);
+projectsRouter.put(
+  "/members",
+  validateSchema(updateProjectAssociationSchema),
+  updateProjectAssociation
 );
-projectsRouter.put("/members", auth, projectController.updateProjectAssociation);
 
 export default projectsRouter;

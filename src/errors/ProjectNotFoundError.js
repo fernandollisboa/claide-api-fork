@@ -1,16 +1,8 @@
-import httpStatusCode from "../enum/httpStatusCode";
-import BaseError from "./BaseError";
+import NotFoundError from "./NotFoundError";
 
-export default class ProjectNotFoundError extends BaseError {
-  constructor(
-    atribute,
-    value,
-    message = `Project with ${atribute}: ${value} not found`,
-    statusCode = httpStatusCode.NOT_FOUND
-  ) {
-    super(message, statusCode);
-    this.message = message;
-    this.statusCode = statusCode;
+export default class ProjectNotFoundError extends NotFoundError {
+  constructor(atribute, value) {
+    super(atribute, value, "Project");
     this.name = "ProjectNotFoundError";
   }
 }

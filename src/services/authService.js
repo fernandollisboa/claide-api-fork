@@ -1,13 +1,14 @@
 import jwt from "jsonwebtoken";
 import ldap from "ldapjs";
 
+//TO-DO após testar, refatorar isso aqui tudo !!!
 export async function authenticateUser({ username, password }) {
   const client = ldap.createClient({
     url: process.env.LDAP_URL,
   });
 
-  client.on("error", (err) => {
-    return { err, status: 403 };
+  client.on("error", () => {
+    return { err: true, status: 403 };
   });
 
   const opts = {

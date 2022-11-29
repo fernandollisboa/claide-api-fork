@@ -6,8 +6,9 @@
 - `npm run dev`
 
 ### Run as dev with Docker:
+
 - `npm i`
-- `docker-compose up` // TO-DO
+- `docker-compose up`
 
 ### Run as prod locally:
 
@@ -16,10 +17,15 @@
 - create and fill `.env.prod` file as shown in `.env.example`
 - `npm start`
 
-### Run tests:
+### Run test :
 
 - `npm i`
-- `npm run test` // TO-DO
+- `npm run tesT`
+
+### Run test as dev:
+
+- `npm i`
+- `npm run test:dev`
 
 #### Generate and run migrations
 

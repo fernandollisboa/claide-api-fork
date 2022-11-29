@@ -15,7 +15,7 @@ export async function insertProjectAssociation({ projectId, username, startDate,
 export async function findByProjectId(projectId) {
   const association = await prisma.projectAssociation.findMany({
     where: {
-      projectId: parseInt(projectId),
+      projectId: Number(projectId), //TO-DO tirar esse Number, deveria já estar certinho desde o controller
     },
   });
   return association;
@@ -43,7 +43,6 @@ export async function findByProjectIdAndUsername(projectId, username) {
 }
 
 export async function updateAssociation({ projectId, username, startDate, endDate }) {
-  projectId = parseInt(projectId);
   const association = await prisma.projectAssociation.update({
     where: {
       projectId_username: { projectId, username },

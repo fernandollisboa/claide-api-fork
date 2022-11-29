@@ -1,14 +1,17 @@
 import { Router } from "express";
+
 import memberRouter from "./memberRoutes";
-import { login } from "../controllers/authController";
 import projectsRouter from "./projectsRouter";
+import authRouter from "./authRoutes";
 import errorMiddleware from "../middlewares/errorMiddleware";
+import auth from "../middlewares/authMiddleware";
 
 const routes = Router();
 
-routes.use("/members", memberRouter);
-routes.use("/projects", projectsRouter);
-routes.post("/login", login);
+routes.use("/login", authRouter);
+
+routes.use("/members", auth, memberRouter);
+routes.use("/projects", auth, projectsRouter);
 routes.use(errorMiddleware);
 
 export default routes;
