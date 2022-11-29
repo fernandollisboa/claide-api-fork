@@ -25,8 +25,8 @@ export function createValidMember({
 
   return {
     name: name ?? fullName,
-    email: email ?? faker.internet.email(), // TO-DO remover isso
-    birthDate: birthDate ?? faker.date.birthdate({ min: 18, max: 65, mode: "age" }),
+    email: email ?? faker.internet.email(),
+    birthDate: birthDate ?? faker.date.birthdate({ max: 75, mode: "age" }),
     username: username ?? `${firstName}.${lastName}`.toLowerCase(),
     cpf: cpf ?? new RandExp(/[0-9]{11}/).gen(),
     rg: rg ?? new RandExp(/[0-9]{7,11}/).gen(),

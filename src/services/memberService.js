@@ -6,6 +6,7 @@ import MemberTooYoungError from "../errors/MemberTooYoungError";
 import MemberNotFoundError from "../errors/MemberNotFoundError";
 
 const MINIMUM_REQUIRED_AGE = 15;
+
 async function createMember(memberData) {
   const {
     name,
@@ -29,31 +30,24 @@ async function createMember(memberData) {
   if (!isBirthDateValid(birthDate)) {
     throw new MemberTooYoungError();
   }
-  try {
-    const newMember = await memberRepository.insertMember({
-      name,
-      email,
-      birthDate: birthDate,
-      username,
-      cpf,
-      rg,
-      passport,
-      phone,
-      lsdEmail,
-      secondaryEmail,
-      memberType,
-      lattes,
-      roomName,
-      hasKey,
-      isBrazilian,
-    });
-    return newMember;
-  } catch (err) {
-    const errorColumn = err.message.substring(err.message.indexOf("(`"));
-    throw new Error(
-      `Already exists a member with this data on column ${errorColumn}, duplicate data!`
-    );
-  }
+
+  return memberRepository.insertMember({
+    name,
+    email,
+    birthDate,
+    username,
+    cpf,
+    rg,
+    passport,
+    phone,
+    lsdEmail,
+    secondaryEmail,
+    memberType,
+    lattes,
+    roomName,
+    hasKey,
+    isBrazilian,
+  });
 }
 
 function isBirthDateValid(birthDate) {
@@ -65,9 +59,11 @@ function isBirthDateValid(birthDate) {
 
 async function getMemberById(id) {
   const member = await memberRepository.getMemberById(id);
-  if (member === undefined || member === null) {
-    throw new Error("Member not found");
+
+  if (!member) {
+    throw new MemberNotFoundError("id", id);
   }
+
   return member;
 }
 
@@ -81,13 +77,13 @@ async function activeMember(username) {
     throw new MemberNotFoundError("username", username);
   }
 }
-
+//TO-DO refatorar isso pra destructuring: getAllMembers({isActive, orderBy})
 async function getAllMembers(isActive, orderBy) {
-  return await memberRepository.getAllMembers(isActive, orderBy);
+  return memberRepository.getAllMembers(isActive, orderBy);
 }
 
 //TO-DO ver se precisa mesmo desse destructurign
-async function updateMember({ ...memberData }) {
+async function updateMember(memberData) {
   const {
     id,
     name,
@@ -111,6 +107,7 @@ async function updateMember({ ...memberData }) {
   if (!toUpdateMember) {
     throw new MemberNotFoundError("Member does not exist");
   }
+
   await memberUtils.checkMemberAlreadyExists(id, cpf, rg, passport, secondaryEmail);
   if (isBrazilian !== null && isBrazilian !== undefined) {
     await memberUtils.checkMemberDocumentsOnUpdate({
@@ -121,9 +118,13 @@ async function updateMember({ ...memberData }) {
       existingMember: toUpdateMember,
     });
   }
-  if (!isBirthDateValid(birthDate)) {
-    throw new MemberTooYoungError();
+
+  if (birthDate) {
+    if (!isBirthDateValid(birthDate)) {
+      throw new MemberTooYoungError();
+    }
   }
+
   try {
     const updatedMember = await memberRepository.updateMember({
       id,
@@ -153,6 +154,10 @@ async function updateMember({ ...memberData }) {
 }
 
 async function deleteMember(id) {
+  const member = await memberRepository.getMemberById(id);
+  if (!member) {
+    throw new MemberNotFoundError("id", id);
+  }
   const deletedMember = await memberRepository.deleteMember(id);
   return deletedMember;
 }

@@ -1,5 +1,3 @@
-// import schemas from "../schemas";
-// import ValidationError from "../errors/ValidationError";
 import httpStatusCode from "../enum/httpStatusCode";
 
 export default function validateSchema(schema) {

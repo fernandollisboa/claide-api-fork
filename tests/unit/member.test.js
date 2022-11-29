@@ -6,6 +6,8 @@ import * as memberService from "../../src/services/memberService";
 import * as memberRepository from "../../src/repositories/memberRepository";
 import { createValidMember, createValidMemberWithId } from "../factories/memberFactory";
 import MemberTooYoungError from "../../src/errors/MemberTooYoungError";
+import MemberNotFoundError from "../../src/errors/MemberNotFoundError";
+import MemberConflictError from "../../src/errors/MemberConflictError";
 
 const MINIMUM_REQUIRED_AGE = 15;
 
@@ -38,8 +40,8 @@ describe("member service", () => {
 
         const result = memberService.createMember(duplicateCpfMember);
 
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty("message", "Already exists a Member with this cpf");
+        await expect(result).rejects.toThrow(MemberConflictError);
+        expect(result).rejects.toEqual(new MemberConflictError("cpf", duplicateCpfMember.cpf));
       });
     });
 
@@ -52,8 +54,8 @@ describe("member service", () => {
 
         const result = memberService.createMember(duplicateRgMember);
 
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty("message", "Already exists a Member with this RG");
+        await expect(result).rejects.toThrow(MemberConflictError);
+        expect(result).rejects.toEqual(new MemberConflictError("rg", duplicateRgMember.rg));
       });
     });
 
@@ -68,10 +70,9 @@ describe("member service", () => {
 
         const result = memberService.createMember(duplicatePassportMember);
 
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty(
-          "message",
-          "Already exists a Member with this passport"
+        await expect(result).rejects.toThrow(MemberConflictError);
+        expect(result).rejects.toEqual(
+          new MemberConflictError("passport", duplicatePassportMember.passport)
         );
       });
     });
@@ -88,10 +89,9 @@ describe("member service", () => {
 
         const result = memberService.createMember(duplicateEmailMember);
 
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty(
-          "message",
-          "Already exists a Member with this secondary email"
+        await expect(result).rejects.toThrow(MemberConflictError);
+        expect(result).rejects.toEqual(
+          new MemberConflictError("secondaryEmail", duplicateEmailMember.secondaryEmail)
         );
       });
     });
@@ -109,7 +109,7 @@ describe("member service", () => {
         const result = memberService.createMember(tooYoungMember);
 
         await expect(result).rejects.toThrow(MemberTooYoungError);
-        expect(result).rejects.toHaveProperty("message", new MemberTooYoungError().message);
+        expect(result).rejects.toEqual(new MemberTooYoungError());
       });
     });
   });
@@ -137,12 +137,12 @@ describe("member service", () => {
         expect.assertions(3);
         const memberInvalidId = faker.datatype.number();
 
-        jest.spyOn(memberRepository, "getMemberById").mockResolvedValueOnce();
+        jest.spyOn(memberRepository, "getMemberById").mockResolvedValueOnce(null);
         const result = memberService.getMemberById(memberInvalidId);
 
         expect(memberRepository.getMemberById).toBeCalledWith(memberInvalidId);
-        expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty("message", "Member not found");
+        await expect(result).rejects.toThrow(MemberNotFoundError);
+        expect(result).rejects.toEqual(new MemberNotFoundError("id", memberInvalidId));
       });
     });
   });
@@ -169,7 +169,7 @@ describe("member service", () => {
 
   describe("updateMember function", () => {
     const existingMember = createValidMemberWithId();
-    const newMember = createValidMemberWithId(); // TO-DO tirar ID
+    const newMember = createValidMemberWithId();
 
     jest.spyOn(memberRepository, "getMemberById").mockResolvedValue(existingMember);
     jest.spyOn(memberRepository, "getMemberByCpf").mockResolvedValue(null);
@@ -184,8 +184,8 @@ describe("member service", () => {
 
         const result = memberService.updateMember(newMember);
 
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty("message", "Already exists a Member with this cpf");
+        await expect(result).rejects.toThrow(MemberConflictError);
+        expect(result).rejects.toEqual(new MemberConflictError("cpf", newMember.cpf));
       });
 
       it("should not update member's rg", async () => {
@@ -194,8 +194,8 @@ describe("member service", () => {
 
         const result = memberService.updateMember(newMember);
 
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty("message", "Already exists a Member with this RG");
+        await expect(result).rejects.toThrow(MemberConflictError);
+        expect(result).rejects.toEqual(new MemberConflictError("rg", newMember.rg));
       });
 
       it("should not update member's passport", async () => {
@@ -204,11 +204,8 @@ describe("member service", () => {
 
         const result = memberService.updateMember(newMember);
 
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty(
-          "message",
-          "Already exists a Member with this passport"
-        );
+        await expect(result).rejects.toThrow(MemberConflictError);
+        expect(result).rejects.toEqual(new MemberConflictError("passport", newMember.passport));
       });
 
       it("should not update member's secondary email", async () => {
@@ -219,10 +216,9 @@ describe("member service", () => {
 
         const result = memberService.updateMember(newMember);
 
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty(
-          "message",
-          "Already exists a Member with this secondary email"
+        await expect(result).rejects.toThrow(MemberConflictError);
+        expect(result).rejects.toEqual(
+          new MemberConflictError("secondaryEmail", newMember.secondaryEmail)
         );
       });
     });
@@ -289,7 +285,7 @@ describe("member service", () => {
         const result = memberService.updateMember(tooYoungMember);
 
         await expect(result).rejects.toThrow(MemberTooYoungError);
-        expect(result).rejects.toHaveProperty("message", new MemberTooYoungError().message);
+        expect(result).rejects.toEqual(new MemberTooYoungError());
       });
     });
 

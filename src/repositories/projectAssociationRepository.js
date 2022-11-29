@@ -15,7 +15,7 @@ export async function insertProjectAssociation({ projectId, username, startDate,
 export async function findByProjectId(projectId) {
   const association = await prisma.projectAssociation.findMany({
     where: {
-      projectId: parseInt(projectId),
+      projectId: Number(projectId), //TO-DO tirar esse Number, deveria já estar certinho desde o controller
     },
   });
   return association;

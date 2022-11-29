@@ -44,10 +44,11 @@ export async function findByEmbrapiiCode(code) {
   return projectToFind;
 }
 
+//TO-DO tirar esse Number, deveria já estar certinho desde o controller
 export async function findById(id) {
   const projectToFind = await prisma.project.findFirst({
     where: {
-      id: parseInt(id),
+      id: Number(id),
     },
   });
 
@@ -67,7 +68,7 @@ export async function updateProject({
 }) {
   const project = await prisma.project.update({
     where: {
-      id: parseInt(id),
+      id: Number(id), //TO-DO tirar esse Number, deveria já estar certinho desde o controller
     },
     data: {
       name: name || undefined,

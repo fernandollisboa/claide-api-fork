@@ -4,7 +4,6 @@ import * as projectService from "../../src/services/projectService";
 import * as projectRepository from "../../src/repositories/projectRepository";
 import * as projectFactory from "../factories/projectFactory";
 import ProjectInvalidCreationOrEndDateError from "../../src/errors/ProjectInvalidCreationOrEndDateError";
-import InvalidAtributeError from "../../src/errors/InvalidAtributeError";
 import ProjectNotFoundError from "../../src/errors/ProjectNotFoundError";
 
 describe("project service", () => {
@@ -23,7 +22,7 @@ describe("project service", () => {
         const result = projectService.createProject(validProject);
 
         await expect(result).resolves.toMatchObject([validProject]);
-        expect(projectRepository.insertProject).toBeCalledTimes(1); // TO-DO mudar isso pra ficar embaixo
+        expect(projectRepository.insertProject).toBeCalledTimes(1);
       });
     });
 
@@ -103,22 +102,6 @@ describe("project service", () => {
         expect(projectRepository.findById).toBeCalledWith(projectId);
         expect(projectRepository.findById).toBeCalledTimes(1);
         expect(result).toEqual(validProject);
-      });
-    });
-
-    describe("given project's id is invalid", () => {
-      it("should not allow to get a project with an invalid id", async () => {
-        expect.assertions(2);
-        const projectId = faker.datatype.number({ min: 11 });
-        const validProjectId = projectFactory.createValidProjectWithId({
-          id: projectId,
-          isActive: true,
-        });
-
-        const result = projectService.findProjectById("a");
-
-        await expect(result).rejects.toThrow(InvalidAtributeError);
-        expect(result).rejects.toHaveProperty("message", "Invalid attribute id: a"); //TO-DO refatorar isso
       });
     });
 
@@ -234,7 +217,7 @@ describe("project service", () => {
         const result = projectService.updateProject(newProject);
 
         expect(projectRepository.findById).toBeCalledWith(newProject.id);
-        await expect(result).rejects.toMatchObject(
+        await expect(result).rejects.toEqual(
           new ProjectInvalidCreationOrEndDateError(creationDate, endDate)
         );
         expect(result).rejects.toThrow(ProjectInvalidCreationOrEndDateError);

@@ -4,7 +4,7 @@ import InvalidDateError from "../errors/InvalidDateError";
 export function parseBrDateToStandardDate(date) {
   try {
     const [day, month, year] = date.split("/");
-    return `${month}/${day}/${year}`;
+    return dayjs(`${month}/${day}/${year}`).toISOString();
   } catch (err) {
     throw new InvalidDateError(date);
   }

@@ -1,20 +1,19 @@
-import BaseError from "../errors/BaseError";
 import * as membersSchema from "../schemas/membersSchema";
 import * as memberService from "../services/memberService";
-import { parseBrDateToStandardDate } from "../utils/dateUtils";
+import { parseBrDateToStandardDate, parseISODateToBrDate } from "../utils/dateUtils";
+import InvalidParamError from "../errors/InvalidParamError";
 
-export async function createMember(req, res) {
+export async function createMember(req, res, next) {
   const { body } = req;
-  const joiValidation = membersSchema.createMemberSchema.validate(body);
-  const validationPassportForeigners = await membersSchema.validatePassportForForeigners(body);
-  const validationCpfRgForBrazilians = await membersSchema.validateRgCpfForBrazilians(body);
+  let validationPassportForeigners;
+  let validationCpfRgForBrazilians;
 
-  if (joiValidation.error) {
-    const typeError = joiValidation.error.details[0].type;
-    if (typeError === "any.required" || typeError === "object.unknown") {
-      return res.status(400).send(joiValidation.error.details[0].message);
-    }
-    return res.status(422).send(joiValidation.error.details[0].message);
+  try {
+    validationPassportForeigners = await membersSchema.validatePassportForForeigners(body);
+    validationCpfRgForBrazilians = await membersSchema.validateRgCpfForBrazilians(body);
+  } catch (err) {
+    //TO-DO consertar isso, esse try/catch existe pois se vc mandar um body sem cpf/rg/passaport ele quebra
+    return res.status(422).send(err.message);
   }
 
   if (!validationCpfRgForBrazilians) {
@@ -23,75 +22,97 @@ export async function createMember(req, res) {
   if (!validationPassportForeigners) {
     return res.status(422).send("Passport is necessary for foreigners!");
   }
-
   try {
-    const { birthDate } = req.body;
-    const birthDateFormatted = parseBrDateToStandardDate(birthDate);
-
-    const memberData = { ...body, birthDate: birthDateFormatted };
+    let { birthDate } = req.body;
+    birthDate = parseBrDateToStandardDate(birthDate);
+    const memberData = { ...body, birthDate };
 
     const createdMember = await memberService.createMember(memberData);
+
     return res.status(201).send(createdMember);
   } catch (err) {
-    if (err instanceof BaseError) {
-      return res.status(err.status).send(err.message);
-    }
-    return res.status(409).send(err);
+    next(err);
   }
 }
 
-export async function getMemberById(req, res) {
-  const id = parseInt(req.params.id);
-  if (isNaN(id)) {
-    return res.status(400).send("The member's Id parameter must be a number");
-  }
+export async function getMemberById(req, res, next) {
+  const { id: idToken } = req.params;
+  const id = Number(idToken);
   try {
+    if (isNaN(id)) {
+      throw new InvalidParamError("memberId", id);
+    }
     const member = await memberService.getMemberById(id);
 
-    return res.status(200).send(member);
+    let { birthDate } = member;
+    birthDate = parseISODateToBrDate(birthDate);
+
+    const memberData = { ...member, birthDate };
+
+    return res.status(200).send(memberData);
   } catch (err) {
-    return res.status(404).send(err.message);
+    next(err);
   }
 }
 
-export async function getAllMembers(req, res) {
+export async function getAllMembers(req, res, next) {
   const { isActive, desc } = req.query;
-  let isActiveBoolean;
-  let organization;
+
+  let isActiveBoolean, organization;
   if (isActive) {
     isActiveBoolean = isActive === "true";
   }
   if (desc) {
     organization = desc === "true" ? "desc" : "asc";
   }
-  const members = await memberService.getAllMembers(isActiveBoolean, organization);
-  return res.status(200).send(members);
+  try {
+    const members = await memberService.getAllMembers(isActiveBoolean, organization);
+
+    const membersData = members.map(formatMemberBirthDateToClient);
+
+    return res.status(200).send(membersData);
+  } catch (err) {
+    next(err);
+  }
 }
 
-export async function updateMember(req, res) {
-  const { body } = req;
-  const joiValidation = membersSchema.updateMemberSchema.validate(body);
+function formatMemberBirthDateToClient(member) {
+  const birthDate = parseISODateToBrDate(member.birthDate);
+  return {
+    ...member,
+    birthDate,
+  };
+}
 
-  if (joiValidation.error) {
-    const typeError = joiValidation.error.details[0].type;
-    if (typeError === "any.required" || typeError === "object.unknown") {
-      return res.status(400).send(joiValidation.error.details[0].message);
-    }
-    return res.status(422).send(joiValidation.error.details[0].message);
-  }
+export async function updateMember(req, res, next) {
+  const { body } = req;
+  let { birthDate } = req.body;
 
   try {
-    const member = await memberService.updateMember(body);
-    return res.status(200).send(member);
+    if (birthDate) {
+      birthDate = parseBrDateToStandardDate(birthDate);
+    }
+    const memberData = { ...body, birthDate };
+    const newMember = await memberService.updateMember(memberData);
+
+    return res.status(200).send(newMember);
   } catch (err) {
-    return res.status(422).send(err.message);
+    next(err);
   }
 }
 
-export async function deleteMember(req, res) {
-  const id = parseInt(req.params.id);
+export async function deleteMember(req, res, next) {
+  const { id: idToken } = req.params;
+  const id = Number(idToken);
 
-  const member = await memberService.deleteMember(id);
+  try {
+    if (isNaN(id)) {
+      throw new InvalidParamError("memberId", id);
+    }
+    await memberService.deleteMember(id);
 
-  return res.status(200).send(member);
+    return res.status(200).send({ message: `Member with id: ${id} deleted successfully` });
+  } catch (err) {
+    next(err);
+  }
 }

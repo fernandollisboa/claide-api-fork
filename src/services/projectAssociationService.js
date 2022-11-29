@@ -40,10 +40,6 @@ export async function findByUsername(username) {
 }
 
 export async function findByProjectIdAndUsername(projectId, username) {
-  if (isNaN(projectId)) {
-    throw new InvalidAtributeError("projectId", projectId);
-  }
-
   const project = await projectAssociationRepository.findByProjectIdAndUsername(
     projectId,
     username

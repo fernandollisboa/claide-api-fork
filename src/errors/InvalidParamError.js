@@ -1,16 +1,16 @@
 import httpStatusCode from "../enum/httpStatusCode";
 import BaseError from "./BaseError";
 
-export default class InvalidAtributeError extends BaseError {
+export default class InvalidParamError extends BaseError {
   constructor(
-    attribute,
+    atribute,
     value,
-    message = `Invalid attribute ${attribute}: ${value}`,
+    message = `Invalid ${atribute}: ${value}`,
     statusCode = httpStatusCode.UNPROCESSABLE_ENTITY
   ) {
     super(message, statusCode);
     this.message = message;
     this.statusCode = statusCode;
-    this.name = "InvalidAtributeError";
+    this.name = "InvalidParamError";
   }
 }
