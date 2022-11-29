@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
-import dayjs from "dayjs";
 import RandExp from "randexp";
+import { isProjectActive } from "../../src/services/projectService";
 
 export function createValidProject({
   name,
@@ -13,8 +13,8 @@ export function createValidProject({
 } = {}) {
   return {
     name: name || faker.company.bsNoun(),
-    creationDate: creationDate || faker.date.past(7),
-    endDate: endDate || faker.date.future(2),
+    creationDate: creationDate || faker.date.past(),
+    endDate: endDate || faker.date.future(),
     building: building || faker.address.country(),
     room: room || faker.address.secondaryAddress(),
     embrapii_code: embrapii_code || new RandExp(/[0-9]{11}/).gen(),
@@ -32,7 +32,7 @@ export function createValidProjectWithoutEndDate({
 } = {}) {
   return {
     name: name || faker.company.bsNoun(),
-    creationDate: creationDate || faker.date.past(7),
+    creationDate: creationDate || faker.date.past(),
     building: building || faker.address.country(),
     room: room || faker.address.secondaryAddress(),
     embrapii_code: embrapii_code || new RandExp(/[0-9]{11}/).gen(),
@@ -50,7 +50,7 @@ export function createValidProjectWithoutCreationDate({
 } = {}) {
   return {
     name: name || faker.company.bsNoun(),
-    endDate: endDate || faker.date.future(2),
+    endDate: endDate || faker.date.future(),
     building: building || faker.address.country(),
     room: room || faker.address.secondaryAddress(),
     embrapii_code: embrapii_code || new RandExp(/[0-9]{11}/).gen(),

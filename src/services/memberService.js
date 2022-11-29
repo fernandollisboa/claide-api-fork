@@ -78,7 +78,7 @@ async function activeMember(username) {
 
     return member;
   } catch (err) {
-    throw new Error("Member not found");
+    throw new MemberNotFoundError("username", username);
   }
 }
 

@@ -1,6 +1,5 @@
 import { faker } from "@faker-js/faker";
 import { MemberType } from "@prisma/client";
-import dayjs from "dayjs";
 import RandExp from "randexp";
 
 export function createValidMember({

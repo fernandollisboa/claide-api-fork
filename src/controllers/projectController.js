@@ -1,7 +1,7 @@
 import { createProjectSchema } from "../schemas/createProjectSchema";
 import { updateProjectSchema } from "../schemas/updateProjectSchema";
-import { createProjectAssociationSchema } from "../schemas/createProjectAssociationSchema";
-import { updateProjectAssociationSchema } from "../schemas/updateProjectAssociationSchema";
+import createProjectAssociationSchema from "../schemas/createProjectAssociationSchema";
+import updateProjectAssociationSchema from "../schemas/updateProjectAssociationSchema";
 import * as projectService from "../services/projectService";
 import * as projectAssociationService from "../services/projectAssociationService";
 import { activeMember } from "../services/memberService";
@@ -28,7 +28,7 @@ export async function createProject(req, res) {
   }
 }
 
-export async function getProjects(req, res) {
+export async function getAllProjects(req, res) {
   const { isActive, desc } = req.query;
   let isActiveBoolean;
   const order = desc === "true" ? "desc" : "asc";

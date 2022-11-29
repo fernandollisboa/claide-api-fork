@@ -1,24 +1,30 @@
 import { Router } from "express";
-import * as projectController from "../controllers/projectController";
-import auth from "../middlewares/auth";
+import {
+  createProject,
+  getAllProjects,
+  getProjectById,
+  updateProject,
+  createProjectAssociation,
+  getProjectAssociationsByProjectId,
+  getProjectAssociationsByProjectIdAndUsername,
+  updateProjectAssociation,
+} from "../controllers/projectController";
+// import auth from "../middlewares/auth";
+import auth from "../mockLdap/mockAuth";
 
 const projectsRouter = Router();
 
-projectsRouter.post("/", auth, projectController.createProject);
-projectsRouter.get("/", auth, projectController.getProjects);
-projectsRouter.get("/:id", auth, projectController.getProjectById);
-projectsRouter.put("/", auth, projectController.updateProject);
-projectsRouter.post("/:projectId/members", auth, projectController.createProjectAssociation);
-projectsRouter.get(
-  "/:projectId/members",
-  auth,
-  projectController.getProjectAssociationsByProjectId
-);
+projectsRouter.post("/", auth, createProject);
+projectsRouter.get("/", auth, getAllProjects);
+projectsRouter.get("/:id", auth, getProjectById);
+projectsRouter.put("/", auth, updateProject);
+projectsRouter.post("/:projectId/members", auth, createProjectAssociation);
+projectsRouter.get("/:projectId/members", auth, getProjectAssociationsByProjectId);
 projectsRouter.get(
   "/:projectId/members/:username",
   auth,
-  projectController.getProjectAssociationsByProjectIdAndUsername
+  getProjectAssociationsByProjectIdAndUsername
 );
-projectsRouter.put("/members", auth, projectController.updateProjectAssociation);
+projectsRouter.put("/members", auth, updateProjectAssociation);
 
 export default projectsRouter;

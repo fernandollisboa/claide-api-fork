@@ -3,7 +3,7 @@ import extension from "@joi/date";
 
 const joi = joiBase.extend(extension);
 
-export const createProjectAssociationSchema = joi.object({
+const createProjectAssociationSchema = joi.object({
   projectId: joi.number().integer().required().messages({
     "number.base": "Project Id must be a number",
     "any.required": "Project must have an Id",
@@ -21,3 +21,5 @@ export const createProjectAssociationSchema = joi.object({
     "date.format": "Association end date must be in 'DD/MM/YYYY' format",
   }),
 });
+
+export default createProjectAssociationSchema;

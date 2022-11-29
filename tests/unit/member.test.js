@@ -1,4 +1,4 @@
-import { jest } from "@jest/globals";
+import { describe, it, expect, jest } from "@jest/globals";
 import { faker } from "@faker-js/faker";
 import dayjs from "dayjs";
 
@@ -118,7 +118,7 @@ describe("member service", () => {
     describe("given the member's id is valid", () => {
       it("should return the member's data", async () => {
         expect.assertions(3);
-        const memberGeneratedId = faker.datatype.uuid();
+        const memberGeneratedId = faker.datatype.number();
         const validMemberWithId = createValidMemberWithId({ id: memberGeneratedId });
 
         jest.spyOn(memberRepository, "getMemberById").mockImplementationOnce(() => {
@@ -135,7 +135,7 @@ describe("member service", () => {
     describe("given member's id is not found", () => {
       it("should not allow to get an inexistent member", async () => {
         expect.assertions(3);
-        const memberInvalidId = faker.datatype.uuid();
+        const memberInvalidId = faker.datatype.number();
 
         jest.spyOn(memberRepository, "getMemberById").mockResolvedValueOnce();
         const result = memberService.getMemberById(memberInvalidId);
@@ -150,9 +150,9 @@ describe("member service", () => {
     describe("given getAllMembers is called", () => {
       it("should return all members created", async () => {
         expect.assertions(3);
-        const memberGeneratedId = faker.datatype.uuid();
+        const memberGeneratedId = faker.datatype.number();
         const validMemberWithId = createValidMemberWithId({ id: memberGeneratedId });
-        const memberGeneratedId2 = faker.datatype.uuid();
+        const memberGeneratedId2 = faker.datatype.number();
         const validMemberWithId2 = createValidMemberWithId({ id: memberGeneratedId2 });
 
         jest

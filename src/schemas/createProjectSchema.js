@@ -3,7 +3,7 @@ import extension from "@joi/date";
 
 const joi = joiBase.extend(extension);
 
-export const createProjectSchema = joi.object({
+const createProjectSchema = joi.object({
   name: joi.string().required().messages({
     "string.base": "Name must be in text format",
     "any.required": "Project must have a name",
@@ -28,3 +28,5 @@ export const createProjectSchema = joi.object({
     "string.base": "Financier must be in text format",
   }),
 });
+
+export default createProjectSchema;

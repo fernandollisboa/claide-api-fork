@@ -1,13 +1,18 @@
 import { Router } from "express";
-import * as memberController from "../controllers/memberController";
-import auth from "../middlewares/auth";
+import {
+  createMember,
+  getMemberById,
+  getAllMembers,
+  updateMember,
+  deleteMember,
+} from "../controllers/memberController";
 
 const memberRouter = Router();
 
-memberRouter.post("/", auth, memberController.createMember);
-memberRouter.get("/:id", auth, memberController.getMemberById);
-memberRouter.get("/", auth, memberController.getAllMembers);
-memberRouter.put("/", auth, memberController.updateMember);
-memberRouter.delete("/:id", auth, memberController.deleteMember);
+memberRouter.post("/", createMember);
+memberRouter.get("/:id", getMemberById);
+memberRouter.get("/", getAllMembers);
+memberRouter.put("/", updateMember);
+memberRouter.delete("/:id", deleteMember);
 
 export default memberRouter;

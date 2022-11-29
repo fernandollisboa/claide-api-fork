@@ -1,7 +1,7 @@
 import * as projectAssociationRepository from "../repositories/projectAssociationRepository";
 import * as dateUtils from "../utils/dateUtils";
 import InvalidAtributeError from "../errors/InvalidAtributeError";
-import ProjectNotFoundError from "../errors/ProjectInvalidEndDateError";
+import ProjectNotFoundError from "../errors/ProjectNotFoundError";
 
 export async function createProjectAssociation(projectAssociation) {
   const startDate = new Date(dateUtils.dateToIso(projectAssociation.startDate));

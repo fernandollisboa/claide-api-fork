@@ -1,6 +1,5 @@
-import { jest } from "@jest/globals";
+import { describe, it, expect, jest } from "@jest/globals";
 import { faker } from "@faker-js/faker";
-import dayjs from "dayjs";
 import * as projectService from "../../src/services/projectService";
 import * as projectRepository from "../../src/repositories/projectRepository";
 import * as projectFactory from "../factories/projectFactory";
@@ -101,7 +100,7 @@ describe("project service", () => {
 
         const result = await projectService.findProjectById(projectId);
 
-        await expect(projectRepository.findById).toBeCalledWith(projectId);
+        expect(projectRepository.findById).toBeCalledWith(projectId);
         expect(projectRepository.findById).toBeCalledTimes(1);
         expect(result).toEqual(validProject);
       });
@@ -110,7 +109,7 @@ describe("project service", () => {
     describe("given project's id is invalid", () => {
       it("should not allow to get a project with an invalid id", async () => {
         expect.assertions(2);
-        const projectId = Math.floor(Math.random() * 11);
+        const projectId = faker.datatype.number({ min: 11 });
         const validProjectId = projectFactory.createValidProjectWithId({
           id: projectId,
           isActive: true,

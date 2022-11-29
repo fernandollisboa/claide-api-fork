@@ -4,20 +4,19 @@ import InvalidAtributeError from "../errors/InvalidAtributeError";
 import ProjectNotFoundError from "../errors/ProjectNotFoundError";
 import dayjs from "dayjs";
 
-export async function createProject(project) {
-  const { creationDate, endDate } = project;
-  const today = dayjs().toISOString();
+export async function createProject(projectData) {
+  const { creationDate, endDate } = projectData;
 
-  const isActive = isProjectActive(creationDate, endDate ?? today);
+  const isActive = isProjectActive(projectData);
 
-  const newProject = {
-    ...project,
+  const project = {
+    ...projectData,
     isActive,
     creationDate,
     endDate,
   };
 
-  return await projectRepository.insertProject(newProject);
+  return await projectRepository.insertProject(project);
 }
 
 export async function findProjectById(id) {
@@ -45,29 +44,32 @@ export async function updateProject(updateProject) {
   const { endDate: originalEndDate, creationDate: originalCreationDate } = originalProject;
   const { endDate: updateEndDate, creationDate: updateCreationDate } = updateProject;
 
-  const newEndDate = updateEndDate ?? originalEndDate;
-  const newCreationDate = updateCreationDate ?? originalCreationDate;
+  const endDate = updateEndDate ?? originalEndDate;
+  const creationDate = updateCreationDate ?? originalCreationDate;
 
-  const newIsActive = isProjectActive(newCreationDate, newEndDate);
+  const newIsActive = isProjectActive({ endDate, creationDate });
 
   const newProject = {
     ...updateProject,
-    creationDate: newCreationDate,
-    endDate: newEndDate,
+    creationDate,
+    endDate,
     isActive: newIsActive,
   };
   return await projectRepository.updateProject(newProject);
 }
 
-function isProjectActive(creationDate, endDate) {
+export function isProjectActive({ creationDate, endDate }) {
+  const today = dayjs().toISOString();
+
+  if (!endDate) {
+    return creationDate <= today;
+  }
+
   if (creationDate > endDate) {
     throw new ProjectInvalidCreationOrEndDateError(creationDate, endDate);
   }
-  const today = new Date();
 
-  const isActive = endDate >= today;
-
-  return isActive;
+  return endDate >= today;
 }
 
 export async function findAll(isActive, order) {

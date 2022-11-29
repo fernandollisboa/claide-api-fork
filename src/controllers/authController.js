@@ -1,35 +1,19 @@
-import httpStatusCode from "../enum/httpStatusCode";
-import { loginSchema } from "../schemas/authSchema";
-import BaseError from "../errors/BaseError";
-import { authenticateUser } from "../services/authService";
+import UserUnauthorizedOrNotFoundError from "../errors/UserUnauthorizedOrNotFoundError";
+import mockAuthenticateUser from "../mockLdap/mockAuthenticateUser";
 
 export async function login(req, res, next) {
-  const { body } = req;
-
-  const joiValidation = loginSchema.validate(body);
-  if (joiValidation.error) {
-    const errorMessage = joiValidation.error.details.map((err) => err.message);
-    return res.status(httpStatusCode.BAD_REQUEST).send(errorMessage);
-  }
-
-  const { username, password } = body;
+  const { username, password } = req.body;
   try {
-    const result = await authenticateUser({ username, password });
+    const { err, jwToken } = await mockAuthenticateUser({ username, password });
 
-    if (result.err) {
-      return res.status(result.status).json({
-        error: true,
-        message: result.err,
-      });
-    } else {
-      return res.status(200).json({
-        token: result.jwToken,
-      });
+    if (err) {
+      throw new UserUnauthorizedOrNotFoundError(username, err);
     }
+
+    return res.status(200).send({
+      token: jwToken,
+    });
   } catch (err) {
-    if (err instanceof BaseError) {
-      return res.status(err.statusCode).send(err.message);
-    }
     next(err);
   }
 }
