@@ -4,7 +4,9 @@ import { createProjectAssociationSchema } from "../schemas/createProjectAssociat
 import { updateProjectAssociationSchema } from "../schemas/updateProjectAssociationSchema";
 import * as projectService from "../services/projectService";
 import * as projectAssociationService from "../services/projectAssociationService";
-import { activeMember } from "../services/memberService";
+import ProjectInvalidAtributeError from "../errors/ProjectInvalidAtributeError";
+import BaseError from "../errors/BaseError";
+import { dateToIso } from "../utils/dateUtils";
 
 export async function createProject(req, res) {
   const { body } = req;
@@ -75,12 +77,15 @@ export async function updateProject(req, res) {
   }
 }
 
-export async function createProjectAssociation(req, res) {
+export async function createProjectAssociation(req, res, next) {
   const { params, body } = req;
   const projectId = parseInt(params.projectId);
-  const association = {
+  const memberId = parseInt(params.memberId);
+
+  let association = {
     ...body,
     projectId,
+    memberId,
   };
 
   const joiValidation = createProjectAssociationSchema.validate(association);
@@ -93,15 +98,17 @@ export async function createProjectAssociation(req, res) {
     return res.status(400).send(joiValidation.error.details[0].message);
   }
 
-  try {
-    await activeMember(body.username);
-  } catch (err) {
-    return res.status(400).send(err.message);
-  }
-
-  const project = await projectService.findById(projectId);
-  if (!project.isActive) {
-    return res.status(400).send("Project is disabled");
+  const startDate = new Date(dateToIso(body.startDate));
+  association = {
+    ...association,
+    startDate,
+  };
+  if (body.endDate) {
+    const endDate = new Date(dateToIso(body.endDate));
+    association = {
+      ...association,
+      endDate,
+    };
   }
 
   try {
@@ -110,51 +117,90 @@ export async function createProjectAssociation(req, res) {
     );
     return res.status(201).send(createdProjectAssociation);
   } catch (err) {
-    return res.status(400).send(err.message);
+    if (err instanceof BaseError) {
+      return res.status(err.statusCode).send(err.message);
+    }
+    next(err);
   }
 }
 
-export async function getProjectAssociationsByProjectId(req, res) {
+export async function getProjectAssociationsByProjectId(req, res, next) {
   const { params } = req;
+
   const projectId = parseInt(params.projectId);
+  if (isNaN(projectId)) {
+    throw new ProjectInvalidAtributeError("projectId", projectId);
+  }
+
   try {
     const associations = await projectAssociationService.findByProjectId(projectId);
     return res.status(200).send(associations);
   } catch (err) {
-    return res.status(422).send(err.message);
+    if (err instanceof BaseError) {
+      return res.status(err.statusCode).send(err.message);
+    }
+    next(err);
   }
 }
 
-export async function getProjectAssociationsByUsername(req, res) {
+export async function getProjectAssociationsByMemberId(req, res, next) {
   const { params } = req;
-  const { username } = params;
+
+  const memberId = parseInt(params.memberId);
+  if (isNaN(memberId)) {
+    throw new ProjectInvalidAtributeError("projectId", memberId);
+  }
+
   try {
-    const associations = await projectAssociationService.findByUsername(username);
+    const associations = await projectAssociationService.findByMemberId(memberId);
     return res.status(200).send(associations);
   } catch (err) {
-    return res.status(422).send(err.message);
+    if (err instanceof BaseError) {
+      return res.status(err.statusCode).send(err.message);
+    }
+    next(err);
   }
 }
 
-export async function getProjectAssociationsByProjectIdAndUsername(req, res) {
+export async function getProjectAssociationsByProjectIdAndMemberId(req, res, next) {
   const { params } = req;
+
   const projectId = parseInt(params.projectId);
-  const { username } = params;
+  if (isNaN(projectId)) {
+    throw new ProjectInvalidAtributeError("projectId", projectId);
+  }
+  const memberId = parseInt(params.projectId);
+  if (isNaN(memberId)) {
+    throw new ProjectInvalidAtributeError("projectId", memberId);
+  }
+
   try {
-    const associations = await projectAssociationService.findByProjectIdAndUsername(
+    const associations = await projectAssociationService.findByProjectIdAndMemberId(
       projectId,
-      username
+      memberId
     );
     return res.status(200).send(associations);
   } catch (err) {
-    return res.status(404).send(err.message);
+    if (err instanceof BaseError) {
+      return res.status(err.statusCode).send(err.message);
+    }
+    next(err);
   }
 }
 
-export async function updateProjectAssociation(req, res) {
+export async function updateProjectAssociation(req, res, next) {
   const { body } = req;
 
-  const joiValidation = updateProjectAssociationSchema.validate(body);
+  const projectId = parseInt(body.projectId);
+  const memberId = parseInt(body.memberId);
+
+  let association = {
+    ...body,
+    projectId,
+    memberId,
+  };
+
+  const joiValidation = updateProjectAssociationSchema.validate(association);
 
   if (joiValidation.error) {
     const typeError = joiValidation.error.details[0].type;
@@ -164,10 +210,28 @@ export async function updateProjectAssociation(req, res) {
     return res.status(400).send(joiValidation.error.details[0].message);
   }
 
+  if (body.startDate) {
+    const startDate = new Date(dateToIso(body.startDate));
+    association = {
+      ...association,
+      startDate,
+    };
+  }
+  if (body.endDate) {
+    const endDate = new Date(dateToIso(body.endDate));
+    association = {
+      ...association,
+      endDate,
+    };
+  }
+
   try {
     const projectAssociation = await projectAssociationService.updateProjectAssociation(body);
     return res.status(200).send(projectAssociation);
   } catch (err) {
-    res.status(404).send(err.message);
+    if (err instanceof BaseError) {
+      return res.status(err.statusCode).send(err.message);
+    }
+    next(err);
   }
 }

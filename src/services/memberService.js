@@ -65,9 +65,9 @@ async function getMemberById(id) {
 }
 
 //TO-DO essa função não deveria ser activateMember?
-async function activeMember(username) {
+async function activateMember(id) {
   try {
-    const member = await memberRepository.activeMember(username);
+    const member = await memberRepository.activateMember(id);
 
     return member;
   } catch (err) {
@@ -152,4 +152,4 @@ async function deleteMember(id) {
   const deletedMember = await memberRepository.deleteMember(id);
   return deletedMember;
 }
-export { createMember, getMemberById, getAllMembers, updateMember, deleteMember, activeMember };
+export { createMember, getMemberById, getAllMembers, updateMember, deleteMember, activateMember };

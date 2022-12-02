@@ -59,9 +59,9 @@ async function getMemberBySecondaryEmail(secondaryEmail) {
   return await prisma.member.findFirst({ where: { secondaryEmail: secondaryEmail } });
 }
 
-async function activeMember(username) {
+async function activateMember(id) {
   const member = await prisma.member.update({
-    where: { username: username },
+    where: { id: id },
     data: {
       isActive: true,
     },
@@ -129,5 +129,5 @@ export {
   getAllMembers,
   updateMember,
   deleteMember,
-  activeMember,
+  activateMember,
 };

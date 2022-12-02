@@ -8,10 +8,9 @@ export const createProjectAssociationSchema = joi.object({
     "number.base": "Project Id must be a number",
     "any.required": "Project must have an Id",
   }),
-  username: joi.string().required().messages({
-    "string.base": "Username should be a string",
-    "string.empty": "A username must contain value",
-    "any.required": "Association should have a member username",
+  memberId: joi.number().integer().required().messages({
+    "number.base": "Member Id must be a number",
+    "any.required": "Member must have an Id",
   }),
   startDate: joi.date().format("DD/MM/YYYY").required().messages({
     "date.format": "Association start date must be in 'DD/MM/YYYY' format",
