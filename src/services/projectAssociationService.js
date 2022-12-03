@@ -1,8 +1,8 @@
 import * as projectAssociationRepository from "../repositories/projectAssociationRepository";
-import ProjectNotFoundError from "../errors/ProjectInvalidEndDateError";
 import { activateMember } from "../services/memberService";
 import * as projectService from "../services/projectService";
 import ProjectAssociationDateError from "../errors/ProjectAssociationDateError";
+import ProjectNotFoundError from "../errors/ProjectNotFoundError";
 
 export async function createProjectAssociation(projectAssociation) {
   const { memberId, projectId, startDate, endDate } = projectAssociation;

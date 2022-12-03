@@ -1,12 +1,13 @@
-import { jest } from "@jest/globals";
+import { describe, it, expect, jest } from "@jest/globals";
 import { faker } from "@faker-js/faker";
 import dayjs from "dayjs";
 
 import * as memberService from "../../src/services/memberService";
 import * as memberRepository from "../../src/repositories/memberRepository";
 import { createValidMember, createValidMemberWithId } from "../factories/memberFactory";
-import { dateToIso } from "../../src/utils/dateUtils";
 import MemberTooYoungError from "../../src/errors/MemberTooYoungError";
+import MemberNotFoundError from "../../src/errors/MemberNotFoundError";
+import MemberConflictError from "../../src/errors/MemberConflictError";
 
 const MINIMUM_REQUIRED_AGE = 15;
 
@@ -21,7 +22,7 @@ describe("member service", () => {
         jest.spyOn(memberRepository, "getMemberByPassport").mockResolvedValueOnce(null);
         jest.spyOn(memberRepository, "getMemberBySecondaryEmail").mockResolvedValueOnce(null);
         jest.spyOn(memberRepository, "insertMember").mockImplementationOnce(() => {
-          return [{ id: faker.datatype.uuid(), ...validMember }];
+          return [{ ...validMember, id: faker.datatype.number() }];
         });
 
         const result = memberService.createMember(validMember);
@@ -39,8 +40,8 @@ describe("member service", () => {
 
         const result = memberService.createMember(duplicateCpfMember);
 
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty("message", "Already exists a Member with this cpf");
+        await expect(result).rejects.toThrow(MemberConflictError);
+        expect(result).rejects.toEqual(new MemberConflictError("cpf", duplicateCpfMember.cpf));
       });
     });
 
@@ -53,8 +54,8 @@ describe("member service", () => {
 
         const result = memberService.createMember(duplicateRgMember);
 
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty("message", "Already exists a Member with this RG");
+        await expect(result).rejects.toThrow(MemberConflictError);
+        expect(result).rejects.toEqual(new MemberConflictError("rg", duplicateRgMember.rg));
       });
     });
 
@@ -69,10 +70,9 @@ describe("member service", () => {
 
         const result = memberService.createMember(duplicatePassportMember);
 
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty(
-          "message",
-          "Already exists a Member with this passport"
+        await expect(result).rejects.toThrow(MemberConflictError);
+        expect(result).rejects.toEqual(
+          new MemberConflictError("passport", duplicatePassportMember.passport)
         );
       });
     });
@@ -89,10 +89,9 @@ describe("member service", () => {
 
         const result = memberService.createMember(duplicateEmailMember);
 
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty(
-          "message",
-          "Already exists a Member with this secondary email"
+        await expect(result).rejects.toThrow(MemberConflictError);
+        expect(result).rejects.toEqual(
+          new MemberConflictError("secondaryEmail", duplicateEmailMember.secondaryEmail)
         );
       });
     });
@@ -100,18 +99,17 @@ describe("member service", () => {
     describe(`given member is younger than ${MINIMUM_REQUIRED_AGE}`, () => {
       it("should not allow to create a new member, because he/she is too young", async () => {
         expect.assertions(2);
-        const now = dayjs();
-        const mockBirthDate = now
+        const mockBirthDate = dayjs()
           .subtract(MINIMUM_REQUIRED_AGE, "years")
-          .subtract(1, "day")
-          .format("DD/MM/YYYY");
+          .add(1, "days")
+          .toISOString();
 
         const tooYoungMember = createValidMember({ birthDate: mockBirthDate });
 
         const result = memberService.createMember(tooYoungMember);
 
         await expect(result).rejects.toThrow(MemberTooYoungError);
-        expect(result).rejects.toHaveProperty("message", new MemberTooYoungError().message);
+        expect(result).rejects.toEqual(new MemberTooYoungError());
       });
     });
   });
@@ -120,7 +118,7 @@ describe("member service", () => {
     describe("given the member's id is valid", () => {
       it("should return the member's data", async () => {
         expect.assertions(3);
-        const memberGeneratedId = faker.datatype.uuid();
+        const memberGeneratedId = faker.datatype.number();
         const validMemberWithId = createValidMemberWithId({ id: memberGeneratedId });
 
         jest.spyOn(memberRepository, "getMemberById").mockImplementationOnce(() => {
@@ -137,14 +135,14 @@ describe("member service", () => {
     describe("given member's id is not found", () => {
       it("should not allow to get an inexistent member", async () => {
         expect.assertions(3);
-        const memberInvalidId = faker.datatype.uuid();
+        const memberInvalidId = faker.datatype.number();
 
-        jest.spyOn(memberRepository, "getMemberById").mockResolvedValueOnce();
+        jest.spyOn(memberRepository, "getMemberById").mockResolvedValueOnce(null);
         const result = memberService.getMemberById(memberInvalidId);
 
         expect(memberRepository.getMemberById).toBeCalledWith(memberInvalidId);
-        expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty("message", "Member not found");
+        await expect(result).rejects.toThrow(MemberNotFoundError);
+        expect(result).rejects.toEqual(new MemberNotFoundError("id", memberInvalidId));
       });
     });
   });
@@ -152,9 +150,9 @@ describe("member service", () => {
     describe("given getAllMembers is called", () => {
       it("should return all members created", async () => {
         expect.assertions(3);
-        const memberGeneratedId = faker.datatype.uuid();
+        const memberGeneratedId = faker.datatype.number();
         const validMemberWithId = createValidMemberWithId({ id: memberGeneratedId });
-        const memberGeneratedId2 = faker.datatype.uuid();
+        const memberGeneratedId2 = faker.datatype.number();
         const validMemberWithId2 = createValidMemberWithId({ id: memberGeneratedId2 });
 
         jest
@@ -171,7 +169,7 @@ describe("member service", () => {
 
   describe("updateMember function", () => {
     const existingMember = createValidMemberWithId();
-    const newMember = createValidMemberWithId(); // TO-DO tirar ID
+    const newMember = createValidMemberWithId();
 
     jest.spyOn(memberRepository, "getMemberById").mockResolvedValue(existingMember);
     jest.spyOn(memberRepository, "getMemberByCpf").mockResolvedValue(null);
@@ -186,8 +184,8 @@ describe("member service", () => {
 
         const result = memberService.updateMember(newMember);
 
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty("message", "Already exists a Member with this cpf");
+        await expect(result).rejects.toThrow(MemberConflictError);
+        expect(result).rejects.toEqual(new MemberConflictError("cpf", newMember.cpf));
       });
 
       it("should not update member's rg", async () => {
@@ -196,8 +194,8 @@ describe("member service", () => {
 
         const result = memberService.updateMember(newMember);
 
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty("message", "Already exists a Member with this RG");
+        await expect(result).rejects.toThrow(MemberConflictError);
+        expect(result).rejects.toEqual(new MemberConflictError("rg", newMember.rg));
       });
 
       it("should not update member's passport", async () => {
@@ -206,11 +204,8 @@ describe("member service", () => {
 
         const result = memberService.updateMember(newMember);
 
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty(
-          "message",
-          "Already exists a Member with this passport"
-        );
+        await expect(result).rejects.toThrow(MemberConflictError);
+        expect(result).rejects.toEqual(new MemberConflictError("passport", newMember.passport));
       });
 
       it("should not update member's secondary email", async () => {
@@ -221,10 +216,9 @@ describe("member service", () => {
 
         const result = memberService.updateMember(newMember);
 
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty(
-          "message",
-          "Already exists a Member with this secondary email"
+        await expect(result).rejects.toThrow(MemberConflictError);
+        expect(result).rejects.toEqual(
+          new MemberConflictError("secondaryEmail", newMember.secondaryEmail)
         );
       });
     });
@@ -276,37 +270,39 @@ describe("member service", () => {
     describe("given member is too young", () => {
       it("should not allow to update member's age", async () => {
         expect.assertions(2);
+        const { id } = existingMember;
+
         const mockBirthDate = dayjs()
           .subtract(MINIMUM_REQUIRED_AGE, "years")
-          .subtract(1, "day")
-          .format("DD/MM/YYYY");
+          .add(1, "days")
+          .toISOString();
+
         const tooYoungMember = createValidMemberWithId({
-          id: existingMember.id,
+          id,
           birthDate: mockBirthDate,
         });
 
         const result = memberService.updateMember(tooYoungMember);
 
         await expect(result).rejects.toThrow(MemberTooYoungError);
-        expect(result).rejects.toHaveProperty("message", new MemberTooYoungError().message);
+        expect(result).rejects.toEqual(new MemberTooYoungError());
       });
     });
 
     describe("given member data is valid", () => {
       it("should call update function", async () => {
         expect.assertions(3);
+        const { birthDate } = newMember;
 
-        jest.spyOn(memberRepository, "updateMember").mockImplementationOnce(() => newMember);
+        jest.spyOn(memberRepository, "updateMember").mockResolvedValueOnce(newMember);
 
         const result = memberService.updateMember(newMember);
-
-        const formatedBirthDate = new Date(dateToIso(newMember.birthDate));
 
         await expect(result).resolves.toEqual(newMember);
         expect(memberRepository.updateMember).toBeCalledTimes(1);
         expect(memberRepository.updateMember).toBeCalledWith({
           ...newMember,
-          birthDate: formatedBirthDate,
+          birthDate,
         });
       });
     });

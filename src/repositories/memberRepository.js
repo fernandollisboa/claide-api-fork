@@ -1,6 +1,6 @@
 import prisma from "../database/prismaClient";
 
-async function insertMember({
+export async function insertMember({
   name,
   email,
   birthDate,
@@ -17,7 +17,7 @@ async function insertMember({
   hasKey,
   isBrazilian,
 }) {
-  const member = await prisma.member.create({
+  return prisma.member.create({
     data: {
       name,
       email,
@@ -36,30 +36,29 @@ async function insertMember({
       isBrazilian,
     },
   });
-  return member;
 }
 
-async function getMemberById(id) {
-  return await prisma.member.findUnique({ where: { id: id } });
+export async function getMemberById(id) {
+  return await prisma.member.findUnique({ where: { id } });
 }
 
-async function getMemberByCpf(cpf) {
-  return await prisma.member.findFirst({ where: { cpf: cpf } });
+export async function getMemberByCpf(cpf) {
+  return await prisma.member.findFirst({ where: { cpf } });
 }
 
-async function getMemberByRg(rg) {
-  return await prisma.member.findFirst({ where: { rg: rg } });
+export async function getMemberByRg(rg) {
+  return await prisma.member.findFirst({ where: { rg } });
 }
 
-async function getMemberByPassport(passport) {
-  return await prisma.member.findFirst({ where: { passport: passport } });
+export async function getMemberByPassport(passport) {
+  return await prisma.member.findFirst({ where: { passport } });
 }
 
-async function getMemberBySecondaryEmail(secondaryEmail) {
-  return await prisma.member.findFirst({ where: { secondaryEmail: secondaryEmail } });
+export async function getMemberBySecondaryEmail(secondaryEmail) {
+  return await prisma.member.findFirst({ where: { secondaryEmail } });
 }
 
-async function activateMember(id) {
+export async function activateMember(id) {
   const member = await prisma.member.update({
     where: { id: id },
     data: {
@@ -69,13 +68,15 @@ async function activateMember(id) {
   return member;
 }
 
-async function getAllMembers(isActive, orderBy) {
-  return await prisma.member.findMany({
-    where: { isActive: isActive },
+//TO-DO refatorar pra chamar atraves de destructuring:  getAllMembers(isActive, orderBy)
+export async function getAllMembers(isActive, orderBy) {
+  return prisma.member.findMany({
+    where: { isActive },
     orderBy: { name: orderBy },
   });
 }
-async function updateMember({
+
+export async function updateMember({
   id,
   name,
   email,
@@ -93,7 +94,7 @@ async function updateMember({
   isBrazilian,
 }) {
   const updatedMember = await prisma.member.update({
-    where: { id: id },
+    where: { id },
     data: {
       name,
       email,
@@ -114,20 +115,6 @@ async function updateMember({
   return updatedMember;
 }
 
-async function deleteMember(id) {
-  const member = await prisma.member.findUnique({ where: { id: id } });
-  await prisma.member.delete({ where: { id: id } });
-  return member;
+export async function deleteMember(id) {
+  await prisma.member.delete({ where: { id } });
 }
-export {
-  insertMember,
-  getMemberById,
-  getMemberByCpf,
-  getMemberByRg,
-  getMemberByPassport,
-  getMemberBySecondaryEmail,
-  getAllMembers,
-  updateMember,
-  deleteMember,
-  activateMember,
-};
