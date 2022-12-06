@@ -1,6 +1,6 @@
 import * as memberRepository from "../repositories/memberRepository";
 
-export async function checkMemberAlreadyExists(id, cpf, rg, passport, secondaryEmail) {
+export async function checkMemberAlreadyExists({ id, cpf, rg, passport, secondaryEmail }) {
   //TO-DO fazer todas essas verificações em paralelo
   let checkCpf, checkRg, checkPassport, checkSecondaryEmail;
   if (cpf) checkCpf = await memberRepository.getMemberByCpf(cpf);

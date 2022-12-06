@@ -33,11 +33,14 @@ describe("member service", () => {
     describe("given the member's cpf is already taken", () => {
       it("should not allow to create a duplicate", async () => {
         expect.assertions(2);
-        const duplicateCpfMember = createValidMember({ cpf: "123456789098" });
+        const duplicateCpfMember = createValidMemberWithId({ cpf: "123456789098" });
 
         jest.spyOn(memberRepository, "getMemberByCpf").mockResolvedValueOnce(duplicateCpfMember);
-
+        
         const result = memberService.createMember(duplicateCpfMember);
+
+        
+        console.log(duplicateCpfMember.id !== result.id + `${result.id} e ${duplicateCpfMember.id}`)
 
         await expect(result).rejects.toThrow(Error);
         expect(result).rejects.toHaveProperty("message", "Already exists a Member with this cpf");
@@ -47,7 +50,7 @@ describe("member service", () => {
     describe("given the member's rg is already taken", () => {
       it("should not allow to create a duplicate", async () => {
         expect.assertions(2);
-        const duplicateRgMember = createValidMember({ rg: "123456789098" });
+        const duplicateRgMember = createValidMemberWithId({ rg: "123456789098" });
 
         jest.spyOn(memberRepository, "getMemberByRg").mockResolvedValueOnce(duplicateRgMember);
 
@@ -61,7 +64,7 @@ describe("member service", () => {
     describe("given the member's passport number is already taken", () => {
       it("should not allow to create a duplicate", async () => {
         expect.assertions(2);
-        const duplicatePassportMember = createValidMember({ passport: "FG1542685" });
+        const duplicatePassportMember = createValidMemberWithId({ passport: "FG1542685" });
 
         jest
           .spyOn(memberRepository, "getMemberByPassport")
@@ -81,7 +84,7 @@ describe("member service", () => {
       it("should not allow to create a duplicate", async () => {
         expect.assertions(2);
         const mockEmail = faker.internet.email();
-        const duplicateEmailMember = createValidMember({ secondaryEmail: mockEmail });
+        const duplicateEmailMember = createValidMemberWithId({ secondaryEmail: mockEmail });
 
         jest
           .spyOn(memberRepository, "getMemberBySecondaryEmail")

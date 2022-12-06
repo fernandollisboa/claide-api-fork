@@ -22,7 +22,7 @@ async function createMember(memberData) {
     hasKey,
     isBrazilian,
   } = memberData;
-  await memberUtils.checkMemberAlreadyExists(null, cpf, rg, passport, secondaryEmail); // TO-DO refatorar, um pouco feio mandar null, poderia ser desestruturado
+  await memberUtils.checkMemberAlreadyExists({ cpf, rg, passport, secondaryEmail });
 
   const dateFormated = new Date(dateUtils.dateToIso(birthDate)); // TO-DO refatorar isso para dayjs
 
@@ -103,7 +103,7 @@ async function updateMember({ ...memberData }) {
   if (!toUpdateMember) {
     throw new Error("Member does not exist");
   }
-  await memberUtils.checkMemberAlreadyExists(id, cpf, rg, passport, secondaryEmail);
+  await memberUtils.checkMemberAlreadyExists({ id, cpf, rg, passport, secondaryEmail });
   if (isBrazilian !== null && isBrazilian !== undefined) {
     await memberUtils.checkMemberDocumentsOnUpdate({
       isBrazilian,
