@@ -84,3 +84,8 @@ model ProjectAssociation {
 
   @@unique([projectId, username])
 }
+
+model Services {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+}
