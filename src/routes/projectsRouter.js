@@ -6,8 +6,9 @@ import {
   updateProject,
   createProjectAssociation,
   getProjectAssociationsByProjectId,
-  getProjectAssociationsByProjectIdAndUsername,
+  getProjectAssociationsByProjectIdAndMemberId,
   updateProjectAssociation,
+  getProjectAssociationsByMemberId,
 } from "../controllers/projectController";
 import validateSchema from "../middlewares/schemaValidationMiddleware";
 import createProjectAssociationSchema from "../schemas/createProjectAssociationSchema";
@@ -22,13 +23,13 @@ projectsRouter.get("/", getAllProjects);
 projectsRouter.get("/:id", getProjectById);
 projectsRouter.put("/", validateSchema(updateProjectSchema), updateProject);
 projectsRouter.post(
-  "/:projectId/members",
+  "/:projectId/members/:memberId",
   validateSchema(createProjectAssociationSchema),
   createProjectAssociation
 );
 projectsRouter.get("/:projectId/members", getProjectAssociationsByProjectId);
-//TO-DO verificar se é isso mesmo aqui embaixo, normalmente se utilizaria /members/:memberId
-projectsRouter.get("/:projectId/members/:username", getProjectAssociationsByProjectIdAndUsername);
+projectsRouter.get("/members/:memberId", getProjectAssociationsByMemberId);
+projectsRouter.get("/:projectId/members/:memberId", getProjectAssociationsByProjectIdAndMemberId);
 projectsRouter.put(
   "/members",
   validateSchema(updateProjectAssociationSchema),

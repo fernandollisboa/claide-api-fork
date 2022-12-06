@@ -76,11 +76,11 @@ enum Role {
 model ProjectAssociation {
   id        Int       @id @default(autoincrement())
   project   Project   @relation(fields: [projectId], references: [id])
-  member    Member    @relation(fields: [username], references: [username])
+  member    Member    @relation(fields: [memberId], references: [id])
   projectId Int
-  username  String
+  memberId  Int
   startDate DateTime
   endDate   DateTime?
 
-  @@unique([projectId, username])
+  @@unique([projectId, memberId])
 }

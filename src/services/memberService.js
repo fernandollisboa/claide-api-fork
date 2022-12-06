@@ -67,14 +67,13 @@ async function getMemberById(id) {
   return member;
 }
 
-//TO-DO essa função não deveria ser activateMember?
-async function activeMember(username) {
+async function activateMember(id) {
   try {
-    const member = await memberRepository.activeMember(username);
+    const member = await memberRepository.activateMember(id);
 
     return member;
   } catch (err) {
-    throw new MemberNotFoundError("username", username);
+    throw new MemberNotFoundError("memberId", id);
   }
 }
 //TO-DO refatorar isso pra destructuring: getAllMembers({isActive, orderBy})
@@ -161,4 +160,4 @@ async function deleteMember(id) {
   const deletedMember = await memberRepository.deleteMember(id);
   return deletedMember;
 }
-export { createMember, getMemberById, getAllMembers, updateMember, deleteMember, activeMember };
+export { createMember, getMemberById, getAllMembers, updateMember, deleteMember, activateMember };
