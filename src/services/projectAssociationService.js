@@ -2,7 +2,7 @@ import * as projectAssociationRepository from "../repositories/projectAssociatio
 import { activateMember } from "../services/memberService";
 import * as projectService from "../services/projectService";
 import ProjectAssociationDateError from "../errors/ProjectAssociationDateError";
-import ProjectNotFoundError from "../errors/ProjectNotFoundError";
+import ProjectAssociationNotFoundError from "../errors/ProjectAssociationNotFound";
 
 export async function createProjectAssociation(projectAssociation) {
   const { memberId, projectId, startDate, endDate } = projectAssociation;
@@ -49,15 +49,23 @@ export async function updateProjectAssociation(projectAssociation) {
   );
 
   if (!associationToChange) {
-    throw new ProjectNotFoundError("projectId and username", [
+    throw new ProjectAssociationNotFoundError("projectId and memberId", [
       projectAssociation.projectId,
-      projectAssociation.username,
+      projectAssociation.memberId,
     ]);
   }
-  const { endDate, startDate } = associationToChange;
+
+  const { endDate, startDate } = projectAssociation;
+  const project = await projectService.findProjectById(projectId);
+  if (
+    (startDate && project.creationDate.getTime() >= startDate.getTime()) ||
+    (project.endDate && endDate && project.endDate.getTime() <= endDate.getTime())
+  ) {
+    throw new ProjectAssociationDateError();
+  }
 
   const newProjectAssociation = {
-    ...projectAssociation,
+    ...associationToChange,
     endDate,
     startDate,
   };
