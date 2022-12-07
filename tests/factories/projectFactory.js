@@ -1,6 +1,5 @@
 import { faker } from "@faker-js/faker";
 import RandExp from "randexp";
-import { isProjectActive } from "../../src/services/projectService";
 
 export function createValidProject({
   name,
