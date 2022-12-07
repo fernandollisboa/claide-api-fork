@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { jest } from "@jest/globals";
 import { faker } from "@faker-js/faker";
 import dayjs from "dayjs";
@@ -9,7 +10,7 @@ import * as memberRepository from "../../src/repositories/memberRepository";
 import * as projectService from "../../src/services/projectService";
 import * as projectFactory from "../factories/projectFactory";
 import ProjectAssociationDateError from "../../src/errors/ProjectAssociationDateError";
-import ProjectAssociationNotFoundError from "../../src/errors/ProjectAssociationNotFound";
+import ProjectAssociationNotFoundError from "../../src/errors/ProjectAssociationNotFoundError";
 import { createValidMemberWithId } from "../factories/memberFactory";
 
 describe("project association service", () => {
@@ -24,12 +25,8 @@ describe("project association service", () => {
         const projectId = faker.datatype.number({ min: 1 });
         const project = projectFactory.createValidProjectWithId({
           id: projectId,
-          creationDate: new Date(
-            dayjs(faker.date.past(1, "2010-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-          ),
-          endDate: new Date(
-            dayjs(faker.date.future(1, "2030-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-          ),
+          creationDate: new Date(dayjs(faker.date.past(1, "2010-01-01T00:00:00.000Z"))),
+          endDate: new Date(dayjs(faker.date.future(1, "2030-01-01T00:00:00.000Z"))),
         });
 
         const validProjectAssociation = projectAssociationFactory.createValidProjectAssociation({
@@ -82,20 +79,14 @@ describe("project association service", () => {
         const projectId = faker.datatype.number({ min: 1 });
         const project = projectFactory.createValidProjectWithId({
           id: projectId,
-          creationDate: new Date(
-            dayjs(faker.date.past(1, "2010-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-          ),
-          endDate: new Date(
-            dayjs(faker.date.future(1, "2030-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-          ),
+          creationDate: new Date(dayjs(faker.date.past(1, "2010-01-01T00:00:00.000Z"))),
+          endDate: new Date(dayjs(faker.date.future(1, "2030-01-01T00:00:00.000Z"))),
         });
 
         const validProjectAssociation = projectAssociationFactory.createValidProjectAssociation({
           projectId,
           memberId,
-          startDate: new Date(
-            dayjs(faker.date.past(1, "2005-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-          ),
+          startDate: new Date(dayjs(faker.date.past(1, "2005-01-01T00:00:00.000Z"))),
         });
 
         jest.spyOn(projectService, "findProjectById").mockImplementationOnce(() => {
@@ -124,20 +115,14 @@ describe("project association service", () => {
         const projectId = faker.datatype.number({ min: 1 });
         const project = projectFactory.createValidProjectWithId({
           id: projectId,
-          creationDate: new Date(
-            dayjs(faker.date.past(1, "2010-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-          ),
-          endDate: new Date(
-            dayjs(faker.date.future(1, "2030-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-          ),
+          creationDate: new Date(dayjs(faker.date.past(1, "2010-01-01T00:00:00.000Z"))),
+          endDate: new Date(dayjs(faker.date.future(1, "2030-01-01T00:00:00.000Z"))),
         });
 
         const validProjectAssociation = projectAssociationFactory.createValidProjectAssociation({
           projectId,
           memberId,
-          endDate: new Date(
-            dayjs(faker.date.future(1, "2031-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-          ),
+          endDate: new Date(dayjs(faker.date.future(1, "2031-01-01T00:00:00.000Z"))),
         });
 
         jest.spyOn(projectService, "findProjectById").mockImplementationOnce(() => {
@@ -276,12 +261,8 @@ describe("project association service", () => {
         const projectId = faker.datatype.number({ min: 1 });
         const project = projectFactory.createValidProjectWithId({
           id: projectId,
-          creationDate: new Date(
-            dayjs(faker.date.past(1, "2010-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-          ),
-          endDate: new Date(
-            dayjs(faker.date.future(1, "2030-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-          ),
+          creationDate: new Date(dayjs(faker.date.past(1, "2010-01-01T00:00:00.000Z"))),
+          endDate: new Date(dayjs(faker.date.future(1, "2030-01-01T00:00:00.000Z"))),
         });
 
         const validProjectAssociation = projectAssociationFactory.createValidProjectAssociation({
@@ -299,9 +280,7 @@ describe("project association service", () => {
           return project;
         });
 
-        const newStartDate = new Date(
-          dayjs(faker.date.past(1, "2015-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-        );
+        const newStartDate = new Date(dayjs(faker.date.past(1, "2015-01-01T00:00:00.000Z")));
 
         jest.spyOn(projectAssociationRepository, "updateAssociation").mockImplementationOnce(() => {
           return { ...validProjectAssociation, startDate: newStartDate };
@@ -344,12 +323,8 @@ describe("project association service", () => {
         const projectId = faker.datatype.number({ min: 1 });
         const project = projectFactory.createValidProjectWithId({
           id: projectId,
-          creationDate: new Date(
-            dayjs(faker.date.past(1, "2010-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-          ),
-          endDate: new Date(
-            dayjs(faker.date.future(1, "2030-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-          ),
+          creationDate: new Date(dayjs(faker.date.past(1, "2010-01-01T00:00:00.000Z"))),
+          endDate: new Date(dayjs(faker.date.future(1, "2030-01-01T00:00:00.000Z"))),
         });
 
         const validProjectAssociation = projectAssociationFactory.createValidProjectAssociation({
@@ -367,9 +342,7 @@ describe("project association service", () => {
           return project;
         });
 
-        const newStartDate = new Date(
-          dayjs(faker.date.past(1, "2005-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-        );
+        const newStartDate = new Date(dayjs(faker.date.past(1, "2005-01-01T00:00:00.000Z")));
 
         const result = projectAssociationService.updateProjectAssociation({
           projectId,
@@ -399,12 +372,8 @@ describe("project association service", () => {
         const projectId = faker.datatype.number({ min: 1 });
         const project = projectFactory.createValidProjectWithId({
           id: projectId,
-          creationDate: new Date(
-            dayjs(faker.date.past(1, "2010-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-          ),
-          endDate: new Date(
-            dayjs(faker.date.future(1, "2030-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-          ),
+          creationDate: new Date(dayjs(faker.date.past(1, "2010-01-01T00:00:00.000Z"))),
+          endDate: new Date(dayjs(faker.date.future(1, "2030-01-01T00:00:00.000Z"))),
         });
 
         const validProjectAssociation = projectAssociationFactory.createValidProjectAssociation({
@@ -422,9 +391,7 @@ describe("project association service", () => {
           return project;
         });
 
-        const newEndDate = new Date(
-          dayjs(faker.date.future(1, "2032-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-        );
+        const newEndDate = new Date(dayjs(faker.date.future(1, "2032-01-01T00:00:00.000Z")));
 
         const result = projectAssociationService.updateProjectAssociation({
           projectId,
@@ -459,9 +426,7 @@ describe("project association service", () => {
             return undefined;
           });
 
-        const newEndDate = new Date(
-          dayjs(faker.date.future(1, "2032-01-01T00:00:00.000Z")).format("MM/DD/YYYY")
-        );
+        const newEndDate = new Date(dayjs(faker.date.future(1, "2032-01-01T00:00:00.000Z")));
 
         const result = projectAssociationService.updateProjectAssociation({
           projectId,

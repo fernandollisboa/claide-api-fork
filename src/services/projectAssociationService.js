@@ -2,7 +2,7 @@ import * as projectAssociationRepository from "../repositories/projectAssociatio
 import { activateMember } from "../services/memberService";
 import * as projectService from "../services/projectService";
 import ProjectAssociationDateError from "../errors/ProjectAssociationDateError";
-import ProjectAssociationNotFoundError from "../errors/ProjectAssociationNotFound";
+import ProjectAssociationNotFoundError from "../errors/ProjectAssociationNotFoundError";
 
 export async function createProjectAssociation(projectAssociation) {
   const { memberId, projectId, startDate, endDate } = projectAssociation;
