@@ -31,7 +31,7 @@ projectsRouter.get("/:projectId/members", getProjectAssociationsByProjectId);
 projectsRouter.get("/members/:memberId", getProjectAssociationsByMemberId);
 projectsRouter.get("/:projectId/members/:memberId", getProjectAssociationsByProjectIdAndMemberId);
 projectsRouter.put(
-  "/members",
+  "/:projectId/members/:memberId",
   validateSchema(updateProjectAssociationSchema),
   updateProjectAssociation
 );

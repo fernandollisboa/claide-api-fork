@@ -12,11 +12,13 @@
     "test": "jest --coverage --testPathPattern=tests/unit",
     "test:dev": "jest --watch --coverage --testPathPattern=tests/unit",
     "lint": "eslint src",
-    "lint:fix": "eslint . --ext .js --fix"
+    "lint:fix": "eslint . --ext .js --fix",
+    "swagger-autogen": "node src/swagger.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@faker-js/faker": "^7.6.0",
     "@joi/date": "^2.1.0",
     "@prisma/client": "^4.4.0",
     "cors": "^2.8.5",
@@ -24,8 +26,7 @@
     "docker": "^1.0.0",
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
-    "joi": "^17.6.4",
-    "@faker-js/faker": "^7.6.0"
+    "joi": "^17.6.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.2",
@@ -49,7 +50,9 @@
     "prettier": "2.7.1",
     "prisma": "^4.4.0",
     "randexp": "^0.5.3",
-    "sucrase": "^3.28.0"
+    "sucrase": "^3.28.0",
+    "swagger-autogen": "^2.22.0",
+    "swagger-ui-express": "^4.1.6"
   },
   "config": {
     "commitizen": {

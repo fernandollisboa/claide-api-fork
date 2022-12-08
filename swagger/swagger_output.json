@@ -1,0 +1,493 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "ClAIDe API",
+    "description": ""
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/login/": {
+      "post": {
+        "tags": ["Login"],
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "example": "any"
+                },
+                "password": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/members/": {
+      "post": {
+        "tags": ["Member"],
+        "description": "Create a member",
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema": {
+                "$ref": "#/components/schemas/CreateMember"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Member"],
+        "description": "Get all members",
+        "parameters": [
+          {
+            "name": "isActive",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "desc",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Member"],
+        "description": "Update a member",
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMember"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/members/{id}": {
+      
+      "get": {
+        "tags": ["Member"],
+        "description": "Get all members",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Member"],
+        "description": "Delete a member (Functionality to be removed)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/": {
+      "post": {
+        "tags": ["Project"],
+        "description": "Create a project",
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema": {
+                "$ref": "#/components/schemas/CreateProject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Project"],
+        "description": "Get all projects",
+        "parameters": [
+          {
+            "name": "isActive",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "desc",
+            "in": "query",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Project"],
+        "description": "Update a project",
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProject"
+              }
+            }
+          }
+        },        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/{id}": {
+      "get": {
+        "tags": ["Project"],
+        "description": "Get a project",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/{projectId}/members/{memberId}": {
+      "post": {
+        "tags": ["Projects Association"],
+        "description": "Create a project association",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema": {
+                "$ref": "#/components/schemas/ProjectAssociation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Projects Association"],
+        "description": "Update an project association",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "requestBody":{
+          "content":{
+            "application/json":{
+              "schema": {
+                "$ref": "#/components/schemas/ProjectAssociation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Projects Association"],
+        "description": "Get one project association, based on the project and member id",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/{projectId}/members": {
+      "get": {
+        "tags": ["Projects Association"],
+        "description": "Get projects associations based on project id",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/projects/members/{memberId}": {
+      "get": {
+        "tags": ["Projects Association"],
+        "description": "Get a project association based on the member id",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+
+  "components":{
+    "schemas": {
+      "CreateMember": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "example": "Fulano de Tal"
+          },
+          "email": {
+            "example": "fulano.tal@ccc.ufcg.edu.br"
+          },
+          "birthDate": {
+            "example": "10/11/1987"
+          },
+          "username": {
+            "example": "fulano.tal"
+          },
+          "cpf": {
+            "example": "12345678931"
+          },
+          "rg": {
+            "example": "9876543"
+          },
+          "passport": {
+            "example": "AP1234567"
+          },
+          "phone": {
+            "example": "12345678912"
+          },
+          "lsdEmail": {
+            "example": "fulano.tal@lsd.ufcg.edu.br"
+          },
+          "secondaryEmail": {},
+          "memberType": {
+            "type": "string",
+            "enum": [
+              "ADMIN", 
+              "STUDENT", 
+              "SUPPORT",
+              "PROFESSOR", 
+              "EXTERNAL"
+            ]
+          },
+          "lattes": {
+            "example": "https://lattes.cnpq.br/FulanoDeTal"
+          },
+          "roomName": {
+            "example": "Triunfo"
+          },
+          "hasKey": {
+            "example": true
+          },
+          "isActive": {
+            "example": false
+          },
+          "isBrazilian": {
+            "example": true
+          }
+        }
+    },
+    "UpdateMember": {
+      "type": "object",
+      "properties": {
+        "id":{
+          "example": 1
+        },
+        "name": {},
+        "email": {},
+        "birthDate": {},
+        "username": {},
+        "cpf": {},
+        "rg": {},
+        "passport": {},
+        "phone": {},
+        "lsdEmail": {},
+        "memberType": {
+          "type": "string",
+          "enum": [
+            "ADMIN", 
+            "STUDENT", 
+            "SUPPORT",
+            "PROFESSOR", 
+            "EXTERNAL"
+          ]
+        },
+        "lattes": {},
+        "roomName": {},
+        "hasKey": {
+          "type": "boolean"
+        },
+        "isActive": {
+          "type": "boolean"
+        },
+        "isBrazilian": {
+          "type": "boolean"
+        }
+      }
+    },
+    "CreateProject": {
+      "type": "object",
+      "properties": {
+        "name": {},
+        "creationDate": {
+          "example": "DD/MM/AAAA"
+        },
+        "endDate": {
+          "example": "DD/MM/AAAA"
+        },
+        "room": {},
+        "building": {},
+        "embrapii_code": {},
+        "financier": {}
+      }
+    },
+    "UpdateProject": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "example": 1
+        },
+        "name": {},
+        "creationDate": {
+          "example": "DD/MM/AAAA"
+        },
+        "endDate": {
+          "example": "DD/MM/AAAA"
+        },
+        "room": {},
+        "building": {},
+        "embrapii_code": {},
+        "financier": {}
+      }
+    },
+    "ProjectAssociation": {
+      "type": "object",
+      "properties": {
+        "startDate": {
+          "example": "DD/MM/AAAA"
+        },
+        "endDate": {
+          "example": "DD/MM/AAAA"
+        }
+      }
+    }
+   }
+  }
+}

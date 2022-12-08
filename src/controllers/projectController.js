@@ -171,10 +171,9 @@ export async function getProjectAssociationsByProjectIdAndMemberId(req, res, nex
 }
 
 export async function updateProjectAssociation(req, res, next) {
-  const { body } = req;
-
-  const projectId = parseInt(body.projectId);
-  const memberId = parseInt(body.memberId);
+  const { params, body } = req;
+  const projectId = Number(params.projectId);
+  const memberId = Number(params.memberId);
 
   let association = {
     ...body,
