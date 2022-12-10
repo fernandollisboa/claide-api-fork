@@ -1,8 +1,8 @@
 # cLaIdeApi
 
-### Run with docker
+### Run with Docker
 
-First of all create and fill `.env.prod` file as shown in `.env.example`. After that all you have to do is run the following command:
+First of all create and fill `.env.prod` file as shown in `.env.example`. After that you have to check if the port setting in the `docker-compose.yml` file is acording with your `.env.prod`. Now, all you have to do is run the following command:
 
 ```
 docker compose up
