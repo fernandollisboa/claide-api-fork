@@ -1,3 +1,13 @@
+# cLaIdeApi
+
+### Run with docker
+
+First of all create and fill `.env.prod` file as shown in `.env.example`. After that all you have to do is run the following command:
+
+```
+docker compose up
+```
+
 ### Run as dev locally:
 
 - `npm i`
@@ -5,16 +15,11 @@
 - `npx prisma migrate dev`
 - `npm run dev`
 
-### Run as dev with Docker:
-
-- `npm i`
-- `docker-compose up`
-
 ### Run as prod locally:
 
 - `npm i`
-- `npm run build`
 - create and fill `.env.prod` file as shown in `.env.example`
+- `npm run build`
 - `npm start`
 
 ### Run test :
@@ -30,5 +35,3 @@
 #### Generate and run migrations
 
 1. `npx prisma migrate dev`
-
-# cLaIdeApi
