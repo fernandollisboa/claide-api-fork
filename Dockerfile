@@ -12,6 +12,4 @@ COPY ./src ./src
 
 RUN npm install
 
-COPY . .
-
 CMD ["npm", "start"]
