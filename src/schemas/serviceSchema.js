@@ -9,3 +9,16 @@ export const createServiceSchema = joi.object({
     "any.required": "Member should have a name",
   }),
 });
+
+export const createServiceAssociationSchema = joi.object({
+  serviceId: joi.number().required().messages({
+    "number.base": "Service id must be a number",
+    "number.empty": "A Service id must contain a valid value",
+    "any.required": "Service's association must have the id of the service",
+  }),
+  memberId: joi.number().required().messages({
+    "number.base": "Member Id should be a number",
+    "number.empty": "A Member Id must contain value",
+    "any.required": "Service's association must have an Member Id",
+  }),
+});
