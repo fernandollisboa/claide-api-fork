@@ -147,7 +147,7 @@ describe("member service", () => {
 
         expect(memberRepository.getMemberById).toBeCalledWith(memberInvalidId);
         expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty("message", "Member not found");
+        expect(result).rejects.toHaveProperty("message", `Member with Id: ${memberInvalidId} not found`);
       });
     });
   });

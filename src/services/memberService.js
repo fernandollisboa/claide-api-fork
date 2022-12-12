@@ -2,6 +2,7 @@ import * as memberRepository from "../repositories/memberRepository";
 import * as dateUtils from "../utils/dateUtils";
 import * as memberUtils from "../utils/memberUtils";
 import MemberTooYoungError from "../errors/MemberTooYoungError";
+import MemberNotFoundError from "../errors/MemberNotFoundError";
 
 const MINIMUM_REQUIRED_AGE = 15;
 async function createMember(memberData) {
@@ -59,7 +60,7 @@ async function createMember(memberData) {
 async function getMemberById(id) {
   const member = await memberRepository.getMemberById(id);
   if (member === undefined || member === null) {
-    throw new Error("Member not found");
+    throw new MemberNotFoundError("Id", id);
   }
   return member;
 }
@@ -71,7 +72,7 @@ async function activeMember(username) {
 
     return member;
   } catch (err) {
-    throw new Error("Member not found");
+    throw new MemberNotFoundError("Username", username);
   }
 }
 
@@ -101,7 +102,7 @@ async function updateMember({ ...memberData }) {
 
   const toUpdateMember = await memberRepository.getMemberById(id);
   if (!toUpdateMember) {
-    throw new Error("Member does not exist");
+    throw new MemberNotFoundError("Id", id);
   }
   await memberUtils.checkMemberAlreadyExists({ id, cpf, rg, passport, secondaryEmail });
   if (isBrazilian !== null && isBrazilian !== undefined) {
