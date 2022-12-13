@@ -30,4 +30,13 @@ async function findServiceByName(name) {
     });
 }
 
-export { insertService, getAllServices, findServiceById, findServiceByName };
+async function updateService({ id, name }) {
+  const updatedService = await prisma.services.update({
+    where: { id: id },
+    data: { name },
+  });
+
+  return updatedService;
+}
+
+export { insertService, getAllServices, findServiceById, findServiceByName, updateService };

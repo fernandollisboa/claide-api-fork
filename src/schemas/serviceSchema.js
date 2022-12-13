@@ -10,6 +10,12 @@ export const createServiceSchema = joi.object({
   }),
 });
 
+export const updateServiceSchema = joi.object({
+  name: joi.string().allow("").messages({
+    "string.base": "Name should be a string",
+  }),
+});
+
 export const createServiceAssociationSchema = joi.object({
   serviceId: joi.number().required().messages({
     "number.base": "Service id must be a number",

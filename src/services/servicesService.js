@@ -25,6 +25,22 @@ async function getServiceByName(serviceName) {
   return service;
 }
 
+async function updateService({ id, name }) {
+  const service = await serviceRepository.findServiceById(id);
+  if (service) {
+    try {
+      const updatedService = await serviceRepository.updateService({
+        id,
+        name: name.trim() || service.name,
+      });
+      return updatedService;
+    } catch (err) {
+      throw new Error("Already exist a data with this data!");
+    }
+  }
+  return service;
+}
+
 async function createServiceAssociation({ memberId, serviceId }) {
   const newServiceAssociation = await serviceAssociationService.insertServiceAssociation({
     memberId,
@@ -58,6 +74,7 @@ export {
   getAllServices,
   getServiceById,
   getServiceByName,
+  updateService,
   createServiceAssociation,
   getAllServicesAssociations,
   getServiceAssociationsByServiceId,

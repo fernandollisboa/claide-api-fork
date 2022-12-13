@@ -8,6 +8,7 @@ serviceRouter.post("/", serviceController.createService);
 serviceRouter.get("/", serviceController.getAllServices);
 serviceRouter.get("/id=:serviceId", serviceController.getServiceById);
 serviceRouter.get("/name=:serviceName", serviceController.getServiceByName);
+serviceRouter.put("/:serviceId", serviceController.updateService);
 
 serviceRouter.post("/:serviceId/members", serviceController.createServiceAssociation);
 serviceRouter.get("/associations", serviceController.getAllServicesAssociations);

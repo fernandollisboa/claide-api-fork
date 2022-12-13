@@ -53,6 +53,31 @@ async function getServiceByName(req, res) {
   }
 }
 
+async function updateService(req, res) {
+  const id = parseInt(req.params.serviceId);
+  const { body } = req;
+  if (isNaN(id)) {
+    return res.status(400).send("The service's Id parameter must be a number");
+  }
+  const joiValidation = serviceSchema.updateServiceSchema.validate(body);
+
+  if (joiValidation.error) {
+    const typeError = joiValidation.error.details[0].type;
+    if (typeError === "any.required" || typeError === "object.unknown") {
+      return res.status(400).send(joiValidation.error.details[0].message);
+    }
+    return res.status(422).send(joiValidation.error.details[0].message);
+  }
+
+  const newService = { id, ...body };
+  try {
+    const service = await servicesService.updateService(newService);
+    return res.status(200).send(service);
+  } catch (err) {
+    return res.status(err.statusCode || 400).send(err.message);
+  }
+}
+
 async function createServiceAssociation(req, res) {
   const serviceId = parseInt(req.params.serviceId);
   const { body } = req;
@@ -128,6 +153,7 @@ export {
   getAllServices,
   getServiceById,
   getServiceByName,
+  updateService,
   createServiceAssociation,
   getAllServicesAssociations,
   getServiceAssociationByServiceId,
