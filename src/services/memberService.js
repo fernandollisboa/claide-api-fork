@@ -73,16 +73,13 @@ async function activateMember(id) {
 
     return member;
   } catch (err) {
-    throw new MemberNotFoundError("Username", username);
+    throw new MemberNotFoundError("memberId", id);
   }
 }
 
 async function getAllMembers({ isActive, orderBy } = {}) {
   return await memberRepository.getAllMembers(isActive, orderBy);
-    throw new MemberNotFoundError("memberId", id);
-  }
 }
-
 
 //TO-DO ver se precisa mesmo desse destructurign
 async function updateMember(memberData) {
