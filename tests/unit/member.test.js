@@ -37,12 +37,11 @@ describe("member service", () => {
         const duplicateCpfMember = createValidMemberWithId({ cpf: "123456789098" });
 
         jest.spyOn(memberRepository, "getMemberByCpf").mockResolvedValueOnce(duplicateCpfMember);
-        
+
         const result = memberService.createMember(duplicateCpfMember);
 
         await expect(result).rejects.toThrow(MemberConflictError);
         expect(result).rejects.toEqual(new MemberConflictError("cpf", duplicateCpfMember.cpf));
-
       });
     });
 
@@ -144,7 +143,6 @@ describe("member service", () => {
         expect(memberRepository.getMemberById).toBeCalledWith(memberInvalidId);
         await expect(result).rejects.toThrow(MemberNotFoundError);
         expect(result).rejects.toEqual(new MemberNotFoundError("id", memberInvalidId));
-
       });
     });
   });
@@ -163,7 +161,7 @@ describe("member service", () => {
         const result = await memberService.getAllMembers();
 
         expect(memberRepository.getAllMembers).toBeCalledTimes(1);
-        expect(memberRepository.getAllMembers).toBeCalledWith(undefined,undefined);
+        expect(memberRepository.getAllMembers).toBeCalledWith(undefined, undefined);
         expect(result).toEqual([validMemberWithId, validMemberWithId2]);
       });
     });

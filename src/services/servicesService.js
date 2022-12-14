@@ -31,7 +31,7 @@ async function updateService({ id, name }) {
     try {
       const updatedService = await serviceRepository.updateService({
         id,
-        name: name.trim() || service.name,
+        name: name ? name.trim() : service.name,
       });
       return updatedService;
     } catch (err) {

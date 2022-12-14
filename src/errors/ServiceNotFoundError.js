@@ -1,16 +1,8 @@
-import httpStatusCode from "../enum/httpStatusCode";
-import BaseError from "./BaseError";
+import NotFoundError from "./NotFoundError";
 
-export default class ServiceNotFoundError extends BaseError {
-  constructor(
-    atribute,
-    value,
-    message = `Service with ${atribute}: ${value} not found`,
-    statusCode = httpStatusCode.NOT_FOUND
-  ) {
-    super(message, statusCode);
-    this.message = message;
-    this.statusCode = statusCode;
+export default class ServiceNotFoundError extends NotFoundError {
+  constructor(atribute, value) {
+    super(atribute, value, "Service");
     this.name = "ServiceNotFoundError";
   }
 }
