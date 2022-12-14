@@ -54,7 +54,7 @@ async function getAllMembers(req, res) {
   if (desc) {
     organization = desc === "true" ? "desc" : "asc";
   }
-  const members = await memberService.getAllMembers(isActiveBoolean, organization);
+  const members = await memberService.getAllMembers({ isActiveBoolean, organization });
   return res.status(200).send(members);
 }
 

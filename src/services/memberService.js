@@ -76,7 +76,7 @@ async function activeMember(username) {
   }
 }
 
-async function getAllMembers(isActive, orderBy) {
+async function getAllMembers({ isActive, orderBy } = {}) {
   return await memberRepository.getAllMembers(isActive, orderBy);
 }
 
