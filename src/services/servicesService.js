@@ -35,7 +35,7 @@ async function updateService({ id, name }) {
       });
       return updatedService;
     } catch (err) {
-      throw new Error("Already exist a data with this data!");
+      throw new Error("Already exists a service with this data!");
     }
   }
   return service;
