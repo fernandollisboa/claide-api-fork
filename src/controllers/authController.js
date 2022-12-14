@@ -1,34 +1,21 @@
-import httpStatusCode from "../enum/httpStatusCode";
-import { loginSchema } from "../schemas/authSchema";
-import BaseError from "../errors/BaseError";
+import UserUnauthorizedOrNotFoundError from "../errors/UserUnauthorizedOrNotFoundError";
 import { authenticateUser } from "../services/authService";
 
 export async function login(req, res, next) {
-  const { body } = req;
-
-  const joiValidation = loginSchema.validate(body);
-  if (joiValidation.error) {
-    const errorMessage = joiValidation.error.details.map((err) => err.message);
-    return res.status(httpStatusCode.BAD_REQUEST).send(errorMessage);
-  }
-
-  const { username, password } = body;
+  const { username, password } = req.body;
   try {
-    const result = await authenticateUser({ username, password });
+    const { err, jwToken } = await authenticateUser({ username, password });
 
-    if (result.err) {
-      return res.status(result.status).json({
-        error: true,
-        message: result.err,
-      });
-    } else {
-      return res.status(200).json({
-        token: result.jwToken,
-      });
+    if (err) {
+      throw new UserUnauthorizedOrNotFoundError(username, err);
     }
+    return res.status(200).send({
+      token: jwToken,
+    });
   } catch (err) {
-    if (err instanceof BaseError) {
-      return res.status(err.statusCode).send(err.message);
+    //TO-DO gambiarra pra funcionar do jeito que está atualmente, gostaria de mudar para errors isntanciados quando conseguirmos testar o ldap mermo @fernandollisboa
+    if (err.err) {
+      return res.status(err.status).send(err.err);
     }
     next(err);
   }

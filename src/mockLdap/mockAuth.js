@@ -8,7 +8,7 @@ export default async function mockAuth(req, res, next) {
 
   if (!token)
     return res
-      .status(httpStatusCode.UNAUTHORIZED)
+      .status(httpStatusCode.BAD_REQUEST)
       .json({ message: "Missing authorization Bearer token in header" });
 
   try {
