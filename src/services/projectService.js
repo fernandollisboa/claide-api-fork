@@ -1,9 +1,11 @@
 import * as projectRepository from "../repositories/projectRepository";
+import * as activityRecordService from "./activityRecordService";
+import { getUsername } from "../services/authService";
 import ProjectInvalidCreationOrEndDateError from "../errors/ProjectInvalidCreationOrEndDateError";
 import ProjectNotFoundError from "../errors/ProjectNotFoundError";
 import dayjs from "dayjs";
 
-export async function createProject(projectData) {
+export async function createProject(projectData, token) {
   const { creationDate, endDate } = projectData;
 
   const isActive = isProjectActive(projectData);
@@ -15,7 +17,19 @@ export async function createProject(projectData) {
     endDate,
   };
 
-  return await projectRepository.insertProject(project);
+  const newProject = await projectRepository.insertProject(project);
+
+  const activity = {
+    operation: "CREATE",
+    entity: "PROJECT",
+    newValue: newProject,
+    idEntity: newProject.id,
+    user: getUsername(token),
+  };
+
+  activityRecordService.createActivity(activity);
+
+  return newProject;
 }
 
 export async function findProjectById(id) {
@@ -28,7 +42,7 @@ export async function findProjectById(id) {
   return project;
 }
 
-export async function updateProject(updateProject) {
+export async function updateProject(updateProject, token) {
   const { id } = updateProject;
   const originalProject = await projectRepository.findById(id);
 
@@ -52,7 +66,20 @@ export async function updateProject(updateProject) {
     isActive,
   };
 
-  return await projectRepository.updateProject(newProject);
+  const projectUpdated = await projectRepository.updateProject(newProject);
+
+  const activity = {
+    operation: "UPDATE",
+    entity: "PROJECT",
+    oldValue: originalProject,
+    newValue: newProject,
+    idEntity: newProject.id,
+    user: getUsername(token),
+  };
+
+  activityRecordService.createActivity(activity);
+
+  return projectUpdated;
 }
 
 export function isProjectActive({ creationDate, endDate }) {

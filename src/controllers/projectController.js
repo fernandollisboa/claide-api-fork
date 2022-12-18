@@ -6,13 +6,16 @@ import BaseError from "../errors/BaseError";
 
 export async function createProject(req, res, next) {
   const { body } = req;
+  const { authorization } = req.headers;
+  const token = authorization?.split("Bearer ")[1];
+
   try {
     let { creationDate, endDate } = body;
     creationDate = parseBrDateToStandardDate(creationDate);
     if (endDate) endDate = parseBrDateToStandardDate(endDate);
 
     const projectData = { ...body, creationDate, endDate };
-    const createdProject = await projectService.createProject(projectData);
+    const createdProject = await projectService.createProject(projectData, token);
 
     return res.status(201).send(createdProject);
   } catch (err) {
@@ -54,13 +57,16 @@ export async function getProjectById(req, res, next) {
 
 export async function updateProject(req, res, next) {
   const { body } = req;
+  const { authorization } = req.headers;
+  const token = authorization?.split("Bearer ")[1];
+
   try {
     let { creationDate, endDate } = body;
     if (creationDate) creationDate = parseBrDateToStandardDate(creationDate);
     if (endDate) endDate = parseBrDateToStandardDate(endDate);
 
     const projectData = { ...body, creationDate, endDate };
-    const project = await projectService.updateProject(projectData);
+    const project = await projectService.updateProject(projectData, token);
 
     return res.status(200).send(project);
   } catch (err) {
