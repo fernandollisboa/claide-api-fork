@@ -8,13 +8,13 @@ export default async function auth(req, res, next) {
 
   if (!token)
     return res
-      .sendStatus(httpStatusCode.BAD_REQUEST)
-      .json({ message: "Missing authorization Bearer token in headers" });
+      .status(httpStatusCode.BAD_REQUEST)
+      .send({ message: "Missing authorization Bearer token in headers" });
 
   try {
     jwt.verify(token, process.env.JWT_SECRET);
   } catch (err) {
-    return res.sendStatus(httpStatusCode.UNAUTHORIZED).json({ message: "User Unauthorized" });
+    return res.status(httpStatusCode.UNAUTHORIZED).send({ message: "User Unauthorized" });
   }
 
   next();
