@@ -5,6 +5,7 @@ import { faker } from "@faker-js/faker";
 import * as servicesService from "../../src/services/servicesService";
 import * as serviceRepository from "../../src/repositories/serviceRepository";
 import ServiceNotFoundError from "../../src/errors/serviceNotFoundError";
+import ServiceConflictError from "../../src/errors/ServiceConflictError";
 import { createValidService, createValidServiceWithId } from "../factories/serviceFactory";
 
 describe("services service", () => {
@@ -28,9 +29,12 @@ describe("services service", () => {
         jest.spyOn(serviceRepository, "insertService").mockRejectedValueOnce(new Error());
         const result = servicesService.createService(duplicateService);
 
-        expect(result).rejects.toHaveProperty("message", `Already exists a service with this name`);
-        expect(result).rejects.toThrow(new Error(`Already exists a service with this name`));
-        expect(result).rejects.toEqual(new Error(`Already exists a service with this name`));
+        expect(result).rejects.toHaveProperty(
+          "message",
+          'Service with name: "GitHub" already registered, duplicate data'
+        );
+        expect(result).rejects.toThrow(new ServiceConflictError("name", "GitHub"));
+        expect(result).rejects.toEqual(new ServiceConflictError("name", "GitHub"));
       });
     });
   });
@@ -185,10 +189,10 @@ describe("services service", () => {
         expect(serviceRepository.findServiceById).toBeCalledWith(duplicateService.id);
         expect(result).rejects.toHaveProperty(
           "message",
-          `Already exists a service with this data!`
+          `Service with name: "${existingService.name}" already registered, duplicate data`
         );
-        expect(result).rejects.toThrow(new Error(`Already exists a service with this data!`));
-        expect(result).rejects.toEqual(new Error(`Already exists a service with this data!`));
+        expect(result).rejects.toThrow(new ServiceConflictError("name", existingService.name));
+        expect(result).rejects.toEqual(new ServiceConflictError("name", existingService.name));
       });
     });
   });

@@ -1,5 +1,6 @@
 import * as serviceRepository from "../repositories/serviceRepository.js";
 import * as serviceAssociationService from "../services/serviceAssociationService";
+import ServiceConflictError from "../errors/ServiceConflictError.js";
 
 async function createService(serviceData) {
   const { name } = serviceData;
@@ -7,7 +8,7 @@ async function createService(serviceData) {
     const newService = await serviceRepository.insertService({ name });
     return newService;
   } catch (err) {
-    throw new Error(`Already exists a service with this name`);
+    throw new ServiceConflictError("name", name);
   }
 }
 
@@ -35,7 +36,7 @@ async function updateService({ id, name }) {
       });
       return updatedService;
     } catch (err) {
-      throw new Error("Already exists a service with this data!");
+      throw new ServiceConflictError("name", name);
     }
   }
   return service;

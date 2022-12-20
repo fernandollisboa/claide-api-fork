@@ -5,26 +5,23 @@ const joi = joiBase.extend(extension);
 
 export const createServiceSchema = joi.object({
   name: joi.string().trim().required().messages({
-    "string.base": "Name should be a string",
-    "any.required": "Member should have a name",
+    "string.pattern.base": `"name" must be a string`,
   }),
 });
 
 export const updateServiceSchema = joi.object({
   name: joi.string().allow("").messages({
-    "string.base": "Name should be a string",
+    "string.pattern.base": `"name" must be a string`,
   }),
 });
 
 export const createServiceAssociationSchema = joi.object({
   serviceId: joi.number().required().messages({
-    "number.base": "Service id must be a number",
-    "number.empty": "A Service id must contain a valid value",
-    "any.required": "Service's association must have the id of the service",
+    "number.pattern.base": "Service id must be a number",
   }),
   memberId: joi.number().required().messages({
-    "number.base": "Member Id should be a number",
-    "number.empty": "A Member Id must contain value",
-    "any.required": "Service's association must have an Member Id",
+    "number.pattern.base": "Member Id should be a number",
   }),
 });
+
+export const updateServiceAssociationSchema = joi.object({});
