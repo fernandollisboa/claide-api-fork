@@ -81,6 +81,8 @@ model ProjectAssociation {
   memberId  Int
   startDate DateTime
   endDate   DateTime?
+  isActive      Boolean   @default(true)
+
 
   @@unique([projectId, memberId])
 }

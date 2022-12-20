@@ -87,20 +87,20 @@ export async function createProjectAssociation(req, res, next) {
     memberId,
   };
 
-  const startDate = new Date(parseBrDateToStandardDate(body.startDate));
-  association = {
-    ...association,
-    startDate,
-  };
-  if (body.endDate) {
-    const endDate = new Date(parseBrDateToStandardDate(body.endDate));
+  try {
+    const startDate = new Date(parseBrDateToStandardDate(body.startDate));
     association = {
       ...association,
-      endDate,
+      startDate,
     };
-  }
+    if (body.endDate) {
+      const endDate = new Date(parseBrDateToStandardDate(body.endDate));
+      association = {
+        ...association,
+        endDate,
+      };
+    }
 
-  try {
     const createdProjectAssociation = await projectAssociationService.createProjectAssociation(
       association,
       token
@@ -187,6 +187,7 @@ export async function updateProjectAssociation(req, res, next) {
 
   const { authorization } = req.headers;
   const token = authorization?.split("Bearer ")[1];
+
 
   let association = {
     ...body,

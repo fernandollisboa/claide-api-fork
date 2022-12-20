@@ -1,12 +1,19 @@
 import prisma from "../database/prismaClient";
 
-export async function insertProjectAssociation({ projectId, memberId, startDate, endDate }) {
+export async function insertProjectAssociation({
+  projectId,
+  memberId,
+  startDate,
+  endDate,
+  isActive,
+}) {
   const association = await prisma.projectAssociation.create({
     data: {
       projectId,
       memberId,
       startDate,
       endDate,
+      isActive,
     },
   });
   return association;
@@ -42,14 +49,15 @@ export async function findByProjectIdAndMemberId(projectId, memberId) {
   return association;
 }
 
-export async function updateAssociation({ projectId, memberId, startDate, endDate }) {
+export async function updateAssociation({ projectId, memberId, startDate, endDate, isActive }) {
   const association = await prisma.projectAssociation.update({
     where: {
       projectId_memberId: { projectId, memberId },
     },
     data: {
-      endDate: endDate || undefined,
-      startDate: startDate || undefined,
+      endDate: endDate,
+      startDate: startDate,
+      isActive: isActive,
     },
   });
   return association;

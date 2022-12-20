@@ -3,6 +3,7 @@ import { faker } from "@faker-js/faker";
 import * as projectService from "../../src/services/projectService";
 import * as projectRepository from "../../src/repositories/projectRepository";
 import * as projectFactory from "../factories/projectFactory";
+import * as projectAssociationService from "../../src/services/projectAssociationService";
 import ProjectInvalidCreationOrEndDateError from "../../src/errors/ProjectInvalidCreationOrEndDateError";
 import ProjectNotFoundError from "../../src/errors/ProjectNotFoundError";
 import * as authService from "../../src/services/authService";
@@ -412,6 +413,7 @@ describe("project service", () => {
         jest.spyOn(projectRepository, "updateProject").mockImplementationOnce(() => {
           return newProject;
         });
+
         jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
           return "test.test";
         });
@@ -429,6 +431,12 @@ describe("project service", () => {
             },
           ];
         });
+        jest
+          .spyOn(projectAssociationService, "updateProjectAssociation")
+          .mockImplementationOnce(() => {
+            return { memberId: 1, projectId: 2 };
+          });
+
 
         const result = await projectService.updateProject(newProject, "testToken");
         expect(projectRepository.findById).toBeCalledWith(newProject.id);

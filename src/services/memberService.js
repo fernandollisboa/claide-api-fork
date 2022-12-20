@@ -90,6 +90,16 @@ async function activateMember(id) {
     throw new MemberNotFoundError("memberId", id);
   }
 }
+
+async function deactivateMember(id) {
+  try {
+    const member = await memberRepository.deactivateMember(id);
+
+    return member;
+  } catch (err) {
+    throw new MemberNotFoundError("memberId", id);
+  }
+}
 //TO-DO refatorar isso pra destructuring: getAllMembers({isActive, orderBy})
 async function getAllMembers(isActive, orderBy) {
   return memberRepository.getAllMembers(isActive, orderBy);
@@ -184,4 +194,12 @@ async function deleteMember(id) {
   const deletedMember = await memberRepository.deleteMember(id);
   return deletedMember;
 }
-export { createMember, getMemberById, getAllMembers, updateMember, deleteMember, activateMember };
+export {
+  createMember,
+  getMemberById,
+  getAllMembers,
+  updateMember,
+  deleteMember,
+  activateMember,
+  deactivateMember,
+};

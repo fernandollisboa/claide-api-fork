@@ -6,12 +6,10 @@ COPY ./package*.json ./
 
 COPY prisma ./prisma/
 
-COPY .env ./
+COPY ./swagger ./swagger
+
+COPY ./src ./src
 
 RUN npm install
-
-COPY . .
-
-EXPOSE 4000
 
 CMD ["npm", "start"]

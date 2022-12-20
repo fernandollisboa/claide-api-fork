@@ -12,8 +12,10 @@ services:
     ports:
       - "5432:5432"
   api:
-    image: claide_api
+    image: caetanobca/claide:v1.0
     depends_on:
       - db
     ports:
-      - "3000:3000"
+      - "8080:8080"
+    volumes:
+      - ./.env.prod:/app/.env.prod

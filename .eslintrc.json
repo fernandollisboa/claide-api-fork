@@ -14,7 +14,7 @@
     "eqeqeq": "warn",
     "no-console": "warn",
     "import/extensions": ["error", { "js": "ignorePackages" }],
-    "prefer-destructuring": ["warn", { "object": true, "array": false }],
+    "prefer-destructuring": ["warn", { "object": true, "array": true }],
     "import/newline-after-import": ["warn", { "count": 1 }],
     "prettier/prettier": ["error", { "endOfLine": "auto" }],
     "prefer-const": "warn",

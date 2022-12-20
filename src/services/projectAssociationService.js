@@ -1,10 +1,12 @@
 import * as projectAssociationRepository from "../repositories/projectAssociationRepository";
-import { activateMember } from "../services/memberService";
+import { activateMember, deactivateMember } from "../services/memberService";
 import * as projectService from "../services/projectService";
 import ProjectAssociationDateError from "../errors/ProjectAssociationDateError";
 import ProjectNotFoundError from "../errors/ProjectNotFoundError";
 import { getUsername } from "../services/authService";
 import * as activityRecordService from "./activityRecordService";
+import ProjectAssociationNotFoundError from "../errors/ProjectAssociationNotFoundError";
+
 
 export async function createProjectAssociation(projectAssociation, token) {
   const { memberId, projectId, startDate, endDate } = projectAssociation;
@@ -17,10 +19,16 @@ export async function createProjectAssociation(projectAssociation, token) {
     throw new ProjectAssociationDateError();
   }
 
-  await activateMember(memberId);
+  var association = projectAssociation;
+  
+  if (endDate && endDate.getTime() <= new Date().getTime()) {
+    association = { ...association, isActive: false };
+  } else {
+    await activateMember(memberId);
+  }
 
   const newAssociation = await projectAssociationRepository.insertProjectAssociation(
-    projectAssociation
+    association
   );
 
   const activity = {
@@ -34,6 +42,7 @@ export async function createProjectAssociation(projectAssociation, token) {
   activityRecordService.createActivity(activity);
 
   return newAssociation;
+
 }
 
 export async function findByProjectId(projectId) {
@@ -65,27 +74,46 @@ export async function updateProjectAssociation(projectAssociation, token) {
   );
 
   if (!associationToChange) {
-    throw new ProjectNotFoundError("projectId and username", [
+    throw new ProjectAssociationNotFoundError("projectId and memberId", [
       projectAssociation.projectId,
-      projectAssociation.username,
+      projectAssociation.memberId,
     ]);
   }
-  const { endDate, startDate } = projectAssociation;
 
+  const { endDate, startDate } = projectAssociation;
   const project = await projectService.findProjectById(projectId);
   if (
     (startDate && project.creationDate.getTime() >= startDate.getTime()) ||
-    (project.endDate && endDate && project.endDate.getTime() <= endDate.getTime())
+    (project.endDate && endDate && project.endDate.getTime() < endDate.getTime())
   ) {
     throw new ProjectAssociationDateError();
   }
 
-  const newProjectAssociation = {
+  let newProjectAssociation = {
     ...associationToChange,
     endDate,
     startDate,
   };
 
+ if (endDate && endDate.getTime() <= new Date().getTime()) {
+    newProjectAssociation = { ...newProjectAssociation, isActive: false };
+
+    const memberAssociations = await projectAssociationRepository.findByMemberId(
+      newProjectAssociation.memberId
+    );
+
+    let keepActivate = false;
+    memberAssociations.map((association) => {
+      if (association.isActive && association.projectId !== newProjectAssociation.projectId) {
+        keepActivate = true;
+      }
+    });
+
+    if (!keepActivate) {
+      await deactivateMember(newProjectAssociation.memberId);
+    }
+  }
+  
   const associationUpdated = await projectAssociationRepository.updateAssociation(
     newProjectAssociation
   );
@@ -101,4 +129,5 @@ export async function updateProjectAssociation(projectAssociation, token) {
   activityRecordService.createActivity(activity);
 
   return associationUpdated;
+
 }

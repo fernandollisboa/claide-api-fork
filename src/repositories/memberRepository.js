@@ -68,7 +68,17 @@ export async function activateMember(id) {
   return member;
 }
 
-//TO-DO refatorar pra chamar atraves de destructuring:  getAllMembers(isActive, orderBy)
+export async function deactivateMember(id) {
+  const member = await prisma.member.update({
+    where: { id: id },
+    data: {
+      isActive: false,
+    },
+  });
+  return member;
+}
+
+//TO-DO refatorar pra chamar atraves de destructuring:  getAllMembers({isActive, orderBy})
 export async function getAllMembers(isActive, orderBy) {
   return prisma.member.findMany({
     where: { isActive },

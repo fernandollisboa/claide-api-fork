@@ -42,9 +42,8 @@ export async function getMemberById(req, res, next) {
   const { id: idToken } = req.params;
   const id = Number(idToken);
   try {
-    if (isNaN(id)) {
-      throw new InvalidParamError("memberId", id);
-    }
+    if (isNaN(id)) throw new InvalidParamError("memberId", id);
+
     const member = await memberService.getMemberById(id);
 
     let { birthDate } = member;
@@ -61,15 +60,15 @@ export async function getMemberById(req, res, next) {
 export async function getAllMembers(req, res, next) {
   const { isActive, desc } = req.query;
 
-  let isActiveBoolean, organization;
+  let isActiveBoolean, order;
   if (isActive) {
     isActiveBoolean = isActive === "true";
   }
   if (desc) {
-    organization = desc === "true" ? "desc" : "asc";
+    order = desc === "true" ? "desc" : "asc";
   }
   try {
-    const members = await memberService.getAllMembers(isActiveBoolean, organization);
+    const members = await memberService.getAllMembers(isActiveBoolean, order);
 
     const membersData = members.map(formatMemberBirthDateToClient);
 
@@ -89,7 +88,7 @@ function formatMemberBirthDateToClient(member) {
 
 export async function updateMember(req, res, next) {
   const { body } = req;
-  let { birthDate } = req.body;
+  let { birthDate } = body;
 
   const { authorization } = req.headers;
   const token = authorization?.split("Bearer ")[1];
