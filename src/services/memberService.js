@@ -78,7 +78,7 @@ async function activateMember(id) {
 }
 
 async function getAllMembers({ isActive, orderBy } = {}) {
-  return await memberRepository.getAllMembers(isActive, orderBy);
+  return memberRepository.getAllMembers(isActive, orderBy);
 }
 
 //TO-DO ver se precisa mesmo desse destructurign
