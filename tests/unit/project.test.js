@@ -252,7 +252,7 @@ describe("project service", () => {
       it("should not allow to update creationDate", async () => {
         expect.assertions(2);
         const { endDate } = existingProject;
-        const creationDate = faker.date.future(1, endDate);
+        const creationDate = faker.date.future(1, endDate).toISOString();
 
         const newProject = projectFactory.createValidProjectWithoutEndDateWithId({
           ...existingProject,
@@ -286,7 +286,7 @@ describe("project service", () => {
       it("should not allow to update project's endDate", async () => {
         expect.assertions(3);
         const { creationDate, id } = existingProject;
-        const endDate = faker.date.past(1, creationDate);
+        const endDate = faker.date.past(1, creationDate).toISOString();
 
         const newProject = projectFactory.createValidProjectWithoutCreationDateWithId({
           id,
@@ -436,7 +436,6 @@ describe("project service", () => {
           .mockImplementationOnce(() => {
             return { memberId: 1, projectId: 2 };
           });
-
 
         const result = await projectService.updateProject(newProject, "testToken");
         expect(projectRepository.findById).toBeCalledWith(newProject.id);

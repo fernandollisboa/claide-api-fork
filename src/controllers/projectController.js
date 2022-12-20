@@ -188,7 +188,6 @@ export async function updateProjectAssociation(req, res, next) {
   const { authorization } = req.headers;
   const token = authorization?.split("Bearer ")[1];
 
-
   let association = {
     ...body,
     projectId,
