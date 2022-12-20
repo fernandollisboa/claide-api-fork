@@ -3,8 +3,10 @@ import { activateMember } from "../services/memberService";
 import * as projectService from "../services/projectService";
 import ProjectAssociationDateError from "../errors/ProjectAssociationDateError";
 import ProjectNotFoundError from "../errors/ProjectNotFoundError";
+import { getUsername } from "../services/authService";
+import * as activityRecordService from "./activityRecordService";
 
-export async function createProjectAssociation(projectAssociation) {
+export async function createProjectAssociation(projectAssociation, token) {
   const { memberId, projectId, startDate, endDate } = projectAssociation;
 
   const project = await projectService.findProjectById(projectId);
@@ -17,7 +19,21 @@ export async function createProjectAssociation(projectAssociation) {
 
   await activateMember(memberId);
 
-  return await projectAssociationRepository.insertProjectAssociation(projectAssociation);
+  const newAssociation = await projectAssociationRepository.insertProjectAssociation(
+    projectAssociation
+  );
+
+  const activity = {
+    operation: "CREATE",
+    entity: "PROJECT_ASSOCIATION",
+    newValue: newAssociation,
+    idEntity: newAssociation.id,
+    user: getUsername(token),
+  };
+
+  activityRecordService.createActivity(activity);
+
+  return newAssociation;
 }
 
 export async function findByProjectId(projectId) {
@@ -41,7 +57,7 @@ export async function findByProjectIdAndMemberId(projectId, memberId) {
   return project;
 }
 
-export async function updateProjectAssociation(projectAssociation) {
+export async function updateProjectAssociation(projectAssociation, token) {
   const { memberId, projectId } = projectAssociation;
   const associationToChange = await projectAssociationRepository.findByProjectIdAndMemberId(
     projectId,
@@ -54,12 +70,35 @@ export async function updateProjectAssociation(projectAssociation) {
       projectAssociation.username,
     ]);
   }
-  const { endDate, startDate } = associationToChange;
+  const { endDate, startDate } = projectAssociation;
+
+  const project = await projectService.findProjectById(projectId);
+  if (
+    (startDate && project.creationDate.getTime() >= startDate.getTime()) ||
+    (project.endDate && endDate && project.endDate.getTime() <= endDate.getTime())
+  ) {
+    throw new ProjectAssociationDateError();
+  }
 
   const newProjectAssociation = {
-    ...projectAssociation,
+    ...associationToChange,
     endDate,
     startDate,
   };
-  return await projectAssociationRepository.updateAssociation(newProjectAssociation);
+
+  const associationUpdated = await projectAssociationRepository.updateAssociation(
+    newProjectAssociation
+  );
+
+  const activity = {
+    operation: "UPDATE",
+    entity: "PROJECT_ASSOCIATION",
+    oldValue: associationToChange,
+    newValue: associationUpdated,
+    idEntity: associationUpdated.id,
+    user: getUsername(token),
+  };
+  activityRecordService.createActivity(activity);
+
+  return associationUpdated;
 }

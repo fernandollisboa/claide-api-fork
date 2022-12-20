@@ -78,6 +78,8 @@ export async function createProjectAssociation(req, res, next) {
   const { params, body } = req;
   const projectId = Number(params.projectId);
   const memberId = Number(params.memberId);
+  const { authorization } = req.headers;
+  const token = authorization?.split("Bearer ")[1];
 
   let association = {
     ...body,
@@ -100,7 +102,8 @@ export async function createProjectAssociation(req, res, next) {
 
   try {
     const createdProjectAssociation = await projectAssociationService.createProjectAssociation(
-      association
+      association,
+      token
     );
     return res.status(201).send(createdProjectAssociation);
   } catch (err) {
@@ -114,6 +117,7 @@ export async function createProjectAssociation(req, res, next) {
 export async function getProjectAssociationsByProjectId(req, res, next) {
   const { projectId: projectIdToken } = req.params;
   const projectId = Number(projectIdToken);
+
   try {
     if (isNaN(projectId)) {
       throw new InvalidParamError("projectId", projectId);
@@ -177,10 +181,12 @@ export async function getProjectAssociationsByProjectIdAndMemberId(req, res, nex
 }
 
 export async function updateProjectAssociation(req, res, next) {
-  const { body } = req;
+  const { params, body } = req;
+  const projectId = Number(params.projectId);
+  const memberId = Number(params.memberId);
 
-  const projectId = parseInt(body.projectId);
-  const memberId = parseInt(body.memberId);
+  const { authorization } = req.headers;
+  const token = authorization?.split("Bearer ")[1];
 
   let association = {
     ...body,
@@ -205,7 +211,8 @@ export async function updateProjectAssociation(req, res, next) {
 
   try {
     const projectAssociation = await projectAssociationService.updateProjectAssociation(
-      association
+      association,
+      token
     );
     return res.status(200).send(projectAssociation);
   } catch (err) {
