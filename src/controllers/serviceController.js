@@ -43,10 +43,11 @@ async function getServiceById(req, res, next) {
 async function updateService(req, res, next) {
   const id = Number(req.params.serviceId);
   const { body } = req;
-  if (isNaN(id)) throw new InvalidParamError("ServiceId", id);
 
-  const newService = { id, ...body };
   try {
+    if (isNaN(id)) throw new InvalidParamError("serviceId", id);
+    const newService = { id, ...body };
+
     const service = await servicesService.updateService(newService);
     return res.status(200).send(service);
   } catch (err) {
@@ -58,14 +59,13 @@ async function createServiceAssociation(req, res, next) {
   const serviceId = parseInt(req.params.serviceId);
   const { body } = req;
 
-  if (isNaN(serviceId)) new InvalidParamError("ServiceId", serviceId);
-
-  const association = {
-    ...body,
-    serviceId,
-  };
-
   try {
+    if (isNaN(serviceId)) new InvalidParamError("ServiceId", serviceId);
+
+    const association = {
+      ...body,
+      serviceId,
+    };
     const serviceAssociation = await servicesService.createServiceAssociation(association);
     return res.status(201).send(serviceAssociation);
   } catch (err) {

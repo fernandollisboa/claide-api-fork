@@ -2,6 +2,7 @@ import * as serviceAssociationRepository from "../repositories/serviceAssociatio
 import ServiceNotFoundError from "../errors/ServiceNotFoundError";
 import MemberNotFoundError from "../errors/MemberNotFoundError";
 import { getMemberById } from "../services/memberService";
+import ServiceAssociationConflictError from "../errors/ServiceAssociationConflictError.js";
 
 async function insertServiceAssociation({ memberId, serviceId }) {
   try {
@@ -11,7 +12,6 @@ async function insertServiceAssociation({ memberId, serviceId }) {
     });
     return newServiceAssociation;
   } catch (err) {
-    // como melhorar aqui?
     const brokeConstraint = err.message.substring(err.message.indexOf(": `") + 2);
 
     if (brokeConstraint === "`ServiceAssociation_serviceId_fkey (index)`") {
@@ -19,7 +19,10 @@ async function insertServiceAssociation({ memberId, serviceId }) {
     } else if (brokeConstraint === "`ServiceAssociation_memberId_fkey (index)`") {
       throw new MemberNotFoundError("Id", memberId);
     } else {
-      throw new Error("There's already an association between this Service and this Member");
+      throw new ServiceAssociationConflictError(
+        "this ServiceId and Member Id",
+        `serviceId: ${serviceId}, memberId: ${memberId}`
+      );
     }
   }
 }

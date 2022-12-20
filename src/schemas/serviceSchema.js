@@ -16,9 +16,6 @@ export const updateServiceSchema = joi.object({
 });
 
 export const createServiceAssociationSchema = joi.object({
-  serviceId: joi.number().required().messages({
-    "number.pattern.base": "Service id must be a number",
-  }),
   memberId: joi.number().required().messages({
     "number.pattern.base": "Member Id should be a number",
   }),

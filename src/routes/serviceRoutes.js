@@ -21,7 +21,7 @@ serviceRouter.post(
   validateSchema(createServiceAssociationSchema),
   serviceController.createServiceAssociation
 );
-serviceRouter.get("/associations", serviceController.getAllServicesAssociations);
+serviceRouter.get("/associations/all", serviceController.getAllServicesAssociations);
 serviceRouter.get("/:serviceId/members", serviceController.getServiceAssociationByServiceId);
 serviceRouter.get("/:memberId/services", serviceController.getServiceAssociationByMemberId);
 serviceRouter.delete("/:id", serviceController.deleteAssociation);

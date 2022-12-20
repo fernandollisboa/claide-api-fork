@@ -4,6 +4,7 @@ import ServiceConflictError from "../errors/ServiceConflictError.js";
 
 async function createService(serviceData) {
   const { name } = serviceData;
+
   try {
     const newService = await serviceRepository.insertService({ name });
     return newService;
