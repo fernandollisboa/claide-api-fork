@@ -8,7 +8,7 @@ import authRouter from "./authRoutes";
 import errorMiddleware from "../middlewares/errorMiddleware";
 import auth from "../middlewares/authMiddleware";
 
-const swaggerFile = require("../../swagger/swagger_output.json");
+import swaggerFile from "../../swagger/swagger_output";
 
 const routes = Router();
 

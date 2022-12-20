@@ -4,8 +4,8 @@ import { faker } from "@faker-js/faker";
 
 import * as servicesService from "../../src/services/servicesService";
 import * as serviceRepository from "../../src/repositories/serviceRepository";
-import ServiceNotFoundError from "../../src/errors/serviceNotFoundError";
 import ServiceConflictError from "../../src/errors/ServiceConflictError";
+import ServiceNotFoundError from "../../src/errors/ServiceNotFoundError";
 import { createValidService, createValidServiceWithId } from "../factories/serviceFactory";
 
 describe("services service", () => {
