@@ -31,7 +31,7 @@ export async function authenticateUser({ username, password }) {
             if (err) {
               reject({ err, status: 403 });
             } else {
-              const jwToken = jwt.sign({ id: entry.objectName }, process.env.JWT_SECRET, {
+              const jwToken = jwt.sign({ username: username }, process.env.JWT_SECRET, {
                 expiresIn: process.env.JWT_EXPIRATION,
               });
               resolve({ username, jwToken });
@@ -70,4 +70,9 @@ async function getMembers(client) {
       });
     });
   });
+}
+
+export function getUsername(jwtToken) {
+  const payload = jwt.verify(jwtToken, process.env.JWT_SECRET);
+  return payload.username;
 }

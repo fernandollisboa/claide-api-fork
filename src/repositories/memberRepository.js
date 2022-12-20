@@ -17,7 +17,7 @@ export async function insertMember({
   hasKey,
   isBrazilian,
 }) {
-  return prisma.member.create({
+  return await prisma.member.create({
     data: {
       name,
       email,

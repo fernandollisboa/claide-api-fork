@@ -4,10 +4,12 @@ import * as memberRepository from "../repositories/memberRepository";
 import * as memberUtils from "../utils/memberUtils";
 import MemberTooYoungError from "../errors/MemberTooYoungError";
 import MemberNotFoundError from "../errors/MemberNotFoundError";
+import * as activityRecordService from "./activityRecordService";
+import { getUsername } from "../services/authService";
 
 const MINIMUM_REQUIRED_AGE = 15;
 
-async function createMember(memberData) {
+async function createMember(memberData, token) {
   const {
     name,
     email,
@@ -31,7 +33,7 @@ async function createMember(memberData) {
     throw new MemberTooYoungError();
   }
 
-  return memberRepository.insertMember({
+  const newMember = await memberRepository.insertMember({
     name,
     email,
     birthDate,
@@ -48,6 +50,18 @@ async function createMember(memberData) {
     hasKey,
     isBrazilian,
   });
+
+  const activity = {
+    operation: "CREATE",
+    entity: "MEMBER",
+    newValue: newMember,
+    idEntity: newMember.id,
+    user: getUsername(token),
+  };
+
+  activityRecordService.createActivity(activity);
+
+  return newMember;
 }
 
 function isBirthDateValid(birthDate) {
@@ -92,7 +106,7 @@ async function getAllMembers(isActive, orderBy) {
 }
 
 //TO-DO ver se precisa mesmo desse destructurign
-async function updateMember(memberData) {
+async function updateMember(memberData, token) {
   const {
     id,
     name,
@@ -153,6 +167,16 @@ async function updateMember(memberData) {
       hasKey: hasKey ?? toUpdateMember.hasKey,
       isBrazilian: isBrazilian ?? toUpdateMember.isBrazilian,
     });
+    const activity = {
+      operation: "UPDATE",
+      entity: "MEMBER",
+      oldValue: toUpdateMember,
+      newValue: updatedMember,
+      idEntity: updatedMember.id,
+      user: getUsername(token),
+    };
+    activityRecordService.createActivity(activity);
+
     return updatedMember;
   } catch (err) {
     const errorColumn = err.message.substring(err.message.indexOf("(`"));

@@ -6,6 +6,8 @@ import * as projectFactory from "../factories/projectFactory";
 import * as projectAssociationService from "../../src/services/projectAssociationService";
 import ProjectInvalidCreationOrEndDateError from "../../src/errors/ProjectInvalidCreationOrEndDateError";
 import ProjectNotFoundError from "../../src/errors/ProjectNotFoundError";
+import * as authService from "../../src/services/authService";
+import * as activityRecordService from "../../src/services/activityRecordService";
 
 describe("project service", () => {
   describe("createProject function", () => {
@@ -19,8 +21,24 @@ describe("project service", () => {
         jest.spyOn(projectRepository, "insertProject").mockImplementationOnce(() => {
           return [{ ...validProject, id: faker.datatype.number() }];
         });
+        jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
+          return "test.test";
+        });
+        jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
+          return [
+            {
+              id: faker.datatype.number(),
+              operation: "CREATE",
+              entity: "PROJECT",
+              newValue: validProject,
+              idEntity: validProject.id,
+              user: "test.test",
+              date: new Date(),
+            },
+          ];
+        });
 
-        const result = projectService.createProject(validProject);
+        const result = projectService.createProject(validProject, "testToken");
 
         await expect(result).resolves.toMatchObject([validProject]);
         expect(projectRepository.insertProject).toBeCalledTimes(1);
@@ -37,8 +55,24 @@ describe("project service", () => {
         jest.spyOn(projectRepository, "insertProject").mockImplementationOnce(() => {
           return [{ ...newProject, id: faker.datatype.number(), isActive: true }];
         });
+        jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
+          return "test.test";
+        });
+        jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
+          return [
+            {
+              id: faker.datatype.number(),
+              operation: "CREATE",
+              entity: "PROJECT",
+              newValue: newProject,
+              idEntity: newProject.id,
+              user: "test.test",
+              date: new Date(),
+            },
+          ];
+        });
 
-        const result = projectService.createProject(newProject);
+        const result = projectService.createProject(newProject, "testToken");
         expect(result).resolves.toMatchObject([newProject]);
       });
     });
@@ -56,8 +90,24 @@ describe("project service", () => {
         jest.spyOn(projectRepository, "insertProject").mockImplementationOnce(() => {
           return [{ id: faker.datatype.uuid(), isActive: false, ...finalizedProject }];
         });
+        jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
+          return "test.test";
+        });
+        jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
+          return [
+            {
+              id: faker.datatype.number(),
+              operation: "CREATE",
+              entity: "PROJECT",
+              newValue: finalizedProject,
+              idEntity: finalizedProject.id,
+              user: "test.test",
+              date: new Date(),
+            },
+          ];
+        });
 
-        const result = projectService.createProject(finalizedProject);
+        const result = projectService.createProject(finalizedProject, "testToken");
         expect(result).resolves.toMatchObject([finalizedProject]);
       });
     });
@@ -73,8 +123,24 @@ describe("project service", () => {
           creationDate: creationDate,
           endDate: endDate,
         });
+        jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
+          return "test.test";
+        });
+        jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
+          return [
+            {
+              id: faker.datatype.number(),
+              operation: "CREATE",
+              entity: "PROJECT",
+              newValue: finalizedProject,
+              idEntity: finalizedProject.id,
+              user: "test.test",
+              date: new Date(),
+            },
+          ];
+        });
 
-        const result = projectService.createProject(finalizedProject);
+        const result = projectService.createProject(finalizedProject, "testToken");
 
         await expect(result).rejects.toThrow(ProjectInvalidCreationOrEndDateError);
         expect(result).rejects.toHaveProperty(
@@ -146,7 +212,7 @@ describe("project service", () => {
 
         jest.spyOn(projectRepository, "findById").mockReturnValueOnce(null);
 
-        const result = projectService.updateProject(updateProjectWrongId);
+        const result = projectService.updateProject(updateProjectWrongId, "testeToken");
 
         expect(projectRepository.findById).toBeCalledWith(updateProjectWrongId.id);
         expect(result).rejects.toThrow(ProjectNotFoundError);
@@ -171,7 +237,7 @@ describe("project service", () => {
 
         jest.spyOn(projectRepository, "findById").mockReturnValueOnce(existingProject);
 
-        const result = projectService.updateProject(newProject);
+        const result = projectService.updateProject(newProject, "testeToken");
 
         await expect(result).rejects.toThrow(ProjectInvalidCreationOrEndDateError);
         expect(projectRepository.findById).toBeCalledWith(newProject.id);
@@ -194,8 +260,22 @@ describe("project service", () => {
         });
 
         jest.spyOn(projectRepository, "findById").mockReturnValueOnce(existingProject);
+        jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
+          return [
+            {
+              id: faker.datatype.number(),
+              operation: "CREATE",
+              entity: "PROJECT",
+              newValue: newProject,
+              oldValue: existingProject,
+              idEntity: existingProject.id,
+              user: "test.test",
+              date: new Date(),
+            },
+          ];
+        });
 
-        const result = projectService.updateProject(newProject);
+        const result = projectService.updateProject(newProject, "testToken");
 
         expect(projectRepository.findById).toBeCalledWith(newProject.id);
         await expect(result).rejects.toThrow(ProjectInvalidCreationOrEndDateError);
@@ -214,8 +294,22 @@ describe("project service", () => {
         });
 
         jest.spyOn(projectRepository, "findById").mockReturnValueOnce(existingProject);
+        jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
+          return [
+            {
+              id: faker.datatype.number(),
+              operation: "CREATE",
+              entity: "PROJECT",
+              newValue: newProject,
+              oldValue: existingProject,
+              idEntity: existingProject.id,
+              user: "test.test",
+              date: new Date(),
+            },
+          ];
+        });
 
-        const result = projectService.updateProject(newProject);
+        const result = projectService.updateProject(newProject, "testToken");
 
         expect(projectRepository.findById).toBeCalledWith(newProject.id);
         await expect(result).rejects.toEqual(
@@ -240,8 +334,25 @@ describe("project service", () => {
         jest
           .spyOn(projectRepository, "updateProject")
           .mockResolvedValueOnce({ ...newProject, isActive: false });
+        jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
+          return "test.test";
+        });
+        jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
+          return [
+            {
+              id: faker.datatype.number(),
+              operation: "CREATE",
+              entity: "PROJECT",
+              newValue: newProject,
+              oldValue: existingProject,
+              idEntity: existingProject.id,
+              user: "test.test",
+              date: new Date(),
+            },
+          ];
+        });
 
-        const result = await projectService.updateProject(newProject);
+        const result = await projectService.updateProject(newProject, "testToken");
         expect(projectRepository.findById).toBeCalledWith(newProject.id);
         expect(result.isActive).toEqual(false);
         expect(result.creationDate).toEqual(newProject.creationDate);
@@ -263,8 +374,25 @@ describe("project service", () => {
         jest.spyOn(projectRepository, "updateProject").mockImplementationOnce(() => {
           return { ...newProject, isActive: true, creationDate: existingProject.creationDate };
         });
+        jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
+          return "test.test";
+        });
+        jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
+          return [
+            {
+              id: faker.datatype.number(),
+              operation: "CREATE",
+              entity: "PROJECT",
+              newValue: newProject,
+              oldValue: existingProject,
+              idEntity: existingProject.id,
+              user: "test.test",
+              date: new Date(),
+            },
+          ];
+        });
 
-        const result = await projectService.updateProject(newProject);
+        const result = await projectService.updateProject(newProject, "testToken");
 
         expect(projectRepository.findById).toBeCalledWith(newProject.id);
         expect(result.isActive).toEqual(true);
@@ -285,13 +413,32 @@ describe("project service", () => {
         jest.spyOn(projectRepository, "updateProject").mockImplementationOnce(() => {
           return newProject;
         });
+
+        jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
+          return "test.test";
+        });
+        jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
+          return [
+            {
+              id: faker.datatype.number(),
+              operation: "CREATE",
+              entity: "PROJECT",
+              newValue: newProject,
+              oldValue: existingProject,
+              idEntity: existingProject.id,
+              user: "test.test",
+              date: new Date(),
+            },
+          ];
+        });
         jest
           .spyOn(projectAssociationService, "updateProjectAssociation")
           .mockImplementationOnce(() => {
             return { memberId: 1, projectId: 2 };
           });
 
-        const result = await projectService.updateProject(newProject);
+
+        const result = await projectService.updateProject(newProject, "testToken");
         expect(projectRepository.findById).toBeCalledWith(newProject.id);
         expect(result.name).toEqual(newProject.name);
         expect(result.room).toEqual(newProject.room);
