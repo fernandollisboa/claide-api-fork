@@ -1,7 +1,7 @@
 import * as servicesService from "../services/servicesService.js";
-import InvalidParamError from "../errors/invalidParamError.js";
+import InvalidParamError from "../errors/InvalidParamError.js";
 
-async function createService(req, res, next) {
+export async function createService(req, res, next) {
   const { body } = req;
   try {
     const newService = await servicesService.createService(body);
@@ -11,7 +11,7 @@ async function createService(req, res, next) {
   }
 }
 
-async function getAllServices(req, res, next) {
+export async function getAllServices(req, res, next) {
   const { name: serviceName } = req.query;
 
   try {
@@ -28,7 +28,7 @@ async function getAllServices(req, res, next) {
   }
 }
 
-async function getServiceById(req, res, next) {
+export async function getServiceById(req, res, next) {
   const id = Number(req.params.serviceId);
   try {
     if (isNaN(id)) throw new InvalidParamError("ServiceId", id);
@@ -40,14 +40,15 @@ async function getServiceById(req, res, next) {
   }
 }
 
-async function updateService(req, res, next) {
+export async function updateService(req, res, next) {
   const id = Number(req.params.serviceId);
   const { body } = req;
 
   try {
     if (isNaN(id)) throw new InvalidParamError("serviceId", id);
+    console.log({ body });
     const newService = { id, ...body };
-
+    console.log({ body });
     const service = await servicesService.updateService(newService);
     return res.status(200).send(service);
   } catch (err) {
@@ -55,7 +56,7 @@ async function updateService(req, res, next) {
   }
 }
 
-async function createServiceAssociation(req, res, next) {
+export async function createServiceAssociation(req, res, next) {
   const serviceId = parseInt(req.params.serviceId);
   const { body } = req;
 
@@ -73,7 +74,7 @@ async function createServiceAssociation(req, res, next) {
   }
 }
 
-async function getAllServicesAssociations(req, res, next) {
+export async function getAllServicesAssociations(req, res, next) {
   try {
     const associations = await servicesService.getAllServicesAssociations();
     return res.status(200).send(associations);
@@ -82,7 +83,7 @@ async function getAllServicesAssociations(req, res, next) {
   }
 }
 
-async function getServiceAssociationByServiceId(req, res, next) {
+export async function getServiceAssociationByServiceId(req, res, next) {
   const serviceId = Number(req.params.serviceId);
   if (isNaN(serviceId)) throw new InvalidParamError("ServiceId", serviceId);
   try {
@@ -95,7 +96,7 @@ async function getServiceAssociationByServiceId(req, res, next) {
   }
 }
 
-async function getServiceAssociationByMemberId(req, res, next) {
+export async function getServiceAssociationByMemberId(req, res, next) {
   const memberId = Number(req.params.memberId);
   if (isNaN(memberId)) throw new InvalidParamError("MemberId", memberId);
   try {
@@ -106,19 +107,7 @@ async function getServiceAssociationByMemberId(req, res, next) {
   }
 }
 
-async function deleteAssociation(req, res) {
+export async function deleteAssociation(req, res) {
   const deletedAssociation = await servicesService.deleteAssociation();
   return res.status(200).send(deletedAssociation);
 }
-
-export {
-  createService,
-  getAllServices,
-  getServiceById,
-  updateService,
-  createServiceAssociation,
-  getAllServicesAssociations,
-  getServiceAssociationByServiceId,
-  getServiceAssociationByMemberId,
-  deleteAssociation,
-};

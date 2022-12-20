@@ -1,29 +1,37 @@
 import { Router } from "express";
-import * as serviceController from "../controllers/serviceController";
+
+import {
+  createService,
+  getAllServices,
+  getServiceById,
+  updateService,
+  createServiceAssociation,
+  getAllServicesAssociations,
+  getServiceAssociationByServiceId,
+  getServiceAssociationByMemberId,
+  deleteAssociation,
+} from "../controllers/serviceController";
+import {
+  createServiceSchema,
+  updateServiceSchema,
+  createServiceAssociationSchema,
+} from "../schemas/serviceSchema";
 import validateSchema from "../middlewares/schemaValidationMiddleware";
-import { createServiceSchema, updateServiceSchema } from "../schemas/serviceSchema";
-import { createServiceAssociationSchema } from "../schemas/serviceSchema";
-// import auth from "../middlewares/auth";
 
 const serviceRouter = Router();
 
-serviceRouter.post("/", validateSchema(createServiceSchema), serviceController.createService);
-serviceRouter.get("/", serviceController.getAllServices);
-serviceRouter.get("/:serviceId", serviceController.getServiceById);
-serviceRouter.put(
-  "/:serviceId",
-  validateSchema(updateServiceSchema),
-  serviceController.updateService
-);
-
+serviceRouter.post("/", validateSchema(createServiceSchema), createService);
+serviceRouter.get("/", getAllServices);
+serviceRouter.get("/:serviceId", getServiceById);
+serviceRouter.put("/:serviceId", validateSchema(updateServiceSchema), updateService);
 serviceRouter.post(
   "/:serviceId/members",
   validateSchema(createServiceAssociationSchema),
-  serviceController.createServiceAssociation
+  createServiceAssociation
 );
-serviceRouter.get("/associations/all", serviceController.getAllServicesAssociations);
-serviceRouter.get("/:serviceId/members", serviceController.getServiceAssociationByServiceId);
-serviceRouter.get("/:memberId/services", serviceController.getServiceAssociationByMemberId);
-serviceRouter.delete("/:id", serviceController.deleteAssociation);
+serviceRouter.get("/associations/all", getAllServicesAssociations);
+serviceRouter.get("/:serviceId/members", getServiceAssociationByServiceId);
+serviceRouter.get("/:memberId/services", getServiceAssociationByMemberId);
+serviceRouter.delete("/:id", deleteAssociation);
 
 export default serviceRouter;
