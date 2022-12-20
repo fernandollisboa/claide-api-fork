@@ -1,5 +1,5 @@
 import * as projectAssociationRepository from "../repositories/projectAssociationRepository";
-import { activateMember } from "../services/memberService";
+import { activateMember, deactivateMember } from "../services/memberService";
 import * as projectService from "../services/projectService";
 import ProjectAssociationDateError from "../errors/ProjectAssociationDateError";
 import ProjectAssociationNotFoundError from "../errors/ProjectAssociationNotFoundError";
@@ -15,9 +15,15 @@ export async function createProjectAssociation(projectAssociation) {
     throw new ProjectAssociationDateError();
   }
 
-  await activateMember(memberId);
+  var association = projectAssociation;
 
-  return await projectAssociationRepository.insertProjectAssociation(projectAssociation);
+  if (endDate && endDate.getTime() <= new Date().getTime()) {
+    association = { ...association, isActive: false };
+  } else {
+    await activateMember(memberId);
+  }
+
+  return await projectAssociationRepository.insertProjectAssociation(association);
 }
 
 export async function findByProjectId(projectId) {
@@ -59,15 +65,36 @@ export async function updateProjectAssociation(projectAssociation) {
   const project = await projectService.findProjectById(projectId);
   if (
     (startDate && project.creationDate.getTime() >= startDate.getTime()) ||
-    (project.endDate && endDate && project.endDate.getTime() <= endDate.getTime())
+    (project.endDate && endDate && project.endDate.getTime() < endDate.getTime())
   ) {
     throw new ProjectAssociationDateError();
   }
 
-  const newProjectAssociation = {
+  let newProjectAssociation = {
     ...associationToChange,
     endDate,
     startDate,
   };
-  return await projectAssociationRepository.updateAssociation(newProjectAssociation);
+
+  if (endDate && endDate.getTime() <= new Date().getTime()) {
+    newProjectAssociation = { ...newProjectAssociation, isActive: false };
+
+    const memberAssociations = await projectAssociationRepository.findByMemberId(
+      newProjectAssociation.memberId
+    );
+
+    let keepActivate = false;
+    memberAssociations.map((association) => {
+      if (association.isActive && association.projectId !== newProjectAssociation.projectId) {
+        keepActivate = true;
+      }
+    });
+
+    if (!keepActivate) {
+      await deactivateMember(newProjectAssociation.memberId);
+    }
+  }
+  const association = await projectAssociationRepository.updateAssociation(newProjectAssociation);
+
+  return association;
 }
