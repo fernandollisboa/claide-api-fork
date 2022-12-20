@@ -2,11 +2,9 @@ import * as projectAssociationRepository from "../repositories/projectAssociatio
 import { activateMember, deactivateMember } from "../services/memberService";
 import * as projectService from "../services/projectService";
 import ProjectAssociationDateError from "../errors/ProjectAssociationDateError";
-import ProjectNotFoundError from "../errors/ProjectNotFoundError";
 import { getUsername } from "../services/authService";
 import * as activityRecordService from "./activityRecordService";
 import ProjectAssociationNotFoundError from "../errors/ProjectAssociationNotFoundError";
-
 
 export async function createProjectAssociation(projectAssociation, token) {
   const { memberId, projectId, startDate, endDate } = projectAssociation;
@@ -20,16 +18,14 @@ export async function createProjectAssociation(projectAssociation, token) {
   }
 
   var association = projectAssociation;
-  
+
   if (endDate && endDate.getTime() <= new Date().getTime()) {
     association = { ...association, isActive: false };
   } else {
     await activateMember(memberId);
   }
 
-  const newAssociation = await projectAssociationRepository.insertProjectAssociation(
-    association
-  );
+  const newAssociation = await projectAssociationRepository.insertProjectAssociation(association);
 
   const activity = {
     operation: "CREATE",
@@ -42,7 +38,6 @@ export async function createProjectAssociation(projectAssociation, token) {
   activityRecordService.createActivity(activity);
 
   return newAssociation;
-
 }
 
 export async function findByProjectId(projectId) {
@@ -95,7 +90,7 @@ export async function updateProjectAssociation(projectAssociation, token) {
     startDate,
   };
 
- if (endDate && endDate.getTime() <= new Date().getTime()) {
+  if (endDate && endDate.getTime() <= new Date().getTime()) {
     newProjectAssociation = { ...newProjectAssociation, isActive: false };
 
     const memberAssociations = await projectAssociationRepository.findByMemberId(
@@ -113,7 +108,7 @@ export async function updateProjectAssociation(projectAssociation, token) {
       await deactivateMember(newProjectAssociation.memberId);
     }
   }
-  
+
   const associationUpdated = await projectAssociationRepository.updateAssociation(
     newProjectAssociation
   );
@@ -129,5 +124,4 @@ export async function updateProjectAssociation(projectAssociation, token) {
   activityRecordService.createActivity(activity);
 
   return associationUpdated;
-
 }
