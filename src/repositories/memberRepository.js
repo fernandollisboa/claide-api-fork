@@ -58,6 +58,14 @@ export async function getMemberBySecondaryEmail(secondaryEmail) {
   return await prisma.member.findFirst({ where: { secondaryEmail } });
 }
 
+export async function getMemberByLattes(lattes) {
+  return await prisma.member.findFirst({ where: { lattes } });
+}
+
+export async function getMemberByEmailLsd(lsdEmail) {
+  return await prisma.member.findFirst({ where: { lsdEmail } });
+}
+
 export async function activateMember(id) {
   const member = await prisma.member.update({
     where: { id: id },
@@ -123,8 +131,4 @@ export async function updateMember({
     },
   });
   return updatedMember;
-}
-
-export async function deleteMember(id) {
-  await prisma.member.delete({ where: { id } });
 }

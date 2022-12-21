@@ -30,10 +30,10 @@ model Member {
   rg                 String?
   passport           String?
   phone              String
-  lsdEmail           String               @unique
+  lsdEmail           String?               
   secondaryEmail     String?
   memberType         MemberType
-  lattes             String               @unique
+  lattes             String?               
   roomName           String
   hasKey             Boolean?             @default(false)
   isActive           Boolean?             @default(false)

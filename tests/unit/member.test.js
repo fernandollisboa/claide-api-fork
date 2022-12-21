@@ -26,6 +26,9 @@ describe("member service", () => {
         jest.spyOn(memberRepository, "insertMember").mockImplementationOnce(() => {
           return [{ ...validMember, id: faker.datatype.number() }];
         });
+        jest.spyOn(memberRepository, "getMemberByLattes").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberByEmailLsd").mockResolvedValueOnce(null);
+
         jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
           return "test.test";
         });
@@ -42,7 +45,7 @@ describe("member service", () => {
             },
           ];
         });
-        const result = memberService.createMember(validMember);
+        const result = memberService.createMember(validMember, "testeToken");
 
         expect(result).resolves.toMatchObject([validMember]);
       });
