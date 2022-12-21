@@ -63,7 +63,7 @@ export async function updateProject(updateProject, token) {
   if (!isActive) {
     const associations = await findByProjectId(id);
     associations.map(async (association) => {
-      await updateProjectAssociation({ ...association, endDate: new Date(endDate) });
+      await updateProjectAssociation({ ...association, endDate: new Date(endDate) }, token);
     });
   }
   const newProject = {
