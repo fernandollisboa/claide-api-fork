@@ -12,6 +12,8 @@ import * as projectFactory from "../factories/projectFactory";
 import ProjectAssociationDateError from "../../src/errors/ProjectAssociationDateError";
 import ProjectAssociationNotFoundError from "../../src/errors/ProjectAssociationNotFoundError";
 import { createValidMemberWithId } from "../factories/memberFactory";
+import * as authService from "../../src/services/authService";
+import * as activityRecordService from "../../src/services/activityRecordService";
 
 describe("project association service", () => {
   describe("createProjectAssociation function", () => {
@@ -47,13 +49,32 @@ describe("project association service", () => {
         jest.spyOn(projectService, "findProjectById").mockImplementationOnce(() => {
           return project;
         });
-
-        const result = projectAssociationService.createProjectAssociation({
-          projectId,
-          memberId,
-          startDate: validProjectAssociation.startDate,
-          endDate: validProjectAssociation.endDate,
+        jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
+          return "test.test";
         });
+        jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
+          return [
+            {
+              id: faker.datatype.number(),
+              operation: "CREATE",
+              entity: "PROJECT_ASSOCIATION",
+              newValue: validProjectAssociation,
+              idEntity: validProjectAssociation.id,
+              user: "test.test",
+              date: new Date(),
+            },
+          ];
+        });
+
+        const result = projectAssociationService.createProjectAssociation(
+          {
+            projectId,
+            memberId,
+            startDate: validProjectAssociation.startDate,
+            endDate: validProjectAssociation.endDate,
+          },
+          "testToken"
+        );
 
         await expect(projectService.findProjectById).toBeCalledTimes(1);
         await expect(projectService.findProjectById).toBeCalledWith(project.id);
@@ -285,12 +306,32 @@ describe("project association service", () => {
         jest.spyOn(projectAssociationRepository, "updateAssociation").mockImplementationOnce(() => {
           return { ...validProjectAssociation, startDate: newStartDate };
         });
-
-        const result = projectAssociationService.updateProjectAssociation({
-          projectId,
-          memberId,
-          startDate: newStartDate,
+        jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
+          return "test.test";
         });
+        jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
+          return [
+            {
+              id: faker.datatype.number(),
+              operation: "CREATE",
+              entity: "PROJECT_ASSOCIATION",
+              oldValue: validProjectAssociation,
+              newValue: { ...validProjectAssociation, startDate: newStartDate },
+              idEntity: validProjectAssociation.id,
+              user: "test.test",
+              date: new Date(),
+            },
+          ];
+        });
+
+        const result = projectAssociationService.updateProjectAssociation(
+          {
+            projectId,
+            memberId,
+            startDate: newStartDate,
+          },
+          "testeToken"
+        );
 
         await expect(projectAssociationRepository.findByProjectIdAndMemberId).toBeCalledTimes(1);
         await expect(projectAssociationRepository.findByProjectIdAndMemberId).toBeCalledWith(

@@ -8,6 +8,8 @@ import { createValidMember, createValidMemberWithId } from "../factories/memberF
 import MemberTooYoungError from "../../src/errors/MemberTooYoungError";
 import MemberNotFoundError from "../../src/errors/MemberNotFoundError";
 import MemberConflictError from "../../src/errors/MemberConflictError";
+import * as authService from "../../src/services/authService";
+import * as activityRecordService from "../../src/services/activityRecordService";
 
 const MINIMUM_REQUIRED_AGE = 15;
 
@@ -24,7 +26,22 @@ describe("member service", () => {
         jest.spyOn(memberRepository, "insertMember").mockImplementationOnce(() => {
           return [{ ...validMember, id: faker.datatype.number() }];
         });
-
+        jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
+          return "test.test";
+        });
+        jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
+          return [
+            {
+              id: faker.datatype.number(),
+              operation: "CREATE",
+              entity: "MEMBER",
+              newValue: validMember,
+              idEntity: validMember.id,
+              user: "test.test",
+              date: new Date(),
+            },
+          ];
+        });
         const result = memberService.createMember(validMember);
 
         expect(result).resolves.toMatchObject([validMember]);
@@ -296,7 +313,23 @@ describe("member service", () => {
 
         jest.spyOn(memberRepository, "updateMember").mockResolvedValueOnce(newMember);
 
-        const result = memberService.updateMember(newMember);
+        jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
+          return "test.test";
+        });
+        jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
+          return [
+            {
+              id: faker.datatype.number(),
+              operation: "UPDATE",
+              entity: "MEMBER",
+              newValue: newMember,
+              idEntity: newMember.id,
+              user: "test.test",
+              date: new Date(),
+            },
+          ];
+        });
+        const result = memberService.updateMember(newMember, "testeToken");
 
         await expect(result).resolves.toEqual(newMember);
         expect(memberRepository.updateMember).toBeCalledTimes(1);

@@ -81,6 +81,32 @@ model ProjectAssociation {
   memberId  Int
   startDate DateTime
   endDate   DateTime?
+  isActive      Boolean   @default(true)
+
 
   @@unique([projectId, memberId])
+}
+
+model ActivityRecord {
+  id Int @id @default(autoincrement())
+  operation OperationType
+  entity EntityTipe
+  newValue Json
+  oldValue Json?
+  idEntity Int
+  user String  
+  date DateTime
+}
+
+enum OperationType{
+  CREATE
+  UPDATE
+}
+
+enum EntityTipe{
+  PROJECT
+  MEMBER
+  SERVICES
+  SERVICE_ASSOCIATION
+  PROJECT_ASSOCIATION
 }

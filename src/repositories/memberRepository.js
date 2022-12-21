@@ -17,7 +17,7 @@ export async function insertMember({
   hasKey,
   isBrazilian,
 }) {
-  return prisma.member.create({
+  return await prisma.member.create({
     data: {
       name,
       email,
@@ -63,6 +63,16 @@ export async function activateMember(id) {
     where: { id: id },
     data: {
       isActive: true,
+    },
+  });
+  return member;
+}
+
+export async function deactivateMember(id) {
+  const member = await prisma.member.update({
+    where: { id: id },
+    data: {
+      isActive: false,
     },
   });
   return member;
