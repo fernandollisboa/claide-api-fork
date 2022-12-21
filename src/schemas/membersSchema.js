@@ -27,7 +27,10 @@ export const createMemberSchema = joi.object({
     .messages({
       "string.pattern.base": `"rg" must have 7-11 digits`,
     }),
-  passport: joi.string().regex(/^[A-Z]{2}[0-9]{7}/),
+  passport: joi
+    .string()
+    .allow("")
+    .regex(/^[A-Z]{2}[0-9]{7}/),
   phone: joi
     .string()
     .regex(/^[0-9]{11,13}$/)

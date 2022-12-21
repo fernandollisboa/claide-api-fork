@@ -17,6 +17,10 @@ export async function findByProjectId(projectId) {
     where: {
       projectId: Number(projectId), //TO-DO tirar esse Number, deveria já estar certinho desde o controller
     },
+    include: {
+      member: true,
+      project: true,
+    },
   });
   return association;
 }
@@ -25,6 +29,10 @@ export async function findByMemberId(memberId) {
   const association = await prisma.projectAssociation.findMany({
     where: {
       memberId: memberId,
+    },
+    include: {
+      member: true,
+      project: true,
     },
   });
 
