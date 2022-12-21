@@ -105,19 +105,3 @@ export async function updateMember(req, res, next) {
     next(err);
   }
 }
-
-export async function deleteMember(req, res, next) {
-  const { id: idToken } = req.params;
-  const id = Number(idToken);
-
-  try {
-    if (isNaN(id)) {
-      throw new InvalidParamError("memberId", id);
-    }
-    await memberService.deleteMember(id);
-
-    return res.status(200).send({ message: `Member with id: ${id} deleted successfully` });
-  } catch (err) {
-    next(err);
-  }
-}

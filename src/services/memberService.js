@@ -27,7 +27,15 @@ async function createMember(memberData, token) {
     hasKey,
     isBrazilian,
   } = memberData;
-  await memberUtils.checkMemberAlreadyExists(null, cpf, rg, passport, secondaryEmail); // TO-DO refatorar, um pouco feio mandar null, poderia ser desestruturado
+  await memberUtils.checkMemberAlreadyExists(
+    null,
+    cpf,
+    rg,
+    passport,
+    secondaryEmail,
+    lattes,
+    lsdEmail
+  ); // TO-DO refatorar, um pouco feio mandar null, poderia ser desestruturado
 
   if (!isBirthDateValid(birthDate)) {
     throw new MemberTooYoungError();
@@ -186,20 +194,11 @@ async function updateMember(memberData, token) {
   }
 }
 
-async function deleteMember(id) {
-  const member = await memberRepository.getMemberById(id);
-  if (!member) {
-    throw new MemberNotFoundError("id", id);
-  }
-  const deletedMember = await memberRepository.deleteMember(id);
-  return deletedMember;
-}
 export {
   createMember,
   getMemberById,
   getAllMembers,
   updateMember,
-  deleteMember,
   activateMember,
   deactivateMember,
 };

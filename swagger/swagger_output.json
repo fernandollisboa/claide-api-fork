@@ -119,24 +119,7 @@
             "description": "OK"
           }
         }
-      },
-      "delete": {
-        "tags": ["Member"],
-        "description": "Delete a member (Functionality to be removed)",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
+      }    
     },
     "/projects/": {
       "post": {
