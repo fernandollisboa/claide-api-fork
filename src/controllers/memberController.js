@@ -8,6 +8,9 @@ export async function createMember(req, res, next) {
   let validationPassportForeigners;
   let validationCpfRgForBrazilians;
 
+  const { authorization } = req.headers;
+  const token = authorization?.split("Bearer ")[1];
+
   try {
     validationPassportForeigners = await membersSchema.validatePassportForForeigners(body);
     validationCpfRgForBrazilians = await membersSchema.validateRgCpfForBrazilians(body);
@@ -27,7 +30,7 @@ export async function createMember(req, res, next) {
     birthDate = parseBrDateToStandardDate(birthDate);
     const memberData = { ...body, birthDate };
 
-    const createdMember = await memberService.createMember(memberData);
+    const createdMember = await memberService.createMember(memberData, token);
 
     return res.status(201).send(createdMember);
   } catch (err) {
@@ -87,30 +90,17 @@ export async function updateMember(req, res, next) {
   const { body } = req;
   let { birthDate } = body;
 
+  const { authorization } = req.headers;
+  const token = authorization?.split("Bearer ")[1];
+
   try {
     if (birthDate) {
       birthDate = parseBrDateToStandardDate(birthDate);
     }
     const memberData = { ...body, birthDate };
-    const newMember = await memberService.updateMember(memberData);
+    const newMember = await memberService.updateMember(memberData, token);
 
     return res.status(200).send(newMember);
-  } catch (err) {
-    next(err);
-  }
-}
-
-export async function deleteMember(req, res, next) {
-  const { id: idToken } = req.params;
-  const id = Number(idToken);
-
-  try {
-    if (isNaN(id)) {
-      throw new InvalidParamError("memberId", id);
-    }
-    await memberService.deleteMember(id);
-
-    return res.status(200).send({ message: `Member with id: ${id} deleted successfully` });
   } catch (err) {
     next(err);
   }

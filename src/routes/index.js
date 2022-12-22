@@ -7,6 +7,7 @@ import serviceRouter from "./serviceRoutes";
 import authRouter from "./authRoutes";
 import errorMiddleware from "../middlewares/errorMiddleware";
 import auth from "../middlewares/authMiddleware";
+import activitiesRouter from "./activitiesRoutes";
 
 import swaggerFile from "../../swagger/swagger_output";
 
@@ -19,6 +20,7 @@ routes.use("/services", auth, serviceRouter);
 routes.use("/login", authRouter);
 
 routes.use(errorMiddleware);
+routes.use("/activityRecords", auth, activitiesRouter);
 
 routes.use("/doc", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 

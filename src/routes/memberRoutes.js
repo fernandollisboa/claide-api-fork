@@ -5,7 +5,6 @@ import {
   getMemberById,
   getAllMembers,
   updateMember,
-  deleteMember,
 } from "../controllers/memberController";
 import validateSchema from "../middlewares/schemaValidationMiddleware";
 import { createMemberSchema, updateMemberSchema } from "../schemas/membersSchema";
@@ -16,6 +15,5 @@ memberRouter.post("/", validateSchema(createMemberSchema), createMember);
 memberRouter.get("/", getAllMembers);
 memberRouter.get("/:id", getMemberById);
 memberRouter.put("/", validateSchema(updateMemberSchema), updateMember);
-memberRouter.delete("/:id", deleteMember);
 
 export default memberRouter;

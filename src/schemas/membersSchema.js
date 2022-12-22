@@ -28,7 +28,10 @@ export const createMemberSchema = joi.object({
     .messages({
       "string.pattern.base": `"rg" must have 7-11 digits`,
     }),
-  passport: joi.string().regex(/^[A-Z]{2}[0-9]{7}/),
+  passport: joi
+    .string()
+    .allow("")
+    .regex(/^[A-Z]{2}[0-9]{7}/),
   phone: joi
     .string()
     .regex(/^[0-9]{11,13}$/)
@@ -39,11 +42,10 @@ export const createMemberSchema = joi.object({
   lsdEmail: joi
     .string()
     .email({ minDomainSegments: 4 })
-    .pattern(/^\w+([.-]?\w+)*@(lsd\.ufcg\.edu\.br)/)
-    .required(),
+    .pattern(/^\w+([.-]?\w+)*@(lsd\.ufcg\.edu\.br)/),
   secondaryEmail: joi.string().allow("").email(),
   memberType: joi.string().valid("ADMIN", "STUDENT", "SUPPORT", "PROFESSOR", "EXTERNAL").required(),
-  lattes: joi.string().trim().required(),
+  lattes: joi.string().trim(),
   roomName: joi.string(),
   hasKey: joi.boolean().required(),
   isActive: joi.boolean().default(false),
@@ -105,14 +107,14 @@ export const updateMemberSchema = joi.object({
 });
 
 export async function validatePassportForForeigners(body) {
-  if (!body.isBrazilian && !body.passport.trim()) {
+  if (!body.isBrazilian && !body.passport?.trim()) {
     return false;
   }
   return true;
 }
 
 export async function validateRgCpfForBrazilians(body) {
-  if (body.isBrazilian && !body.cpf.trim() && !body.rg.trim()) {
+  if (body.isBrazilian && !body.cpf?.trim() && !body.rg?.trim()) {
     return false;
   }
   return true;

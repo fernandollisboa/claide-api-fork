@@ -17,7 +17,7 @@ export async function insertMember({
   hasKey,
   isBrazilian,
 }) {
-  return prisma.member.create({
+  return await prisma.member.create({
     data: {
       name,
       email,
@@ -58,11 +58,29 @@ export async function getMemberBySecondaryEmail(secondaryEmail) {
   return await prisma.member.findFirst({ where: { secondaryEmail } });
 }
 
+export async function getMemberByLattes(lattes) {
+  return await prisma.member.findFirst({ where: { lattes } });
+}
+
+export async function getMemberByEmailLsd(lsdEmail) {
+  return await prisma.member.findFirst({ where: { lsdEmail } });
+}
+
 export async function activateMember(id) {
   const member = await prisma.member.update({
     where: { id: id },
     data: {
       isActive: true,
+    },
+  });
+  return member;
+}
+
+export async function deactivateMember(id) {
+  const member = await prisma.member.update({
+    where: { id: id },
+    data: {
+      isActive: false,
     },
   });
   return member;
@@ -113,8 +131,4 @@ export async function updateMember({
     },
   });
   return updatedMember;
-}
-
-export async function deleteMember(id) {
-  await prisma.member.delete({ where: { id } });
 }
