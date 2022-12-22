@@ -4,13 +4,7 @@ import extension from "@joi/date";
 const joi = joiBase.extend(extension);
 //TO-DO padronizar mensagens de falha de validação
 export const createMemberSchema = joi.object({
-  name: joi
-    .string()
-    .regex(/^([a-zA-Z]{2,}\s[a-zA-Z])/)
-    .required()
-    .messages({
-      "string.pattern.base": `"name" must have only letters and spaces, with at least two names (first name and last name)"`,
-    }),
+  name: joi.string().required(),
   email: joi.string().required().email(),
   birthDate: joi.date().format("DD/MM/YYYY").required(),
   username: joi.string().min(3).max(20).required(),
