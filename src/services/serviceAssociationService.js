@@ -4,7 +4,7 @@ import MemberNotFoundError from "../errors/MemberNotFoundError";
 import { getMemberById } from "../services/memberService";
 import ServiceAssociationConflictError from "../errors/ServiceAssociationConflictError.js";
 
-async function insertServiceAssociation({ memberId, serviceId }) {
+async function createServiceAssociation({ memberId, serviceId }) {
   try {
     const newServiceAssociation = await serviceAssociationRepository.insertServiceAssociation({
       memberId,
@@ -44,14 +44,9 @@ async function getServiceAssociationsByMemberId(id) {
   return member;
 }
 
-async function deleteAssociation() {
-  return serviceAssociationRepository.deleteA();
-}
-
 export {
-  insertServiceAssociation,
+  createServiceAssociation,
   getAllServicesAssociations,
   getServiceAssociationsByServiceId,
   getServiceAssociationsByMemberId,
-  deleteAssociation,
 };
