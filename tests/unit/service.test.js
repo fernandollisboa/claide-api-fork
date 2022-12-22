@@ -4,9 +4,14 @@ import { faker } from "@faker-js/faker";
 
 import * as servicesService from "../../src/services/servicesService";
 import * as serviceRepository from "../../src/repositories/serviceRepository";
+import * as serviceAssociationService from "../../src/services/serviceAssociationService";
 import ServiceConflictError from "../../src/errors/ServiceConflictError";
 import ServiceNotFoundError from "../../src/errors/ServiceNotFoundError";
 import { createValidService, createValidServiceWithId } from "../factories/serviceFactory";
+import {
+  createValidServiceAssociation,
+  createValidServiceAssociationWithId,
+} from "../factories/serviceAssociationFactory";
 
 describe("services service", () => {
   describe("create service function", () => {
@@ -164,6 +169,7 @@ describe("services service", () => {
         jest
           .spyOn(serviceRepository, "findServiceById")
           .mockRejectedValueOnce(new ServiceNotFoundError("id", serviceInvalidId));
+
         const result = servicesService.updateService({
           id: serviceInvalidId,
           name: validServiceBody,
@@ -194,6 +200,78 @@ describe("services service", () => {
         expect(result).rejects.toThrow(new ServiceConflictError("name", existingService.name));
         expect(result).rejects.toEqual(new ServiceConflictError("name", existingService.name));
       });
+    });
+  });
+  describe("create serviceAssociation function", () => {
+    describe("given the service data and member date are valid", () => {
+      it("should create a new serviceAssociation", async () => {
+        const validServiceAssociation = createValidServiceAssociation();
+
+        jest
+          .spyOn(serviceAssociationService, "createServiceAssociation")
+          .mockImplementationOnce(() => {
+            return [{ id: faker.datatype.uuid(), ...validServiceAssociation }];
+          });
+        const result = servicesService.createServiceAssociation(validServiceAssociation);
+        expect(result).resolves.toMatchObject([validServiceAssociation]);
+      });
+    });
+  });
+  describe("getAllServicesAssociations function", () => {
+    describe("given the method is called", () => {
+      it("should return all service's associations registered", async () => {
+        expect.assertions(2);
+        const serviceAssociationGeneratedId = faker.datatype.uuid();
+        const serviceAssociationGeneratedId2 = faker.datatype.uuid();
+        const validServiceAssociationWithId = createValidServiceAssociationWithId({
+          id: serviceAssociationGeneratedId,
+        });
+        const validServiceAssociationWithId2 = createValidServiceAssociationWithId({
+          id: serviceAssociationGeneratedId2,
+        });
+
+        jest
+          .spyOn(serviceAssociationService, "getAllServicesAssociations")
+          .mockImplementationOnce(() => [
+            validServiceAssociationWithId,
+            validServiceAssociationWithId2,
+          ]);
+
+        const result = await servicesService.getAllServicesAssociations();
+
+        expect(serviceAssociationService.getAllServicesAssociations).toBeCalledTimes(1);
+        expect(result).toEqual([validServiceAssociationWithId, validServiceAssociationWithId2]);
+      });
+    });
+  });
+  describe("getServiceAssociationsByServiceId function", () => {
+    it("should return all associations that involves this serviceId", async () => {
+      expect.assertions(2);
+      const serviceGeneratedId = faker.datatype.uuid();
+      const serviceAssociationGeneratedId = faker.datatype.uuid();
+      const serviceAssociationGeneratedId2 = faker.datatype.uuid();
+      const validServiceAssociationWithId = createValidServiceAssociationWithId({
+        id: serviceAssociationGeneratedId,
+        serviceId: serviceGeneratedId,
+      });
+      const validServiceAssociationWithId2 = createValidServiceAssociationWithId({
+        id: serviceAssociationGeneratedId2,
+        serviceId: serviceGeneratedId,
+      });
+      jest
+        .spyOn(serviceRepository, "findServiceById")
+        .mockResolvedValueOnce(createValidServiceWithId({ id: serviceGeneratedId }));
+      jest
+        .spyOn(serviceAssociationService, "getServiceAssociationsByServiceId")
+        .mockImplementationOnce(() => [
+          validServiceAssociationWithId,
+          validServiceAssociationWithId2,
+        ]);
+
+      const result = await servicesService.getServiceAssociationsByServiceId(serviceGeneratedId);
+
+      expect(serviceAssociationService.getServiceAssociationsByServiceId).toBeCalledTimes(1);
+      expect(result).toEqual([validServiceAssociationWithId, validServiceAssociationWithId2]);
     });
   });
 });
