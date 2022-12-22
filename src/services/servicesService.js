@@ -44,7 +44,7 @@ async function updateService({ id, name }) {
 }
 
 async function createServiceAssociation({ memberId, serviceId }) {
-  const newServiceAssociation = await serviceAssociationService.insertServiceAssociation({
+  const newServiceAssociation = await serviceAssociationService.createServiceAssociation({
     memberId,
     serviceId,
   });
@@ -68,9 +68,6 @@ async function getServiceAssociationsByMemberId(memberId) {
   return await serviceAssociationService.getServiceAssociationsByMemberId(memberId);
 }
 
-async function deleteAssociation() {
-  return await serviceAssociationService.deleteAssociation();
-}
 export {
   createService,
   getAllServices,
@@ -81,5 +78,4 @@ export {
   getAllServicesAssociations,
   getServiceAssociationsByServiceId,
   getServiceAssociationsByMemberId,
-  deleteAssociation,
 };

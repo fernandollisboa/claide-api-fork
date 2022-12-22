@@ -22,14 +22,9 @@ async function getAllAssociationsByMemberId(id) {
   return await prisma.serviceAssociation.findMany({ where: { memberId: id } });
 }
 
-async function deleteA() {
-  await prisma.serviceAssociation.deleteMany();
-}
-
 export {
   insertServiceAssociation,
   getAllAssociations,
   getAllAssociationsByServiceId,
   getAllAssociationsByMemberId,
-  deleteA,
 };

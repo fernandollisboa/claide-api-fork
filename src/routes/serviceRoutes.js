@@ -9,7 +9,6 @@ import {
   getAllServicesAssociations,
   getServiceAssociationByServiceId,
   getServiceAssociationByMemberId,
-  deleteAssociation,
 } from "../controllers/serviceController";
 import {
   createServiceSchema,
@@ -32,6 +31,5 @@ serviceRouter.post(
 serviceRouter.get("/associations/all", getAllServicesAssociations);
 serviceRouter.get("/:serviceId/members", getServiceAssociationByServiceId);
 serviceRouter.get("/:memberId/services", getServiceAssociationByMemberId);
-serviceRouter.delete("/:id", deleteAssociation);
 
 export default serviceRouter;

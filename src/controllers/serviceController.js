@@ -46,9 +46,7 @@ export async function updateService(req, res, next) {
 
   try {
     if (isNaN(id)) throw new InvalidParamError("serviceId", id);
-    console.log({ body });
     const newService = { id, ...body };
-    console.log({ body });
     const service = await servicesService.updateService(newService);
     return res.status(200).send(service);
   } catch (err) {
@@ -57,7 +55,7 @@ export async function updateService(req, res, next) {
 }
 
 export async function createServiceAssociation(req, res, next) {
-  const serviceId = parseInt(req.params.serviceId);
+  const serviceId = Number(req.params.serviceId);
   const { body } = req;
 
   try {
@@ -105,9 +103,4 @@ export async function getServiceAssociationByMemberId(req, res, next) {
   } catch (err) {
     next(err);
   }
-}
-
-export async function deleteAssociation(req, res) {
-  const deletedAssociation = await servicesService.deleteAssociation();
-  return res.status(200).send(deletedAssociation);
 }
