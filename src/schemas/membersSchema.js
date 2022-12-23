@@ -10,6 +10,7 @@ export const createMemberSchema = joi.object({
   username: joi.string().min(3).max(20).required(),
   cpf: joi
     .string()
+    .allow("")
     .regex(/^[0-9]{11}$/)
     .messages({
       "string.pattern.base": `"cpf" must have 11 digits`,

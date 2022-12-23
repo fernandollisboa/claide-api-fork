@@ -1,3 +1,4 @@
 prisma/migrations/
 src/setup.js
 src/server.js
+swagger/

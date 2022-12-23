@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import {
   createMember,
   getMemberById,
@@ -11,8 +12,8 @@ import { createMemberSchema, updateMemberSchema } from "../schemas/membersSchema
 const memberRouter = Router();
 
 memberRouter.post("/", validateSchema(createMemberSchema), createMember);
-memberRouter.get("/:id", getMemberById);
 memberRouter.get("/", getAllMembers);
+memberRouter.get("/:id", getMemberById);
 memberRouter.put("/", validateSchema(updateMemberSchema), updateMember);
 
 export default memberRouter;

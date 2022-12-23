@@ -39,6 +39,7 @@ model Member {
   isActive           Boolean?             @default(false)
   isBrazilian        Boolean?             @default(true)
   ProjectAssociation ProjectAssociation[]
+  ServiceAssociation ServiceAssociation[]
 
   @@map("members")
 }
@@ -85,6 +86,23 @@ model ProjectAssociation {
 
 
   @@unique([projectId, memberId])
+}
+
+model Services {
+  id                 Int                  @id @default(autoincrement())
+  name               String               @unique
+  ServiceAssociation ServiceAssociation[]
+}
+
+model ServiceAssociation {
+  id             Int      @id @default(autoincrement())
+  service        Services @relation(fields: [serviceId], references: [id])
+  member         Member   @relation(fields: [memberId], references: [id])
+  serviceId    Int
+  memberId Int
+
+  @@unique([serviceId, memberId])
+
 }
 
 model ActivityRecord {

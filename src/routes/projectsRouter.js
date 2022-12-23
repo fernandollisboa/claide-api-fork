@@ -1,4 +1,5 @@
 import { Router } from "express";
+
 import {
   createProject,
   getAllProjects,
@@ -29,6 +30,7 @@ projectsRouter.post(
 );
 projectsRouter.get("/:projectId/members", getProjectAssociationsByProjectId);
 projectsRouter.get("/members/:memberId", getProjectAssociationsByMemberId);
+// TO-DO acho que essa rota deveria ser GET /members/:memberId/projects
 projectsRouter.get("/:projectId/members/:memberId", getProjectAssociationsByProjectIdAndMemberId);
 projectsRouter.put(
   "/:projectId/members/:memberId",
