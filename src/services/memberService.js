@@ -27,15 +27,14 @@ async function createMember(memberData, token) {
     hasKey,
     isBrazilian,
   } = memberData;
-  await memberUtils.checkMemberAlreadyExists(
-    null,
+  await memberUtils.checkMemberAlreadyExists({
     cpf,
     rg,
     passport,
     secondaryEmail,
     lattes,
-    lsdEmail
-  ); // TO-DO refatorar, um pouco feio mandar null, poderia ser desestruturado
+    lsdEmail,
+  });
 
   if (!isBirthDateValid(birthDate)) {
     throw new MemberTooYoungError();
@@ -108,8 +107,8 @@ async function deactivateMember(id) {
     throw new MemberNotFoundError("memberId", id);
   }
 }
-//TO-DO refatorar isso pra destructuring: getAllMembers({isActive, orderBy})
-async function getAllMembers(isActive, orderBy) {
+
+async function getAllMembers({ isActive, orderBy } = {}) {
   return memberRepository.getAllMembers(isActive, orderBy);
 }
 
@@ -136,10 +135,9 @@ async function updateMember(memberData, token) {
 
   const toUpdateMember = await memberRepository.getMemberById(id);
   if (!toUpdateMember) {
-    throw new MemberNotFoundError("Member does not exist");
+    throw new MemberNotFoundError("Id", id);
   }
-
-  await memberUtils.checkMemberAlreadyExists(id, cpf, rg, passport, secondaryEmail);
+  await memberUtils.checkMemberAlreadyExists({ id, cpf, rg, passport, secondaryEmail });
   if (isBrazilian !== null && isBrazilian !== undefined) {
     await memberUtils.checkMemberDocumentsOnUpdate({
       isBrazilian,

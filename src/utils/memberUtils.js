@@ -1,15 +1,15 @@
 import MemberConflictError from "../errors/MemberConflictError";
 import * as memberRepository from "../repositories/memberRepository";
 
-export async function checkMemberAlreadyExists(
+export async function checkMemberAlreadyExists({
   id,
   cpf,
   rg,
   passport,
   secondaryEmail,
   lattes,
-  lsdEmail
-) {
+  lsdEmail,
+}) {
   //TO-DO fazer todas essas verificações em paralelo
   let checkCpf, checkRg, checkPassport, checkSecondaryEmail, checkLattes, checkLsdEmail;
   if (cpf) checkCpf = await memberRepository.getMemberByCpf(cpf);

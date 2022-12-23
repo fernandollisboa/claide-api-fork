@@ -68,7 +68,7 @@ export async function getAllMembers(req, res, next) {
     order = desc === "true" ? "desc" : "asc";
   }
   try {
-    const members = await memberService.getAllMembers(isActiveBoolean, order);
+    const members = await memberService.getAllMembers({ isActiveBoolean, order });
 
     const membersData = members.map(formatMemberBirthDateToClient);
 
