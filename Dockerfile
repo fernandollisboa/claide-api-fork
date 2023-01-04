@@ -1,15 +1,12 @@
-FROM node:alpine
+FROM node:18.12
 
 WORKDIR /app
 
 COPY ./package*.json ./
-
 COPY prisma ./prisma/
-
 COPY ./swagger ./swagger
+COPY ./dist ./dist
 
-COPY ./src ./src
+RUN npm i
 
-RUN npm install
-
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]
