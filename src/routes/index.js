@@ -20,7 +20,7 @@ routes.use("/services", auth, serviceRouter);
 routes.use("/login", authRouter);
 
 routes.use(errorMiddleware);
-routes.use("/activityRecords", auth, activitiesRouter);
+routes.use("/activity-records", auth, activitiesRouter);
 
 routes.use("/doc", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
