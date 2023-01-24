@@ -7,7 +7,7 @@ export function createValidProject({
   endDate,
   building,
   room,
-  embrapii_code,
+  embrapiiCode,
   financier,
 } = {}) {
   return {
@@ -16,7 +16,7 @@ export function createValidProject({
     endDate: endDate || faker.date.future(),
     building: building || faker.address.country(),
     room: room || faker.address.secondaryAddress(),
-    embrapii_code: embrapii_code || new RandExp(/[0-9]{11}/).gen(),
+    embrapiiCode: embrapiiCode || new RandExp(/[0-9]{11}/).gen(),
     financier: financier || faker.company.name(),
   };
 }
@@ -26,7 +26,7 @@ export function createValidProjectWithoutEndDate({
   creationDate,
   building,
   room,
-  embrapii_code,
+  embrapiiCode,
   financier,
 } = {}) {
   return {
@@ -34,7 +34,7 @@ export function createValidProjectWithoutEndDate({
     creationDate: creationDate || faker.date.past(),
     building: building || faker.address.country(),
     room: room || faker.address.secondaryAddress(),
-    embrapii_code: embrapii_code || new RandExp(/[0-9]{11}/).gen(),
+    embrapiiCode: embrapiiCode || new RandExp(/[0-9]{11}/).gen(),
     financier: financier || faker.company.name(),
   };
 }
@@ -44,7 +44,7 @@ export function createValidProjectWithoutCreationDate({
   endDate,
   building,
   room,
-  embrapii_code,
+  embrapiiCode,
   financier,
 } = {}) {
   return {
@@ -52,7 +52,7 @@ export function createValidProjectWithoutCreationDate({
     endDate: endDate || faker.date.future(),
     building: building || faker.address.country(),
     room: room || faker.address.secondaryAddress(),
-    embrapii_code: embrapii_code || new RandExp(/[0-9]{11}/).gen(),
+    embrapiiCode: embrapiiCode || new RandExp(/[0-9]{11}/).gen(),
     financier: financier || faker.company.name(),
   };
 }
