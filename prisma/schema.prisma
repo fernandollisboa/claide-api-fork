@@ -59,7 +59,7 @@ model Project {
   endDate       DateTime?
   building      String?
   room          String?
-  embrapii_code String?
+  embrapiiCode String?
   financier     String?
   isActive      Boolean   @default(true)
 

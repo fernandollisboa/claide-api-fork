@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 import ldap from "ldapjs";
+import BaseError from "../errors/BaseError";
+import UserUnauthorizedOrNotFoundError from "../errors/UserUnauthorizedOrNotFoundError";
 
 //TO-DO após testar, refatorar isso aqui tudo !!!
 export async function authenticateUser({ username, password }) {
@@ -20,7 +22,7 @@ export async function authenticateUser({ username, password }) {
   const members = await getMembers(client);
   return new Promise((resolve, reject) => {
     if (members.err) {
-      reject(members);
+      reject(new BaseError("Wasn't possible to load the members list", 400));
     }
     client.search(process.env.LDAP_SEARCHBASE, opts, (err, resp) => {
       const users = [];
@@ -29,7 +31,7 @@ export async function authenticateUser({ username, password }) {
         if (members.member.includes(entry.object.dn)) {
           client.bind(entry.objectName, password, function (err) {
             if (err) {
-              reject({ err, status: 403 });
+              reject(new BaseError("Invalid Credentials", 403));
             } else {
               const jwToken = jwt.sign({ username: username }, process.env.JWT_SECRET, {
                 expiresIn: process.env.JWT_EXPIRATION,
@@ -38,12 +40,12 @@ export async function authenticateUser({ username, password }) {
             }
           });
         } else {
-          reject({ err: "User unauthorized", status: 401 });
+          reject(new UserUnauthorizedOrNotFoundError(username));
         }
       });
       resp.on("end", () => {
         if (!users.length) {
-          reject({ err: "User not found", status: 404 });
+          reject(new UserUnauthorizedOrNotFoundError(username));
         }
       });
     });
@@ -65,7 +67,7 @@ async function getMembers(client) {
       });
       resp.on("end", () => {
         if (!users.length) {
-          reject({ err: "Group not found", status: 404 });
+          reject(new BaseError("LDAP group not found", 404));
         }
       });
     });

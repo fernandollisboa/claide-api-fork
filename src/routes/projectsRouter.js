@@ -29,8 +29,7 @@ projectsRouter.post(
   createProjectAssociation
 );
 projectsRouter.get("/:projectId/members", getProjectAssociationsByProjectId);
-projectsRouter.get("/members/:memberId", getProjectAssociationsByMemberId);
-// TO-DO acho que essa rota deveria ser GET /members/:memberId/projects
+projectsRouter.get("/members/:memberId/projects", getProjectAssociationsByMemberId);
 projectsRouter.get("/:projectId/members/:memberId", getProjectAssociationsByProjectIdAndMemberId);
 projectsRouter.put(
   "/:projectId/members/:memberId",

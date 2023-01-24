@@ -2,7 +2,6 @@ import * as projectService from "../services/projectService";
 import * as projectAssociationService from "../services/projectAssociationService";
 import { parseBrDateToStandardDate } from "../utils/dateUtils";
 import InvalidParamError from "../errors/InvalidParamError";
-import BaseError from "../errors/BaseError";
 
 export async function createProject(req, res, next) {
   const { body } = req;
@@ -107,9 +106,6 @@ export async function createProjectAssociation(req, res, next) {
     );
     return res.status(201).send(createdProjectAssociation);
   } catch (err) {
-    if (err instanceof BaseError) {
-      return res.status(err.statusCode).send(err.message);
-    }
     next(err);
   }
 }
@@ -126,9 +122,6 @@ export async function getProjectAssociationsByProjectId(req, res, next) {
 
     return res.status(200).send(associations);
   } catch (err) {
-    if (err instanceof BaseError) {
-      return res.status(err.statusCode).send(err.message);
-    }
     next(err);
   }
 }
@@ -145,9 +138,6 @@ export async function getProjectAssociationsByMemberId(req, res, next) {
     const associations = await projectAssociationService.findByMemberId(memberId);
     return res.status(200).send(associations);
   } catch (err) {
-    if (err instanceof BaseError) {
-      return res.status(err.statusCode).send(err.message);
-    }
     next(err);
   }
 }
@@ -173,9 +163,6 @@ export async function getProjectAssociationsByProjectIdAndMemberId(req, res, nex
 
     return res.status(200).send(associations);
   } catch (err) {
-    if (err instanceof BaseError) {
-      return res.status(err.statusCode).send(err.message);
-    }
     next(err);
   }
 }
@@ -216,9 +203,6 @@ export async function updateProjectAssociation(req, res, next) {
     );
     return res.status(200).send(projectAssociation);
   } catch (err) {
-    if (err instanceof BaseError) {
-      return res.status(err.statusCode).send(err.message);
-    }
     next(err);
   }
 }
