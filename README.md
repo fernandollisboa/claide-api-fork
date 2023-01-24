@@ -1,37 +1,77 @@
-# cLaIdeApi
+# ClAIDe
 
-### Run with Docker
+## Running the application
 
-First of all create and fill `.env.prod` file as shown in `.env.example`. After that you have to check if the port setting in the `docker-compose.yml` file is acording with your `.env.prod`. Now, all you have to do is run the following command:
+Here we provide three ways to deploy this application, with Docker, localy as dev and as prod.
 
-```
+### Run with Docker 
+
+First of all create and fill `.env` file as shown in `.env.example`. After that you have to check if the port setting in the `docker-compose.yml` file is acording with your `.env`. Now, you have to run the following command:
+
+```docker
 docker compose up
 ```
 
-### Run as dev locally:
+Once both applications are up (the clAIDe and the database). You need to apply the migrations on the database with the following command:
 
-- `npm i`
-- create and fill `.env` file as shown in `.env.example`
-- `npx prisma migrate dev`
-- `npm run dev`
+```docker
+docker exec <NAME_OF_YOUR_CLAIDE_CONTAINER>  npx prisma migrate deploy
+```
 
+### Run as dev
+
+To run locally with the dev enviroment you first need to create and fill the `.env.dev`file as shown in `.env.example` . Once you have set your environment variables, If you didnt had installed all the dependencies, it's time to do that with the following command:
+
+```npm
+npm i
+```
+
+Now you need to generate and run the Prisma migrations with the following command:
+
+```npm
+npx prisma migrate dev
+```
+
+At this moment all you have to do is run with this command
+
+```npm
+npm run dev
+```
+ 
 ### Run as prod locally:
 
-- `npm i`
-- create and fill `.env.prod` file as shown in `.env.example`
-- `npm run build`
-- `npm start`
+To run locally with the dev enviroment you first need to create and fill the `.env.prod`file as shown in `.env.example` . Once you have set your environment variables, If you didnt had installed all the dependencies, it's time to do that with the following command:
 
-### Run test :
+```npm
+npm i
+```
 
-- `npm i`
-- `npm run tesT`
+Now you need to generate and run the Prisma migrations and generate the prod files with the following command:
 
-### Run test as dev:
+```npm
+npm run build
+```
 
-- `npm i`
-- `npm run test:dev`
+Once eveerything is configured, you just need to run the following command: 
 
-#### Generate and run migrations
+```npm
+npm start
+```
 
-1. `npx prisma migrate dev`
+## Running the tests 
+
+If you didnt had installed all the dependencies, first you will need to do that with the following command:
+
+```npm
+npm i
+```
+
+Once you have the dependencies installed, all you have to do is run the test with one of the two following commands:
+
+```npm
+npm run test
+
+or
+
+npm run test:dev
+```
