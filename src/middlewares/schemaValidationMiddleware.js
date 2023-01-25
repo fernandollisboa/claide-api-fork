@@ -5,8 +5,12 @@ export default function validateSchema(schema) {
     const { error } = schema.validate(req.body, { abortEarly: false });
 
     if (error) {
+      console.log(error.details);
       const errorMessages = error.details.map((detail) => detail.message);
-      return res.status(httpStatusCode.UNPROCESSABLE_ENTITY).send(errorMessages);
+      const errorLabels = error.details.map((detail) => detail.context.label);
+      return res
+        .status(httpStatusCode.UNPROCESSABLE_ENTITY)
+        .send({ message: errorMessages, errorLabels: errorLabels });
     }
 
     return next();

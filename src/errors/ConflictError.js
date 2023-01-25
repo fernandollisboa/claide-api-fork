@@ -13,5 +13,6 @@ export default class ConflictError extends BaseError {
     this.message = message;
     this.statusCode = statusCode;
     this.name = "ConflictError";
+    this.errorLabels = [attribute];
   }
 }
