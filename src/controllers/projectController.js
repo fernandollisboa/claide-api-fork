@@ -9,12 +9,14 @@ export async function createProject(req, res, next) {
   const token = authorization?.split("Bearer ")[1];
 
   try {
-    let { creationDate, endDate } = body;
-    creationDate = parseBrDateToStandardDate(creationDate);
-    if (endDate) endDate = parseBrDateToStandardDate(endDate);
+    //let { creationDate, endDate } = body;
+    //creationDate = parseBrDateToStandardDate(creationDate);
+    //if (endDate) endDate = parseBrDateToStandardDate(endDate);
+//
+    //const projectData = { ...body, creationDate, endDate };
+    //const createdProject = await projectService.createProject(projectData, token);
 
-    const projectData = { ...body, creationDate, endDate };
-    const createdProject = await projectService.createProject(projectData, token);
+    const createdProject = await projectService.createProject(body, token);
 
     return res.status(201).send(createdProject);
   } catch (err) {
@@ -60,12 +62,13 @@ export async function updateProject(req, res, next) {
   const token = authorization?.split("Bearer ")[1];
 
   try {
-    let { creationDate, endDate } = body;
-    if (creationDate) creationDate = parseBrDateToStandardDate(creationDate);
-    if (endDate) endDate = parseBrDateToStandardDate(endDate);
-
-    const projectData = { ...body, creationDate, endDate };
-    const project = await projectService.updateProject(projectData, token);
+    //let { creationDate, endDate } = body;
+    //if (creationDate) creationDate = parseBrDateToStandardDate(creationDate);
+    //if (endDate) endDate = parseBrDateToStandardDate(endDate);
+//
+    //const projectData = { ...body, creationDate, endDate };
+    //const project = await projectService.updateProject(projectData, token);
+    const project = await projectService.updateProject(body, token);
 
     return res.status(200).send(project);
   } catch (err) {
@@ -87,13 +90,15 @@ export async function createProjectAssociation(req, res, next) {
   };
 
   try {
-    const startDate = new Date(parseBrDateToStandardDate(body.startDate));
+    //const startDate = new Date(parseBrDateToStandardDate(body.startDate));
+    const startDate = body.startDate;
     association = {
       ...association,
       startDate,
     };
     if (body.endDate) {
-      const endDate = new Date(parseBrDateToStandardDate(body.endDate));
+      //const endDate = new Date(parseBrDateToStandardDate(body.endDate));
+      const endDate = body.endDate;
       association = {
         ...association,
         endDate,
@@ -182,14 +187,14 @@ export async function updateProjectAssociation(req, res, next) {
   };
 
   if (body.startDate) {
-    const startDate = new Date(parseBrDateToStandardDate(body.startDate));
+    const startDate = body.startDate;
     association = {
       ...association,
       startDate,
     };
   }
   if (body.endDate) {
-    const endDate = new Date(parseBrDateToStandardDate(body.endDate));
+    const endDate = body.endDate;
     association = {
       ...association,
       endDate,
