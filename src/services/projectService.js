@@ -55,7 +55,7 @@ export async function updateProject(updateProject, token) {
 
   const { endDate: updateEndDate, creationDate: updateCreationDate } = updateProject;
 
-  const endDate = updateEndDate ?? originalEndDate.toISOString();
+  const endDate = updateEndDate ?? originalEndDate?.toISOString();
   const creationDate = updateCreationDate ?? originalCreationDate.toISOString();
 
   const isActive = isProjectActive({ creationDate, endDate });

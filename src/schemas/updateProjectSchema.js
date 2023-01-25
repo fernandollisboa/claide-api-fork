@@ -10,7 +10,7 @@ const updateProjectSchema = joi.object({
   endDate: joi.date().allow(null).format("DD/MM/YYYY"),
   room: joi.string().allow(null),
   building: joi.string().allow(null),
-  embrapii_code: joi.string().allow(null),
+  embrapiiCode: joi.string().allow(null),
   financier: joi.string().allow(null),
 });
 

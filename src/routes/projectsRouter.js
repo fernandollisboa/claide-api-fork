@@ -9,7 +9,6 @@ import {
   getProjectAssociationsByProjectId,
   getProjectAssociationsByProjectIdAndMemberId,
   updateProjectAssociation,
-  getProjectAssociationsByMemberId,
 } from "../controllers/projectController";
 import validateSchema from "../middlewares/schemaValidationMiddleware";
 import createProjectAssociationSchema from "../schemas/createProjectAssociationSchema";
@@ -29,8 +28,6 @@ projectsRouter.post(
   createProjectAssociation
 );
 projectsRouter.get("/:projectId/members", getProjectAssociationsByProjectId);
-projectsRouter.get("/members/:memberId", getProjectAssociationsByMemberId);
-// TO-DO acho que essa rota deveria ser GET /members/:memberId/projects
 projectsRouter.get("/:projectId/members/:memberId", getProjectAssociationsByProjectIdAndMemberId);
 projectsRouter.put(
   "/:projectId/members/:memberId",

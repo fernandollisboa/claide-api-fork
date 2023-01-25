@@ -6,7 +6,7 @@ export async function insertProject({
   endDate,
   building,
   room,
-  embrapii_code,
+  embrapiiCode,
   financier,
   isActive,
 }) {
@@ -17,7 +17,7 @@ export async function insertProject({
       endDate,
       building,
       room,
-      embrapii_code,
+      embrapiiCode,
       financier,
       isActive,
     },
@@ -37,7 +37,7 @@ export async function findByName(name) {
 export async function findByEmbrapiiCode(code) {
   const projectToFind = await prisma.project.findMany({
     where: {
-      embrapii_code: code,
+      embrapiiCode: code,
     },
   });
 
@@ -62,7 +62,7 @@ export async function updateProject({
   endDate,
   building,
   room,
-  embrapii_code,
+  embrapiiCode,
   financier,
   isActive,
 }) {
@@ -76,7 +76,7 @@ export async function updateProject({
       endDate: endDate || undefined,
       building: building || undefined,
       room: room || undefined,
-      embrapii_code: embrapii_code || undefined,
+      embrapiiCode: embrapiiCode || undefined,
       financier: financier || undefined,
       isActive: isActive,
     },
