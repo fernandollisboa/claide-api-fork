@@ -1,5 +1,6 @@
 import MemberConflictError from "../errors/MemberConflictError";
 import * as memberRepository from "../repositories/memberRepository";
+import BaseError from "../errors/BaseError";
 
 export async function checkMemberAlreadyExists({
   id,
@@ -39,13 +40,15 @@ export async function checkMemberDocumentsOnUpdate({
 }) {
   if (
     isBrazilian &&
-    (!existingMember.rg.trim() || !existingMember.cpf.trim() || !rg.trim() || !cpf.trim())
+    !existingMember.rg.trim() &&
+    !existingMember.cpf.trim() &&
+    !rg.trim() &&
+    !cpf.trim()
   ) {
-    throw new Error("A brazilian must have cpf or rg");
+    throw new BaseError("A brazilian must have cpf or rg", 422);
   }
 
-  //TO-DO trocar eses dois pra BaseError
   if (!isBrazilian && (!existingMember.passport.trim() || !passport.trim())) {
-    throw new Error("A foreigner must have a passport");
+    throw new BaseError("A foreigner must have a passport", 422);
   }
 }

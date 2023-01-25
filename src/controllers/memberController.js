@@ -2,30 +2,25 @@ import * as membersSchema from "../schemas/membersSchema";
 import * as memberService from "../services/memberService";
 import { parseBrDateToStandardDate, parseISODateToBrDate } from "../utils/dateUtils";
 import InvalidParamError from "../errors/InvalidParamError";
+import InvalidAtributeError from "../errors/InvalidAtributeError";
 
 export async function createMember(req, res, next) {
   const { body } = req;
-  let validationPassportForeigners;
-  let validationCpfRgForBrazilians;
 
   const { authorization } = req.headers;
   const token = authorization?.split("Bearer ")[1];
 
-  try {
-    validationPassportForeigners = await membersSchema.validatePassportForForeigners(body);
-    validationCpfRgForBrazilians = await membersSchema.validateRgCpfForBrazilians(body);
-  } catch (err) {
-    //TO-DO consertar isso, esse try/catch existe pois se vc mandar um body sem cpf/rg/passaport ele quebra
-    return res.status(422).send(err.message);
-  }
+  const validationPassportForeigners = await membersSchema.validatePassportForForeigners(body);
+  const validationCpfRgForBrazilians = await membersSchema.validateRgCpfForBrazilians(body);
 
-  if (!validationCpfRgForBrazilians) {
-    return res.status(422).send("CPF or RG is necessary for brazilians!");
-  }
-  if (!validationPassportForeigners) {
-    return res.status(422).send("Passport is necessary for foreigners!");
-  }
   try {
+    if (!validationCpfRgForBrazilians) {
+      const value = `empty`;
+      throw new InvalidAtributeError("cpf and rg", value);
+    }
+    if (!validationPassportForeigners) {
+      throw new InvalidAtributeError("passport", "empty");
+    }
     let { birthDate } = req.body;
     birthDate = parseBrDateToStandardDate(birthDate);
     const memberData = { ...body, birthDate };
