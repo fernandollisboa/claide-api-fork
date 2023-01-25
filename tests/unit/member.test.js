@@ -254,35 +254,6 @@ describe("member service", () => {
           new MemberConflictError("secondaryEmail", newMember.secondaryEmail)
         );
       });
-      // it("should not update member", async () => {
-      //   // expect.assertions(2);
-      //   jest
-      //     .spyOn(memberRepository, "updateMember")
-      //     .mockResolvedValueOnce(new Error(" constraint problem on column (`username`)"));
-
-      //   jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
-      //     return [
-      //       {
-      //         id: faker.datatype.number(),
-      //         operation: "UPDATE",
-      //         entity: "MEMBER",
-      //         newValue: newMember,
-      //         idEntity: newMember.id,
-      //         user: "test.test",
-      //         date: new Date(),
-      //       },
-      //     ];
-      //   });
-      //   const result = memberService.updateMember(newMember);
-
-      //   await expect(result).rejects.toThrow(BaseError);
-      //   expect(result).rejects.toEqual(
-      //     new BaseError(
-      //       `Already exists a member with this data on column username, duplicate data!`,
-      //       409
-      //     )
-      //   );
-      // });
     });
 
     describe("given member is too young", () => {
