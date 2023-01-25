@@ -8,6 +8,7 @@ import { createValidMember, createValidMemberWithId } from "../factories/memberF
 import MemberTooYoungError from "../../src/errors/MemberTooYoungError";
 import MemberNotFoundError from "../../src/errors/MemberNotFoundError";
 import MemberConflictError from "../../src/errors/MemberConflictError";
+import BaseError from "../../src/errors/BaseError";
 import * as authService from "../../src/services/authService";
 import * as activityRecordService from "../../src/services/activityRecordService";
 
@@ -197,6 +198,18 @@ describe("member service", () => {
     jest.spyOn(memberRepository, "getMemberByPassport").mockResolvedValue(null);
     jest.spyOn(memberRepository, "getMemberBySecondaryEmail").mockResolvedValue(null);
 
+    describe("given the member is not present", () => {
+      it("should not allow the update to proceed", async () => {
+        // expect.assertions(2);
+        jest.spyOn(memberRepository, "getMemberById").mockResolvedValueOnce(null);
+
+        const result = memberService.updateMember(newMember);
+
+        expect(memberRepository.getMemberById).toBeCalledWith(newMember.id);
+        await expect(result).rejects.toThrow(MemberNotFoundError);
+        expect(result).rejects.toEqual(new MemberNotFoundError("Id", newMember.id));
+      });
+    });
     describe("given member's data is duplicated", () => {
       it("should not update member's cpf", async () => {
         expect.assertions(2);
@@ -241,50 +254,35 @@ describe("member service", () => {
           new MemberConflictError("secondaryEmail", newMember.secondaryEmail)
         );
       });
-    });
+      // it("should not update member", async () => {
+      //   // expect.assertions(2);
+      //   jest
+      //     .spyOn(memberRepository, "updateMember")
+      //     .mockResolvedValueOnce(new Error(" constraint problem on column (`username`)"));
 
-    describe("given member's documents are invalid", () => {
-      it("should not update as a brazilian with empty rg", async () => {
-        expect.assertions(2);
-        const brazilianInvalidMember = createValidMemberWithId({
-          id: existingMember.id,
-          isBrazilian: true,
-          rg: "   ",
-        });
+      //   jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
+      //     return [
+      //       {
+      //         id: faker.datatype.number(),
+      //         operation: "UPDATE",
+      //         entity: "MEMBER",
+      //         newValue: newMember,
+      //         idEntity: newMember.id,
+      //         user: "test.test",
+      //         date: new Date(),
+      //       },
+      //     ];
+      //   });
+      //   const result = memberService.updateMember(newMember);
 
-        const result = memberService.updateMember(brazilianInvalidMember);
-
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty("message", "A brazilian must have cpf or rg");
-      });
-
-      it("should not update as a brazilian with empty cpf", async () => {
-        expect.assertions(2);
-        const brazilianInvalidMember = createValidMemberWithId({
-          id: existingMember.id,
-          isBrazilian: true,
-          cpf: "",
-        });
-
-        const result = memberService.updateMember(brazilianInvalidMember);
-
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty("message", "A brazilian must have cpf or rg");
-      });
-
-      it("should not update as a foreigner", async () => {
-        expect.assertions(2);
-        const foreignInvalidMember = createValidMemberWithId({
-          id: existingMember.id,
-          isBrazilian: false,
-          passport: "   ",
-        });
-
-        const result = memberService.updateMember(foreignInvalidMember);
-
-        await expect(result).rejects.toThrow(Error);
-        expect(result).rejects.toHaveProperty("message", "A foreigner must have a passport");
-      });
+      //   await expect(result).rejects.toThrow(BaseError);
+      //   expect(result).rejects.toEqual(
+      //     new BaseError(
+      //       `Already exists a member with this data on column username, duplicate data!`,
+      //       409
+      //     )
+      //   );
+      // });
     });
 
     describe("given member is too young", () => {

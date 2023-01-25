@@ -6,6 +6,7 @@ import MemberTooYoungError from "../errors/MemberTooYoungError";
 import MemberNotFoundError from "../errors/MemberNotFoundError";
 import * as activityRecordService from "./activityRecordService";
 import { getUsername } from "../services/authService";
+import BaseError from "../errors/BaseError";
 
 const MINIMUM_REQUIRED_AGE = 15;
 
@@ -112,7 +113,6 @@ async function getAllMembers({ isActive, orderBy } = {}) {
   return memberRepository.getAllMembers(isActive, orderBy);
 }
 
-//TO-DO ver se precisa mesmo desse destructurign
 async function updateMember(memberData, token) {
   const {
     id,
@@ -186,8 +186,9 @@ async function updateMember(memberData, token) {
     return updatedMember;
   } catch (err) {
     const errorColumn = err.message.substring(err.message.indexOf("(`"));
-    throw new Error(
-      `Already exists a member with this data on column ${errorColumn}, duplicate data!`
+    throw new BaseError(
+      `Already exists a member with this data on column ${errorColumn}, duplicate data!`,
+      409
     );
   }
 }
