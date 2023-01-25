@@ -12,7 +12,7 @@ export async function insertProjectAssociation({
       projectId,
       memberId,
       startDate,
-      endDate,
+      endDate: endDate || undefined,
       isActive,
     },
   });
@@ -63,8 +63,8 @@ export async function updateAssociation({ projectId, memberId, startDate, endDat
       projectId_memberId: { projectId, memberId },
     },
     data: {
-      endDate: endDate,
-      startDate: startDate,
+      endDate: endDate || undefined,
+      startDate: startDate || undefined,
       isActive: isActive,
     },
   });

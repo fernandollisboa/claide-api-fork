@@ -15,7 +15,7 @@ export async function insertActivity({
       entity,
       newValue,
       oldValue,
-      idEntity,
+      idEntity: Number(idEntity),
       user,
       date,
     },

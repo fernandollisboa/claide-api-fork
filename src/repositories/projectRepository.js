@@ -14,7 +14,7 @@ export async function insertProject({
     data: {
       name,
       creationDate,
-      endDate,
+      endDate: endDate || undefined,
       building,
       room,
       embrapiiCode,
