@@ -1,6 +1,6 @@
 import * as membersSchema from "../schemas/membersSchema";
 import * as memberService from "../services/memberService";
-import { parseBrDateToStandardDate, parseISODateToBrDate } from "../utils/dateUtils";
+import { parseBrDateToStandardDate } from "../utils/dateUtils";
 import InvalidParamError from "../errors/InvalidParamError";
 
 export async function createMember(req, res, next) {
@@ -46,12 +46,7 @@ export async function getMemberById(req, res, next) {
 
     const member = await memberService.getMemberById(id);
 
-    let { birthDate } = member;
-    birthDate = parseISODateToBrDate(birthDate);
-
-    const memberData = { ...member, birthDate };
-
-    return res.status(200).send(memberData);
+    return res.status(200).send(member);
   } catch (err) {
     next(err);
   }
@@ -70,22 +65,11 @@ export async function getAllMembers(req, res, next) {
   try {
     const members = await memberService.getAllMembers({ isActiveBoolean, order });
 
-    const membersData = members.map(formatMemberBirthDateToClient);
-
-    return res.status(200).send(membersData);
+    return res.status(200).send(members);
   } catch (err) {
     next(err);
   }
 }
-
-function formatMemberBirthDateToClient(member) {
-  const birthDate = parseISODateToBrDate(member.birthDate);
-  return {
-    ...member,
-    birthDate,
-  };
-}
-
 export async function updateMember(req, res, next) {
   const { body } = req;
   let { birthDate } = body;

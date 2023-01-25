@@ -2,9 +2,14 @@
 import httpStatusCode from "../enum/httpStatusCode";
 import BaseError from "../errors/BaseError";
 import { Prisma } from "@prisma/client";
+import ConflictError from "../errors/ConflictError";
+import ProjectInvalidCreationOrEndDateError from "../errors/ProjectInvalidCreationOrEndDateError";
 
 export default async function errorMiddleware(err, req, res, next) {
   console.error("Middleware de erro:\n", err);
+
+  if (err instanceof ConflictError || err instanceof ProjectInvalidCreationOrEndDateError)
+    return res.status(err.statusCode).send({ message: err.message, errorLabels: err.errorLabels });
 
   if (err instanceof BaseError) return res.status(err.statusCode).send({ message: err.message });
 
@@ -16,7 +21,7 @@ export default async function errorMiddleware(err, req, res, next) {
       const { target } = err.meta;
       return res
         .status(httpStatusCode.CONFLICT)
-        .send({ message: `duplicate data on column "${target}"` }); //TO-DO evitar que create member utilize disso
+        .send({ message: `duplicate data on column "${target}"`, errorLabels: target }); //TODO evitar que create member utilize disso
     }
   }
 

@@ -6,7 +6,7 @@ export default class ProjectInvalidCreationOrEndDateError extends BaseError {
   constructor(
     creationDate,
     endDate,
-    message = `Error: creationDate (${dayjs(creationDate).format(
+    message = `CreationDate (${dayjs(creationDate).format(
       "DD/MM/YYYY"
     )}) must be before endDate (${dayjs(endDate).format("DD/MM/YYYY")})`,
     statusCode = httpStatusCode.UNPROCESSABLE_ENTITY
@@ -15,5 +15,6 @@ export default class ProjectInvalidCreationOrEndDateError extends BaseError {
     this.message = message;
     this.statusCode = statusCode;
     this.name = "ProjectInvalidCreationOrEndDateError";
+    this.errorLabels = ["creationDate", "endDate"];
   }
 }
