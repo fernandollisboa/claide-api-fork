@@ -4,8 +4,8 @@ import extension from "@joi/date";
 const joi = joiBase.extend(extension);
 
 const updateProjectAssociationSchema = joi.object({
-  startDate: joi.date().format("DD/MM/YYYY"),
-  endDate: joi.date().allow(null).format("DD/MM/YYYY"),
+  startDate: joi.date().iso(),
+  endDate: joi.date().iso().allow(""),
 });
 
 export default updateProjectAssociationSchema;

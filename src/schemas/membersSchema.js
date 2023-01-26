@@ -5,7 +5,7 @@ const joi = joiBase.extend(extension);
 export const createMemberSchema = joi.object({
   name: joi.string().required(),
   email: joi.string().required().email(),
-  birthDate: joi.date().format("DD/MM/YYYY").required(),
+  birthDate: joi.date().iso().required(),
   username: joi.string().min(3).max(20).required(),
   cpf: joi
     .string()
@@ -35,7 +35,7 @@ export const updateMemberSchema = joi.object({
   id: joi.number().required(),
   name: joi.string().required(),
   email: joi.string().allow("").email(),
-  birthDate: joi.date().allow("").format("DD/MM/YYYY"),
+  birthDate: joi.date().allow("").iso(),
   username: joi.string().min(3).max(20).allow(""),
   cpf: joi
     .string()

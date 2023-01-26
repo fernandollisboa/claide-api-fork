@@ -6,12 +6,12 @@ const joi = joiBase.extend(extension);
 const updateProjectSchema = joi.object({
   id: joi.number().integer().required(),
   name: joi.string(),
-  creationDate: joi.date().format("DD/MM/YYYY"),
-  endDate: joi.date().allow(null).format("DD/MM/YYYY"),
-  room: joi.string().allow(null),
-  building: joi.string().allow(null),
-  embrapiiCode: joi.string().allow(null),
-  financier: joi.string().allow(null),
+  creationDate: joi.date().iso(),
+  endDate: joi.date().iso().allow(""),
+  room: joi.string().allow(""),
+  building: joi.string().allow(""),
+  embrapiiCode: joi.string().allow(""),
+  financier: joi.string().allow(""),
 });
 
 export default updateProjectSchema;
