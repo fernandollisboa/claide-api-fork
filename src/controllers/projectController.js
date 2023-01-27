@@ -60,13 +60,14 @@ export async function updateProject(req, res, next) {
   const { body } = req;
   const { authorization } = req.headers;
   const token = authorization?.split("Bearer ")[1];
+  const id = Number(req.params.id)
 
   try {
     let { creationDate, endDate } = body;
     if (creationDate) creationDate = new Date(creationDate);
     if (endDate) endDate = new Date(endDate);
 
-    const projectData = { ...body, creationDate, endDate };
+    const projectData = { ...body, id,creationDate, endDate };
     const project = await projectService.updateProject(projectData, token);
     //const project = await projectService.updateProject(body, token);
 

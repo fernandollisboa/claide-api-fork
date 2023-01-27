@@ -21,7 +21,7 @@ const projectsRouter = Router();
 projectsRouter.post("/", validateSchema(createProjectSchema), createProject);
 projectsRouter.get("/", getAllProjects);
 projectsRouter.get("/:id", getProjectById);
-projectsRouter.put("/", validateSchema(updateProjectSchema), updateProject);
+projectsRouter.put("/:id", validateSchema(updateProjectSchema), updateProject);
 projectsRouter.post(
   "/:projectId/members",
   validateSchema(createProjectAssociationSchema),

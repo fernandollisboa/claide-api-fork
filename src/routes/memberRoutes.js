@@ -15,7 +15,7 @@ const memberRouter = Router();
 memberRouter.post("/", validateSchema(createMemberSchema), createMember);
 memberRouter.get("/", getAllMembers);
 memberRouter.get("/:id", getMemberById);
-memberRouter.put("/", validateSchema(updateMemberSchema), updateMember);
+memberRouter.put("/:id", validateSchema(updateMemberSchema), updateMember);
 memberRouter.get("/:memberId/projects", getProjectAssociationsByMemberId);
 
 export default memberRouter;

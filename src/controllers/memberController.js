@@ -66,7 +66,10 @@ export async function getAllMembers(req, res, next) {
   }
 }
 export async function updateMember(req, res, next) {
-  const { body } = req;
+  const { body } = req;    
+  const id = Number(req.params.id);
+  
+  
   let { birthDate } = body;
 
   const { authorization } = req.headers;
@@ -76,7 +79,7 @@ export async function updateMember(req, res, next) {
     if (birthDate) {
       birthDate = new Date(birthDate);
     }
-    const memberData = { ...body, birthDate };
+    const memberData = { ...body,id, birthDate };
     const newMember = await memberService.updateMember(memberData, token);
     //const newMember = await memberService.updateMember(body, token);
 
