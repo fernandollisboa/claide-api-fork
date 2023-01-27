@@ -79,14 +79,12 @@ export async function updateProject(req, res, next) {
 export async function createProjectAssociation(req, res, next) {
   const { params, body } = req;
   const projectId = Number(params.projectId);
-  const memberId = Number(params.memberId);
   const { authorization } = req.headers;
   const token = authorization?.split("Bearer ")[1];
 
   let association = {
     ...body,
     projectId,
-    memberId,
   };
 
   try {

@@ -11,15 +11,15 @@ export async function createProjectAssociation(projectAssociation, token) {
 
   const project = await projectService.findProjectById(projectId);
   if (
-    project.creationDate.getTime() >= startDate.getTime() ||
-    (project.endDate && endDate && project.endDate.getTime() <= endDate.getTime())
+    project.creationDate >= startDate ||
+    (project.endDate && endDate && project.endDate <= endDate)
   ) {
     throw new ProjectAssociationDateError();
   }
 
   var association = projectAssociation;
 
-  if (endDate && endDate.getTime() <= new Date().getTime()) {
+  if (endDate && endDate <= new Date()) {
     association = { ...association, isActive: false };
   } else {
     await activateMember(memberId);
@@ -78,8 +78,8 @@ export async function updateProjectAssociation(projectAssociation, token) {
   const { endDate, startDate } = projectAssociation;
   const project = await projectService.findProjectById(projectId);
   if (
-    (startDate && project.creationDate.getTime() >= startDate.getTime()) ||
-    (project.endDate && endDate && project.endDate.getTime() < endDate.getTime())
+    (startDate && project.creationDate >= startDate) ||
+    (project.endDate && endDate && project.endDate < endDate)
   ) {
     throw new ProjectAssociationDateError();
   }
@@ -90,7 +90,7 @@ export async function updateProjectAssociation(projectAssociation, token) {
     startDate,
   };
 
-  if (endDate && endDate.getTime() <= new Date().getTime()) {
+  if (endDate && endDate <= new Date()) {
     newProjectAssociation = { ...newProjectAssociation, isActive: false };
 
     const memberAssociations = await projectAssociationRepository.findByMemberId(
