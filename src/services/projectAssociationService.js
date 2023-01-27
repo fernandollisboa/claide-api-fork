@@ -77,12 +77,21 @@ export async function updateProjectAssociation(projectAssociation, token) {
 
   const { endDate, startDate } = projectAssociation;
   const project = await projectService.findProjectById(projectId);
-  
+
   if (
     (startDate && project.creationDate >= startDate) ||
     (project.endDate && endDate && project.endDate < endDate)
   ) {
     throw new ProjectAssociationDateError();
+  }
+
+  if (
+    (associationToChange.endDate && startDate && associationToChange.endDate < startDate) ||
+    (endDate && associationToChange.startDate > endDate)
+  ) {
+    throw new ProjectAssociationDateError(
+      "the project association startDate must be before than the endDate"
+    );
   }
 
   let newProjectAssociation = {
@@ -125,4 +134,17 @@ export async function updateProjectAssociation(projectAssociation, token) {
   activityRecordService.createActivity(activity);
 
   return associationUpdated;
+}
+
+export async function verifyProjectDate(association, updateCreationDate, updateEndDate) {
+  if (association.startDate < updateCreationDate) {
+    throw new ProjectAssociationDateError(
+      "The project shouldn't start after any of its associations"
+    );
+  }
+  if (association.endDate && association.endDate < updateEndDate) {
+    throw new ProjectAssociationDateError(
+      "The project shouldn't end before any of its associations"
+    );
+  }
 }

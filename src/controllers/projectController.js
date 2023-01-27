@@ -1,6 +1,5 @@
 import * as projectService from "../services/projectService";
 import * as projectAssociationService from "../services/projectAssociationService";
-import { parseBrDateToStandardDate } from "../utils/dateUtils";
 import InvalidParamError from "../errors/InvalidParamError";
 
 export async function createProject(req, res, next) {

@@ -453,6 +453,112 @@ describe("project association service", () => {
       });
     });
 
+    describe("given an invalid startDate", () => {
+      it("should not allow the edition of the association with startDate before than the endDate", async () => {
+        expect.assertions(5);
+
+        const memberId = faker.datatype.number({ min: 1 });
+
+        const projectId = faker.datatype.number({ min: 1 });
+        const project = projectFactory.createValidProjectWithId({
+          id: projectId,
+          creationDate: new Date(dayjs(faker.date.past(1, "2010-01-01T00:00:00.000Z"))),
+          endDate: new Date(dayjs(faker.date.future(1, "2030-01-01T00:00:00.000Z"))),
+        });
+
+        const validProjectAssociation = projectAssociationFactory.createValidProjectAssociation({
+          projectId,
+          memberId,
+        });
+
+        jest
+          .spyOn(projectAssociationRepository, "findByProjectIdAndMemberId")
+          .mockImplementationOnce(() => {
+            return validProjectAssociation;
+          });
+
+        jest.spyOn(projectService, "findProjectById").mockImplementationOnce(() => {
+          return project;
+        });
+
+        const newStartDate = new Date(dayjs(faker.date.future(1, "2035-01-01T00:00:00.000Z")));
+
+        const result = projectAssociationService.updateProjectAssociation({
+          projectId,
+          memberId,
+          startDate: newStartDate,
+        });
+
+        await expect(projectAssociationRepository.findByProjectIdAndMemberId).toBeCalledTimes(1);
+        await expect(projectAssociationRepository.findByProjectIdAndMemberId).toBeCalledWith(
+          projectId,
+          memberId
+        );
+
+        await expect(projectService.findProjectById).toBeCalledTimes(1);
+        await expect(projectService.findProjectById).toBeCalledWith(project.id);
+
+        expect(result).rejects.toEqual(
+          new ProjectAssociationDateError(
+            "the project association startDate must be before than the endDate"
+          )
+        );
+      });
+    });
+
+    describe("given an invalid endDate", () => {
+      it("should not allow the edition of the association with endDate after than the startDate", async () => {
+        expect.assertions(5);
+
+        const memberId = faker.datatype.number({ min: 1 });
+
+        const projectId = faker.datatype.number({ min: 1 });
+        const project = projectFactory.createValidProjectWithId({
+          id: projectId,
+          creationDate: new Date(dayjs(faker.date.past(1, "2010-01-01T00:00:00.000Z"))),
+          endDate: new Date(dayjs(faker.date.future(1, "2030-01-01T00:00:00.000Z"))),
+        });
+
+        const validProjectAssociation = projectAssociationFactory.createValidProjectAssociation({
+          projectId,
+          memberId,
+        });
+
+        jest
+          .spyOn(projectAssociationRepository, "findByProjectIdAndMemberId")
+          .mockImplementationOnce(() => {
+            return validProjectAssociation;
+          });
+
+        jest.spyOn(projectService, "findProjectById").mockImplementationOnce(() => {
+          return project;
+        });
+
+        const newEndDate = new Date(dayjs(faker.date.past(1, "2000-01-01T00:00:00.000Z")));
+
+        const result = projectAssociationService.updateProjectAssociation({
+          projectId,
+          memberId,
+          endDate: newEndDate,
+        });
+
+        await expect(projectAssociationRepository.findByProjectIdAndMemberId).toBeCalledTimes(1);
+        await expect(projectAssociationRepository.findByProjectIdAndMemberId).toBeCalledWith(
+          projectId,
+          memberId
+        );
+
+        await expect(projectService.findProjectById).toBeCalledTimes(1);
+        await expect(projectService.findProjectById).toBeCalledWith(project.id);
+
+        expect(result).rejects.toEqual(
+          new ProjectAssociationDateError(
+            "the project association startDate must be before than the endDate"
+          )
+        );
+      });
+    });
+
     describe("updating an association that doesn't exists", () => {
       it("should not allow the edition of an association that doesnt exists", async () => {
         expect.assertions(3);
