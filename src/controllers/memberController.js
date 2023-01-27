@@ -1,6 +1,5 @@
 import * as membersSchema from "../schemas/membersSchema";
 import * as memberService from "../services/memberService";
-import { parseBrDateToStandardDate } from "../utils/dateUtils";
 import InvalidParamError from "../errors/InvalidParamError";
 import InvalidAtributeError from "../errors/InvalidAtributeError";
 
@@ -21,12 +20,12 @@ export async function createMember(req, res, next) {
     if (!validationPassportForeigners) {
       throw new InvalidAtributeError("passport", "empty");
     }
-    //let { birthDate } = req.body;
-    //birthDate = parseBrDateToStandardDate(birthDate);
-    //const memberData = { ...body, birthDate };
+    let { birthDate } = req.body;
+    birthDate = new Date(birthDate);
+    const memberData = { ...body, birthDate };
 
-    //const createdMember = await memberService.createMember(memberData, token);
-    const createdMember = await memberService.createMember(body, token);
+    const createdMember = await memberService.createMember(memberData, token);
+    //const createdMember = await memberService.createMember(body, token);
 
     return res.status(201).send(createdMember);
   } catch (err) {
@@ -74,12 +73,12 @@ export async function updateMember(req, res, next) {
   const token = authorization?.split("Bearer ")[1];
 
   try {
-    //if (birthDate) {
-    //  birthDate = parseBrDateToStandardDate(birthDate);
-    //}
-    //const memberData = { ...body, birthDate };
-    //const newMember = await memberService.updateMember(memberData, token);
-    const newMember = await memberService.updateMember(body, token);
+    if (birthDate) {
+      birthDate = new Date(birthDate);
+    }
+    const memberData = { ...body, birthDate };
+    const newMember = await memberService.updateMember(memberData, token);
+    //const newMember = await memberService.updateMember(body, token);
 
     return res.status(200).send(newMember);
   } catch (err) {

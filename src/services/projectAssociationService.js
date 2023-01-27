@@ -77,6 +77,7 @@ export async function updateProjectAssociation(projectAssociation, token) {
 
   const { endDate, startDate } = projectAssociation;
   const project = await projectService.findProjectById(projectId);
+  
   if (
     (startDate && project.creationDate >= startDate) ||
     (project.endDate && endDate && project.endDate < endDate)
