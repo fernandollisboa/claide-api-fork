@@ -182,7 +182,7 @@ describe("member service", () => {
         const result = await memberService.getAllMembers();
 
         expect(memberRepository.getAllMembers).toBeCalledTimes(1);
-        expect(memberRepository.getAllMembers).toBeCalledWith(undefined, undefined);
+        expect(memberRepository.getAllMembers).toBeCalledWith({});
         expect(result).toEqual([validMemberWithId, validMemberWithId2]);
       });
     });

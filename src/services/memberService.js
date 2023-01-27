@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-
 import * as memberRepository from "../repositories/memberRepository";
 import * as memberUtils from "../utils/memberUtils";
 import MemberTooYoungError from "../errors/MemberTooYoungError";
@@ -109,8 +108,8 @@ async function deactivateMember(id) {
   }
 }
 
-async function getAllMembers({ isActive, orderBy } = {}) {
-  return memberRepository.getAllMembers(isActive, orderBy);
+async function getAllMembers({ isActiveBoolean: isActive, order: orderBy } = {}) {
+  return memberRepository.getAllMembers({ isActive, orderBy });
 }
 
 async function updateMember(memberData, token) {
