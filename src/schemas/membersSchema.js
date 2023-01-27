@@ -32,7 +32,6 @@ export const createMemberSchema = joi.object({
 });
 
 export const updateMemberSchema = joi.object({
-  id: joi.number().required(),
   name: joi.string(),
   email: joi.string().allow("").email(),
   birthDate: joi.date().allow("").iso(),

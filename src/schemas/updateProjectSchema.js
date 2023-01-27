@@ -4,7 +4,6 @@ import extension from "@joi/date";
 const joi = joiBase.extend(extension);
 
 const updateProjectSchema = joi.object({
-  id: joi.number().integer().required(),
   name: joi.string(),
   creationDate: joi.date().iso(),
   endDate: joi.date().iso().allow(""),
