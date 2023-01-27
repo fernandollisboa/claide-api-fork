@@ -24,8 +24,8 @@ export const createMemberSchema = joi.object({
     .pattern(/^\w+([.-]?\w+)*@(lsd\.ufcg\.edu\.br)/),
   secondaryEmail: joi.string().allow("").email(),
   memberType: joi.string().valid("ADMIN", "STUDENT", "SUPPORT", "PROFESSOR", "EXTERNAL").required(),
-  lattes: joi.string().trim(),
-  roomName: joi.string(),
+  lattes: joi.string().trim().allow(""),
+  roomName: joi.string().allow(""),
   hasKey: joi.boolean().required(),
   isActive: joi.boolean().default(false),
   isBrazilian: joi.boolean().required(),
@@ -33,7 +33,7 @@ export const createMemberSchema = joi.object({
 
 export const updateMemberSchema = joi.object({
   id: joi.number().required(),
-  name: joi.string().required(),
+  name: joi.string(),
   email: joi.string().allow("").email(),
   birthDate: joi.date().allow("").iso(),
   username: joi.string().min(3).max(20).allow(""),
@@ -46,7 +46,7 @@ export const updateMemberSchema = joi.object({
     }),
   rg: joi.string().allow(""),
   passport: joi.string().allow(""),
-  phone: joi.string().required().allow(""),
+  phone: joi.string().allow(""),
   lsdEmail: joi
     .string()
     .allow("")

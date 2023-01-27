@@ -23,7 +23,7 @@ projectsRouter.get("/", getAllProjects);
 projectsRouter.get("/:id", getProjectById);
 projectsRouter.put("/", validateSchema(updateProjectSchema), updateProject);
 projectsRouter.post(
-  "/:projectId/members/:memberId",
+  "/:projectId/members",
   validateSchema(createProjectAssociationSchema),
   createProjectAssociation
 );

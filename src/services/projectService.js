@@ -5,6 +5,7 @@ import { findByProjectId, updateProjectAssociation } from "../services/projectAs
 import ProjectInvalidCreationOrEndDateError from "../errors/ProjectInvalidCreationOrEndDateError";
 import ProjectNotFoundError from "../errors/ProjectNotFoundError";
 import dayjs from "dayjs";
+import ProjectAssociationDateError from "../errors/ProjectAssociationDateError";
 
 export async function createProject(projectData, token) {
   const { creationDate, endDate } = projectData;
@@ -60,12 +61,15 @@ export async function updateProject(updateProject, token) {
 
   const isActive = isProjectActive({ creationDate, endDate });
 
+  
   if (!isActive) {
     const associations = await findByProjectId(id);
-    associations.map(async (association) => {
-      await updateProjectAssociation({ ...association, endDate: new Date(endDate) }, token);
-    });
-  }
+    const promises = associations.map((association) => 
+      updateProjectAssociation({ ...association, endDate: new Date(endDate) }, token)
+    );
+    await Promise.all(promises)
+  }    
+  
   const newProject = {
     ...updateProject,
     creationDate,
