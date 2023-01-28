@@ -15,11 +15,21 @@ async function getAllAssociations() {
 }
 
 async function getAllAssociationsByServiceId(id) {
-  return await prisma.serviceAssociation.findMany({ where: { serviceId: id } });
+  return await prisma.serviceAssociation.findMany({
+    where: { serviceId: id },
+    include: {
+      service: true,
+    },
+  });
 }
 
 async function getAllAssociationsByMemberId(id) {
-  return await prisma.serviceAssociation.findMany({ where: { memberId: id } });
+  return await prisma.serviceAssociation.findMany({
+    where: { memberId: id },
+    include: {
+      service: true,
+    },
+  });
 }
 
 export {
