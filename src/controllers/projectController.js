@@ -9,8 +9,8 @@ export async function createProject(req, res, next) {
 
 	try {
 		let { creationDate, endDate } = body;
-		creationDate = new Date(creationDate);
-		if (endDate) endDate = new Date(endDate);
+		creationDate = new Date(creationDate).toISOString();
+		if (endDate) endDate = new Date(endDate).toISOString();
 
 		const projectData = { ...body, creationDate, endDate };
 		const createdProject = await projectService.createProject(projectData, token);
@@ -63,8 +63,8 @@ export async function updateProject(req, res, next) {
 
 	try {
 		let { creationDate, endDate } = body;
-		if (creationDate) creationDate = new Date(creationDate);
-		if (endDate) endDate = new Date(endDate);
+		if (creationDate) creationDate = new Date(creationDate).toISOString();
+		if (endDate) endDate = new Date(endDate).toISOString();
 
 		const projectData = { ...body, id,creationDate, endDate };
 		const project = await projectService.updateProject(projectData, token);
