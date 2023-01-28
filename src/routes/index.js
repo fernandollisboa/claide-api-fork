@@ -16,11 +16,13 @@ const routes = Router();
 routes.use("/members", auth, memberRouter);
 routes.use("/projects", auth, projectsRouter);
 routes.use("/services", auth, serviceRouter);
+routes.use("/activity-records", auth, activitiesRouter);
 
 routes.use("/login", authRouter);
 
+
 routes.use(errorMiddleware);
-routes.use("/activity-records", auth, activitiesRouter);
+
 
 routes.use("/doc", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
