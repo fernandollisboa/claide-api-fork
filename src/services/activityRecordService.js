@@ -16,8 +16,6 @@ export async function createActivity(activity) {
 		newValue,
 		date: new Date(),
 	};
-	console.log("oieee");
-	console.log(newActivity);
 
 	return await activityRepository.insertActivity(newActivity);
 }
