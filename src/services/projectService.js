@@ -49,7 +49,7 @@ export async function findProjectById(id) {
 
 export async function updateProject(updateProject, token) {
 	const { id } = updateProject;
-	
+
 	const originalProject = await projectRepository.findById(id);
 
 	if (!originalProject) {
@@ -62,10 +62,9 @@ export async function updateProject(updateProject, token) {
 
 	const endDate = updateEndDate ?? originalEndDate?.toISOString();
 	const creationDate = updateCreationDate ?? originalCreationDate.toISOString();
-		
-	
+
 	const isActive = isProjectActive({ creationDate, endDate });
-	
+
 	if (updateEndDate || updateCreationDate) {
 		const associations = await findByProjectId(id);
 		const promises = associations.map((association) =>
@@ -89,7 +88,7 @@ export async function updateProject(updateProject, token) {
 		isActive,
 	};
 
-	
+
 	const projectUpdated = await projectRepository.updateProject(newProject);
 
 	const activity = {
@@ -108,7 +107,7 @@ export async function updateProject(updateProject, token) {
 
 export function isProjectActive({ creationDate, endDate }) {
 	const today = dayjs().toISOString();
-	
+
 	if (!endDate) {
 		return creationDate <= today;
 	}
@@ -117,7 +116,6 @@ export function isProjectActive({ creationDate, endDate }) {
 		throw new ProjectInvalidCreationOrEndDateError(creationDate, endDate);
 	}
 
-	
 	return endDate >= today;
 }
 

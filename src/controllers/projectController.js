@@ -9,6 +9,7 @@ export async function createProject(req, res, next) {
 
 	try {
 		let { creationDate, endDate } = body;
+
 		creationDate = new Date(creationDate).toISOString();
 		if (endDate) endDate = new Date(endDate).toISOString();
 
