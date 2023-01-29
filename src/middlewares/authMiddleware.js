@@ -8,7 +8,7 @@ export default async function auth(req, res, next) {
 
   if (!token)
     return res
-      .status(httpStatusCode.BAD_REQUEST)
+      .status(httpStatusCode.UNAUTHORIZED)
       .send({ message: "Missing authorization Bearer token in headers" });
 
   try {

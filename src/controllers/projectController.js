@@ -74,6 +74,7 @@ export async function updateProject(req, res, next) {
 	} catch (err) {
 		next(err);
 	}
+
 }
 
 export async function createProjectAssociation(req, res, next) {
