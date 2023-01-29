@@ -98,8 +98,9 @@ export async function updateProjectAssociation(projectAssociation, token) {
 		...associationToChange,
 		endDate,
 		startDate,
+		isActive: true,
 	};
-
+	
 	if (endDate && endDate <= new Date()) {
 		newProjectAssociation = { ...newProjectAssociation, isActive: false };
 

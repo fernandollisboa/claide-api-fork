@@ -347,6 +347,7 @@ describe("project association service", () => {
           ...validProjectAssociation,
           startDate: newStartDate,
           endDate: undefined,
+          isActive: true,
         });
         expect(result).resolves.toMatchObject({
           ...validProjectAssociation,
