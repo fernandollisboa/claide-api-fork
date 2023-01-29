@@ -34,7 +34,7 @@ model Member {
   secondaryEmail     String?
   memberType         MemberType
   lattes             String?               
-  roomName           String
+  roomName           String?
   hasKey             Boolean?             @default(false)
   isActive           Boolean?             @default(false)
   isBrazilian        Boolean?             @default(true)
@@ -92,6 +92,8 @@ model Services {
   id                 Int                  @id @default(autoincrement())
   name               String               @unique
   ServiceAssociation ServiceAssociation[]
+
+    @@map("services")
 }
 
 model ServiceAssociation {
