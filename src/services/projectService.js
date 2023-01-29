@@ -49,6 +49,7 @@ export async function findProjectById(id) {
 
 export async function updateProject(updateProject, token) {
 	const { id } = updateProject;
+
 	const originalProject = await projectRepository.findById(id);
 
 	if (!originalProject) {
@@ -87,14 +88,15 @@ export async function updateProject(updateProject, token) {
 		isActive,
 	};
 
+
 	const projectUpdated = await projectRepository.updateProject(newProject);
 
 	const activity = {
 		operation: "UPDATE",
 		entity: "PROJECT",
 		oldValue: originalProject,
-		newValue: newProject,
-		idEntity: newProject.id,
+		newValue: projectUpdated,
+		idEntity: projectUpdated.id,
 		user: getUsername(token),
 	};
 
