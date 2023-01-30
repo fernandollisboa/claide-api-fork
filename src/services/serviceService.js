@@ -1,12 +1,25 @@
 import * as serviceRepository from "../repositories/serviceRepository.js";
-import * as serviceAssociationService from "../services/serviceAssociationService";
+import * as serviceAssociationService from "./serviceAssociationService";
+import * as activityRecordService from "./activityRecordService";
+import { getUsername } from "../services/authService";
 import ServiceConflictError from "../errors/ServiceConflictError.js";
 
-async function createService(serviceData) {
+async function createService(serviceData, token) {
   const { name } = serviceData;
 
   try {
     const newService = await serviceRepository.insertService({ name });
+
+    const activity = {
+      operation: "CREATE",
+      entity: "SERVICE",
+      newValue: newService,
+      idEntity: newService.id,
+      user: getUsername(token),
+    };
+
+    activityRecordService.createActivity(activity);
+
     return newService;
   } catch (err) {
     throw new ServiceConflictError("name", name);
@@ -27,7 +40,7 @@ async function getServiceByName(serviceName) {
   return service;
 }
 
-async function updateService({ id, name }) {
+async function updateService({ id, name }, token) {
   const service = await serviceRepository.findServiceById(id);
   if (service) {
     try {
@@ -35,6 +48,18 @@ async function updateService({ id, name }) {
         id,
         name: name ? name.trim() : service.name,
       });
+
+      const activity = {
+        operation: "UPDATE",
+        entity: "SERVICE",
+        oldValue: service,
+        newValue: updatedService,
+        idEntity: updatedService.id,
+        user: getUsername(token),
+      };
+
+      activityRecordService.createActivity(activity);
+
       return updatedService;
     } catch (err) {
       throw new ServiceConflictError("name", name);
@@ -43,11 +68,22 @@ async function updateService({ id, name }) {
   return service;
 }
 
-async function createServiceAssociation({ memberId, serviceId }) {
+async function createServiceAssociation({ memberId, serviceId }, token) {
   const newServiceAssociation = await serviceAssociationService.createServiceAssociation({
     memberId,
     serviceId,
   });
+
+  const activity = {
+    operation: "CREATE",
+    entity: "SERVICE_ASSOCIATION",
+    newValue: newServiceAssociation,
+    idEntity: newServiceAssociation.id,
+    user: getUsername(token),
+  };
+
+  activityRecordService.createActivity(activity);
+
   return newServiceAssociation;
 }
 

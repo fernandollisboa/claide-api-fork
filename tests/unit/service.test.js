@@ -2,7 +2,7 @@
 import { jest } from "@jest/globals";
 import { faker } from "@faker-js/faker";
 
-import * as servicesService from "../../src/services/servicesService";
+import * as servicesService from "../../src/services/serviceService";
 import * as serviceRepository from "../../src/repositories/serviceRepository";
 import * as serviceAssociationService from "../../src/services/serviceAssociationService";
 import ServiceConflictError from "../../src/errors/ServiceConflictError";
@@ -12,6 +12,8 @@ import {
   createValidServiceAssociation,
   createValidServiceAssociationWithId,
 } from "../factories/serviceAssociationFactory";
+import * as authService from "../../src/services/authService";
+import * as activityRecordService from "../../src/services/activityRecordService";
 
 describe("services service", () => {
   describe("create service function", () => {
@@ -22,7 +24,24 @@ describe("services service", () => {
         jest.spyOn(serviceRepository, "insertService").mockImplementationOnce(() => {
           return [{ id: faker.datatype.uuid(), ...validService }];
         });
-        const result = servicesService.createService(validService);
+        jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
+          return "test.test";
+        });
+        jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
+          return [
+            {
+              id: faker.datatype.number(),
+              operation: "CREATE",
+              entity: "SERVICE",
+              newValue: validService,
+              idEntity: validService.id,
+              user: "test.test",
+              date: new Date(),
+            },
+          ];
+        });
+
+        const result = servicesService.createService(validService, "validToken");
         expect(result).resolves.toMatchObject([validService]);
       });
     });
@@ -153,7 +172,23 @@ describe("services service", () => {
 
         jest.spyOn(serviceRepository, "findServiceById").mockResolvedValueOnce(existingService);
         jest.spyOn(serviceRepository, "updateService").mockImplementationOnce(() => newService);
-        const result = servicesService.updateService(newService);
+        jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
+          return "test.test";
+        });
+        jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
+          return [
+            {
+              id: faker.datatype.number(),
+              operation: "UPDATE",
+              entity: "SERVICE",
+              newValue: newService,
+              idEntity: newService.id,
+              user: "test.test",
+              date: new Date(),
+            },
+          ];
+        });
+        const result = servicesService.updateService(newService, "validToken");
 
         await expect(result).resolves.toEqual(newService);
         expect(serviceRepository.updateService).toBeCalledTimes(1);
@@ -212,7 +247,26 @@ describe("services service", () => {
           .mockImplementationOnce(() => {
             return [{ id: faker.datatype.uuid(), ...validServiceAssociation }];
           });
-        const result = servicesService.createServiceAssociation(validServiceAssociation);
+        jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
+          return "test.test";
+        });
+        jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
+          return [
+            {
+              id: faker.datatype.number(),
+              operation: "CREATE",
+              entity: "SERVICE_ASSOCIATION",
+              newValue: validServiceAssociation,
+              idEntity: validServiceAssociation.id,
+              user: "test.test",
+              date: new Date(),
+            },
+          ];
+        });
+        const result = servicesService.createServiceAssociation(
+          validServiceAssociation,
+          "validToken"
+        );
         expect(result).resolves.toMatchObject([validServiceAssociation]);
       });
     });

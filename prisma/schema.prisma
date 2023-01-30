@@ -88,7 +88,7 @@ model ProjectAssociation {
   @@unique([projectId, memberId])
 }
 
-model Services {
+model Service {
   id                 Int                  @id @default(autoincrement())
   name               String               @unique
   ServiceAssociation ServiceAssociation[]
@@ -98,7 +98,7 @@ model Services {
 
 model ServiceAssociation {
   id             Int      @id @default(autoincrement())
-  service        Services @relation(fields: [serviceId], references: [id])
+  service        Service @relation(fields: [serviceId], references: [id])
   member         Member   @relation(fields: [memberId], references: [id])
   serviceId    Int
   memberId Int
@@ -126,7 +126,7 @@ enum OperationType{
 enum EntityTipe{
   PROJECT
   MEMBER
-  SERVICES
+  SERVICE
   SERVICE_ASSOCIATION
   PROJECT_ASSOCIATION
 }

@@ -8,7 +8,7 @@ import { createValidMember, createValidMemberWithId } from "../factories/memberF
 import MemberTooYoungError from "../../src/errors/MemberTooYoungError";
 import MemberNotFoundError from "../../src/errors/MemberNotFoundError";
 import MemberConflictError from "../../src/errors/MemberConflictError";
-import BaseError from "../../src/errors/BaseError";
+// import BaseError from "../../src/errors/BaseError";
 import * as authService from "../../src/services/authService";
 import * as activityRecordService from "../../src/services/activityRecordService";
 
@@ -59,7 +59,7 @@ describe("member service", () => {
 
         jest.spyOn(memberRepository, "getMemberByCpf").mockResolvedValueOnce(duplicateCpfMember);
 
-        const result = memberService.createMember(duplicateCpfMember);
+        const result = memberService.createMember(duplicateCpfMember, "token");
 
         await expect(result).rejects.toThrow(MemberConflictError);
         expect(result).rejects.toEqual(new MemberConflictError("cpf", duplicateCpfMember.cpf));
@@ -73,7 +73,7 @@ describe("member service", () => {
 
         jest.spyOn(memberRepository, "getMemberByRg").mockResolvedValueOnce(duplicateRgMember);
 
-        const result = memberService.createMember(duplicateRgMember);
+        const result = memberService.createMember(duplicateRgMember, "token");
 
         await expect(result).rejects.toThrow(MemberConflictError);
         expect(result).rejects.toEqual(new MemberConflictError("rg", duplicateRgMember.rg));
@@ -89,7 +89,7 @@ describe("member service", () => {
           .spyOn(memberRepository, "getMemberByPassport")
           .mockResolvedValueOnce(duplicatePassportMember);
 
-        const result = memberService.createMember(duplicatePassportMember);
+        const result = memberService.createMember(duplicatePassportMember, "token");
 
         await expect(result).rejects.toThrow(MemberConflictError);
         expect(result).rejects.toEqual(
@@ -108,7 +108,7 @@ describe("member service", () => {
           .spyOn(memberRepository, "getMemberBySecondaryEmail")
           .mockResolvedValueOnce(duplicateEmailMember);
 
-        const result = memberService.createMember(duplicateEmailMember);
+        const result = memberService.createMember(duplicateEmailMember, "token");
 
         await expect(result).rejects.toThrow(MemberConflictError);
         expect(result).rejects.toEqual(
@@ -127,7 +127,7 @@ describe("member service", () => {
 
         const tooYoungMember = createValidMember({ birthDate: mockBirthDate });
 
-        const result = memberService.createMember(tooYoungMember);
+        const result = memberService.createMember(tooYoungMember, "token");
 
         await expect(result).rejects.toThrow(MemberTooYoungError);
         expect(result).rejects.toEqual(new MemberTooYoungError());
@@ -203,7 +203,7 @@ describe("member service", () => {
         // expect.assertions(2);
         jest.spyOn(memberRepository, "getMemberById").mockResolvedValueOnce(null);
 
-        const result = memberService.updateMember(newMember);
+        const result = memberService.updateMember(newMember, "token");
 
         expect(memberRepository.getMemberById).toBeCalledWith(newMember.id);
         await expect(result).rejects.toThrow(MemberNotFoundError);
@@ -225,7 +225,7 @@ describe("member service", () => {
         expect.assertions(2);
         jest.spyOn(memberRepository, "getMemberByRg").mockResolvedValueOnce(existingMember);
 
-        const result = memberService.updateMember(newMember);
+        const result = memberService.updateMember(newMember, "token");
 
         await expect(result).rejects.toThrow(MemberConflictError);
         expect(result).rejects.toEqual(new MemberConflictError("rg", newMember.rg));
@@ -235,7 +235,7 @@ describe("member service", () => {
         expect.assertions(2);
         jest.spyOn(memberRepository, "getMemberByPassport").mockResolvedValueOnce(existingMember);
 
-        const result = memberService.updateMember(newMember);
+        const result = memberService.updateMember(newMember, "token");
 
         await expect(result).rejects.toThrow(MemberConflictError);
         expect(result).rejects.toEqual(new MemberConflictError("passport", newMember.passport));
@@ -247,7 +247,7 @@ describe("member service", () => {
           .spyOn(memberRepository, "getMemberBySecondaryEmail")
           .mockResolvedValueOnce(existingMember);
 
-        const result = memberService.updateMember(newMember);
+        const result = memberService.updateMember(newMember, "token");
 
         await expect(result).rejects.toThrow(MemberConflictError);
         expect(result).rejects.toEqual(
@@ -271,7 +271,7 @@ describe("member service", () => {
           birthDate: mockBirthDate,
         });
 
-        const result = memberService.updateMember(tooYoungMember);
+        const result = memberService.updateMember(tooYoungMember, "token");
 
         await expect(result).rejects.toThrow(MemberTooYoungError);
         expect(result).rejects.toEqual(new MemberTooYoungError());
@@ -301,7 +301,7 @@ describe("member service", () => {
             },
           ];
         });
-        const result = memberService.updateMember(newMember, "testeToken");
+        const result = memberService.updateMember(newMember, "validToken");
 
         await expect(result).resolves.toEqual(newMember);
         expect(memberRepository.updateMember).toBeCalledTimes(1);
