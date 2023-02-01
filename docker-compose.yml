@@ -12,11 +12,21 @@ services:
     ports:
       - "5432:5432"
   api:
-    image: caetanobca/claide:v1.1
+    image: caetanobca/claide:v1.2
     depends_on:
       - db
     ports:
-      - "8080:8080"
+      - "8001:8001"
+    environment:
+      - DATABASE_URL=
+      - PORT=
+      - JWT_SECRET=
+      - JWT_EXPIRATION=
+      - LDAP_URL= 
+      - LDAP_SEARCHBASE=
+      - LDAP_GROUP=
+      - CERT_PATH=
+      - KEY_PATH=
+      - TLS_ENABLE=
     volumes:
-      - ./.env:/app/.env
-      - ./.env:/app/.env.prod
+      - ./certs:/app/certs
