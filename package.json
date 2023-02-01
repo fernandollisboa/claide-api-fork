@@ -7,7 +7,7 @@
     "prepare": "husky install",
     "start": "NODE_ENV=PROD node dist/server.js",
     "dev": "NODE_ENV=DEV nodemon src/server.js",
-    "build": "npx prisma migrate deploy && sucrase ./src -d ./dist --transforms imports",
+    "build": "sucrase ./src -d ./dist --transforms imports",
     "commit": "cz",
     "test": "jest --coverage --testPathPattern=tests/unit",
     "test:dev": "jest --watch --coverage --testPathPattern=tests/unit",
