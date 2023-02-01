@@ -11,6 +11,8 @@ services:
       - ./pgdata:/var/lib/postgresql/data\
     ports:
       - "5432:5432"
+    networks:
+      - claide-net
   api:
     image: caetanobca/claide:v1.2
     depends_on:
@@ -30,3 +32,8 @@ services:
       - TLS_ENABLE=
     volumes:
       - ./certs:/app/certs
+    networks:
+      - claide-net
+networks:
+  claide-net:
+    driver: bridge
