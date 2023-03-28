@@ -10,16 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       Int        @id @default(autoincrement())
-  name     String
-  email    String     @unique
-  password String
-  role     MemberType
-
-  @@map("users")
-}
-
 model Member {
   id                 Int                  @id @default(autoincrement())
   name               String
@@ -30,16 +20,16 @@ model Member {
   rg                 String?
   passport           String?
   phone              String
-  lsdEmail           String?               
+  lsdEmail           String?
   secondaryEmail     String?
   memberType         MemberType
-  lattes             String?               
+  lattes             String?
   roomName           String?
   hasKey             Boolean?             @default(false)
   isActive           Boolean?             @default(false)
   isBrazilian        Boolean?             @default(true)
   ProjectAssociation ProjectAssociation[]
-  ServiceAssociation ServiceAssociation[]
+  services           String[]
 
   @@map("members")
 }
@@ -53,16 +43,15 @@ enum MemberType {
 }
 
 model Project {
-  id            Int       @id @default(autoincrement())
-  name          String
-  creationDate  DateTime
-  endDate       DateTime?
-  building      String?
-  room          String?
-  embrapiiCode String?
-  financier     String?
-  isActive      Boolean   @default(true)
-
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  creationDate       DateTime
+  endDate            DateTime?
+  building           String?
+  room               String?
+  embrapiiCode       String?
+  financier          String?
+  isActive           Boolean              @default(true)
   ProjectAssociation ProjectAssociation[]
 }
 
@@ -82,51 +71,29 @@ model ProjectAssociation {
   memberId  Int
   startDate DateTime
   endDate   DateTime?
-  isActive      Boolean   @default(true)
-
+  isActive  Boolean   @default(true)
 
   @@unique([projectId, memberId])
 }
 
-model Service {
-  id                 Int                  @id @default(autoincrement())
-  name               String               @unique
-  ServiceAssociation ServiceAssociation[]
-
-    @@map("services")
-}
-
-model ServiceAssociation {
-  id             Int      @id @default(autoincrement())
-  service        Service @relation(fields: [serviceId], references: [id])
-  member         Member   @relation(fields: [memberId], references: [id])
-  serviceId    Int
-  memberId Int
-
-  @@unique([serviceId, memberId])
-
-}
-
 model ActivityRecord {
-  id Int @id @default(autoincrement())
+  id        Int           @id @default(autoincrement())
   operation OperationType
-  entity EntityTipe
-  newValue Json
-  oldValue Json?
-  idEntity Int
-  user String  
-  date DateTime
+  entity    EntityTipe
+  newValue  Json
+  oldValue  Json?
+  idEntity  Int
+  user      String
+  date      DateTime
 }
 
-enum OperationType{
+enum OperationType {
   CREATE
   UPDATE
 }
 
-enum EntityTipe{
+enum EntityTipe {
   PROJECT
   MEMBER
-  SERVICE
-  SERVICE_ASSOCIATION
   PROJECT_ASSOCIATION
 }
