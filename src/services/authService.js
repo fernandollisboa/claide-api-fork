@@ -37,13 +37,13 @@ export async function authenticateUser({ username, password }) {
         const roles = [];
 
         if (professors.member.includes(entry.object.dn)) {
-          roles.push("professor");
+          roles.push("PROFESSOR");
         }
         if (receptionist.member.includes(entry.object.dn)) {
-          roles.push("receptionist");
+          roles.push("RECEPTIONIST");
         }
         if (support.member.includes(entry.object.dn)) {
-          roles.push("support");
+          roles.push("SUPPORT");
         }
 
         if (roles.length > 0) {
