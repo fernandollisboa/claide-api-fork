@@ -38,14 +38,31 @@ model Member {
   hasKey             Boolean?             @default(false)
   isActive           Boolean?             @default(false)
   isBrazilian        Boolean?             @default(true)
-  ProjectAssociation ProjectAssociation[]
-  ServiceAssociation ServiceAssociation[]
-
+  projectAssociation ProjectAssociation[]
+  serviceAssociation String[]
+  registrationStatus RegistrationStatus?
   @@map("members")
 }
 
+model RegistrationStatus {
+  id        Int       @id @default(autoincrement())
+  status    StatusType
+  comment   String?
+  createdBy String
+  member Member @relation(fields: [memberId], references: [id])
+  memberId Int @unique
+  reviewedBy String?
+
+  @@unique([id, memberId])
+}
+
+enum StatusType{
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum MemberType {
-  ADMIN
   STUDENT
   SUPPORT
   PROFESSOR
@@ -63,15 +80,7 @@ model Project {
   financier     String?
   isActive      Boolean   @default(true)
 
-  ProjectAssociation ProjectAssociation[]
-}
-
-enum Role {
-  ADMIN
-  STUDENT
-  SUPPORT
-  PROFESSOR
-  EXTERNAL
+  projectAssociation ProjectAssociation[]
 }
 
 model ProjectAssociation {
@@ -88,29 +97,11 @@ model ProjectAssociation {
   @@unique([projectId, memberId])
 }
 
-model Service {
-  id                 Int                  @id @default(autoincrement())
-  name               String               @unique
-  ServiceAssociation ServiceAssociation[]
-
-    @@map("services")
-}
-
-model ServiceAssociation {
-  id             Int      @id @default(autoincrement())
-  service        Service @relation(fields: [serviceId], references: [id])
-  member         Member   @relation(fields: [memberId], references: [id])
-  serviceId    Int
-  memberId Int
-
-  @@unique([serviceId, memberId])
-
-}
 
 model ActivityRecord {
   id Int @id @default(autoincrement())
   operation OperationType
-  entity EntityTipe
+  entity EntityType
   newValue Json
   oldValue Json?
   idEntity Int
@@ -123,10 +114,8 @@ enum OperationType{
   UPDATE
 }
 
-enum EntityTipe{
+enum EntityType{
   PROJECT
   MEMBER
-  SERVICE
-  SERVICE_ASSOCIATION
   PROJECT_ASSOCIATION
 }

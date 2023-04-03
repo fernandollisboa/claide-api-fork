@@ -8,6 +8,7 @@ const httpStatusCode = Object.freeze({
   CONFLICT: 409,
   UNPROCESSABLE_ENTITY: 422,
   INTERNAL_SERVER_ERROR: 500,
+  PRECODITION_REQUIRED: 428,
 });
 
 export default httpStatusCode;

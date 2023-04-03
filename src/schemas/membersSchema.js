@@ -74,3 +74,8 @@ export async function validateRgCpfForBrazilians(body) {
   }
   return true;
 }
+
+export const setStatusRegistrationSchema = joi.object({
+  status: joi.string().valid("APPROVED", "REJECTED", "PENDING").required(),
+  comment: joi.string().allow(""),
+});

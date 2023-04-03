@@ -1,135 +1,178 @@
 import prisma from "../database/prismaClient";
 
 export async function insertMember({
-    name,
-    email,
-    birthDate,
-    username,
-    cpf,
-    rg,
-    passport,
-    phone,
-    lsdEmail,
-    secondaryEmail,
-    memberType,
-    lattes,
-    roomName,
-    hasKey,
-    isBrazilian,
+  name,
+  email,
+  birthDate,
+  username,
+  cpf,
+  rg,
+  passport,
+  phone,
+  lsdEmail,
+  secondaryEmail,
+  memberType,
+  lattes,
+  roomName,
+  hasKey,
+  isBrazilian,
+  registrationStatus,
 }) {
-    return await prisma.member.create({
-        data: {
-            name,
-            email,
-            birthDate,
-            username,
-            cpf,
-            rg,
-            passport,
-            phone,
-            lsdEmail,
-            secondaryEmail,
-            memberType,
-            lattes,
-            roomName,
-            hasKey,
-            isBrazilian,
+  return await prisma.member.create({
+    data: {
+      name,
+      email,
+      birthDate,
+      username,
+      cpf,
+      rg,
+      passport,
+      phone,
+      lsdEmail,
+      secondaryEmail,
+      memberType,
+      lattes,
+      roomName,
+      hasKey,
+      isBrazilian,
+      registrationStatus: {
+        create: {
+          ...registrationStatus,
         },
-    });
+      },
+    },
+    include: {
+      registrationStatus: true,
+    },
+  });
 }
 
 export async function getMemberById(id) {
-    return await prisma.member.findUnique({ where: { id } });
+  return await prisma.member.findUnique({
+    where: { id },
+    include: { registrationStatus: true, projectAssociation: true },
+  });
 }
 
 export async function getMemberByCpf(cpf) {
-    return await prisma.member.findFirst({ where: { cpf } });
+  return await prisma.member.findFirst({
+    where: { cpf },
+    include: { registrationStatus: true, projectAssociation: true },
+  });
 }
 
 export async function getMemberByRg(rg) {
-    return await prisma.member.findFirst({ where: { rg } });
+  return await prisma.member.findFirst({
+    where: { rg },
+    include: { registrationStatus: true, projectAssociation: true },
+  });
 }
 
 export async function getMemberByPassport(passport) {
-    return await prisma.member.findFirst({ where: { passport } });
+  return await prisma.member.findFirst({
+    where: { passport },
+    include: { registrationStatus: true, projectAssociation: true },
+  });
 }
 
 export async function getMemberBySecondaryEmail(secondaryEmail) {
-    return await prisma.member.findFirst({ where: { secondaryEmail } });
+  return await prisma.member.findFirst({
+    where: { secondaryEmail },
+    include: { registrationStatus: true, projectAssociation: true },
+  });
 }
 
 export async function getMemberByLattes(lattes) {
-    return await prisma.member.findFirst({ where: { lattes } });
+  return await prisma.member.findFirst({
+    where: { lattes },
+    include: { registrationStatus: true, projectAssociation: true },
+  });
 }
 
 export async function getMemberByEmailLsd(lsdEmail) {
-    return await prisma.member.findFirst({ where: { lsdEmail } });
+  return await prisma.member.findFirst({
+    where: { lsdEmail },
+    include: { registrationStatus: true, projectAssociation: true },
+  });
 }
 
 export async function activateMember(id) {
-    const member = await prisma.member.update({
-        where: { id: id },
-        data: {
-            isActive: true,
-        },
-    });
-    return member;
+  const member = await prisma.member.update({
+    where: { id: id },
+    data: {
+      isActive: true,
+    },
+  });
+  return member;
 }
 
 export async function deactivateMember(id) {
-    const member = await prisma.member.update({
-        where: { id: id },
-        data: {
-            isActive: false,
-        },
-    });
-    return member;
+  const member = await prisma.member.update({
+    where: { id: id },
+    data: {
+      isActive: false,
+    },
+  });
+  return member;
 }
 
-export async function getAllMembers({ isActive, orderBy }) {
-    return prisma.member.findMany({
-        where: { isActive },
-        orderBy: { name: orderBy },
-    });
+export async function getAllMembers({ isActive, orderBy, status, createdBy }) {
+  return prisma.member.findMany({
+    where: {
+      isActive,
+      registrationStatus: { status, createdBy },
+    },
+    orderBy: { name: orderBy },
+    include: { registrationStatus: true, projectAssociation: true },
+  });
 }
 
 export async function updateMember({
-    id,
-    name,
-    email,
-    birthDate,
-    username,
-    cpf,
-    rg,
-    passport,
-    lsdEmail,
-    secondaryEmail,
-    memberType,
-    phone,
-    lattes,
-    roomName,
-    hasKey,
-    isBrazilian,
+  id,
+  name,
+  email,
+  birthDate,
+  username,
+  cpf,
+  rg,
+  passport,
+  lsdEmail,
+  secondaryEmail,
+  memberType,
+  phone,
+  lattes,
+  roomName,
+  hasKey,
+  isBrazilian,
+  registrationStatus,
 }) {
-    const updatedMember = await prisma.member.update({
-        where: { id },
-        data: {
-            name,
-            email,
-            birthDate,
-            username,
-            cpf,
-            rg,
-            passport,
-            lsdEmail,
-            secondaryEmail,
-            memberType,
-            lattes,
-            phone,
-            roomName,
-            hasKey,
-            isBrazilian,
+  const updatedMember = await prisma.member.update({
+    where: { id },
+    data: {
+      name,
+      email,
+      birthDate,
+      username,
+      cpf,
+      rg,
+      passport,
+      lsdEmail,
+      secondaryEmail,
+      memberType,
+      lattes,
+      phone,
+      roomName,
+      hasKey,
+      isBrazilian,
+      registrationStatus: {
+        update: {
+          ...registrationStatus,
         },
-    });
-    return updatedMember;
+      },
+    },
+    include: {
+      registrationStatus: true,
+    },
+  });
+  return updatedMember;
 }

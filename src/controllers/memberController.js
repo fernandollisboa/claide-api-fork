@@ -2,6 +2,7 @@ import * as membersSchema from "../schemas/membersSchema";
 import * as memberService from "../services/memberService";
 import InvalidParamError from "../errors/InvalidParamError";
 import InvalidAtributeError from "../errors/InvalidAtributeError";
+import { getUsername } from "../services/authService";
 
 export async function createMember(req, res, next) {
   const { body } = req;
@@ -25,7 +26,6 @@ export async function createMember(req, res, next) {
     const memberData = { ...body, birthDate };
 
     const createdMember = await memberService.createMember(memberData, token);
-    //const createdMember = await memberService.createMember(body, token);
 
     return res.status(201).send(createdMember);
   } catch (err) {
@@ -33,9 +33,23 @@ export async function createMember(req, res, next) {
   }
 }
 
+export async function setStatusRegistration(req, res, next) {
+  const { body } = req;
+  const { id } = req.params;
+  const { authorization } = req.headers;
+  const token = authorization?.split("Bearer ")[1];
+
+  try {
+    const member = await memberService.setStatusRegistration(body, id, token);
+
+    return res.status(200).send(member);
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function getMemberById(req, res, next) {
-  const { id: idToken } = req.params;
-  const id = Number(idToken);
+  const id = Number(req.params.id);
   try {
     if (isNaN(id)) throw new InvalidParamError("memberId", id);
 
@@ -48,17 +62,33 @@ export async function getMemberById(req, res, next) {
 }
 
 export async function getAllMembers(req, res, next) {
-  const { isActive, desc } = req.query;
+  const { authorization } = req.headers;
+  const token = authorization?.split("Bearer ")[1];
 
-  let isActiveBoolean, order;
-  if (isActive) {
-    isActiveBoolean = isActive === "true";
-  }
-  if (desc) {
-    order = desc === "true" ? "desc" : "asc";
-  }
   try {
-    const members = await memberService.getAllMembers({ isActiveBoolean, order });
+    const { isActive, desc, status, createdBy } = req.query;
+    let isActiveBoolean, order, status_, creator;
+    if (status) {
+      status_ = status.toUpperCase();
+    }
+
+    if (isActive) {
+      isActiveBoolean = isActive === "true";
+    }
+    if (desc) {
+      order = desc === "true" ? "desc" : "asc";
+    }
+
+    if (createdBy === "true") {
+      creator = getUsername(token);
+    }
+
+    const members = await memberService.getAllMembers({
+      isActiveBoolean,
+      order,
+      status_,
+      creator,
+    });
 
     return res.status(200).send(members);
   } catch (err) {
