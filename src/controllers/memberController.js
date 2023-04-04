@@ -66,10 +66,10 @@ export async function getAllMembers(req, res, next) {
   const token = authorization?.split("Bearer ")[1];
 
   try {
-    const { isActive, desc, status, createdBy } = req.query;
+    const { isActive, desc, registrationStatus, createdByMe } = req.query;
     let isActiveBoolean, order, status_, creator;
-    if (status) {
-      status_ = status.toUpperCase();
+    if (registrationStatus) {
+      status_ = registrationStatus.toUpperCase();
     }
 
     if (isActive) {
@@ -79,7 +79,7 @@ export async function getAllMembers(req, res, next) {
       order = desc === "true" ? "desc" : "asc";
     }
 
-    if (createdBy === "true") {
+    if (createdByMe === "true") {
       creator = getUsername(token);
     }
 
