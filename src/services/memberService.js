@@ -28,8 +28,8 @@ async function createMember(memberData, token) {
     roomName,
     hasKey,
     isBrazilian,
+    services,
   } = memberData;
-
   await memberUtils.checkMemberAlreadyExists({
     cpf,
     rg,
@@ -43,7 +43,6 @@ async function createMember(memberData, token) {
     throw new MemberTooYoungError();
   }
   const registrationStatus = createRegistrationStatus(token);
-
   const newMember = await memberRepository.insertMember({
     name,
     email,
@@ -59,7 +58,8 @@ async function createMember(memberData, token) {
     lattes,
     roomName,
     hasKey,
-    isBrazilian,
+    isBrazilian,    
+    services,
     registrationStatus,
   });
 
@@ -92,7 +92,6 @@ function createRegistrationStatus(token) {
 function isBirthDateValid(birthDate) {
   const today = dayjs();
   const memberAge = today.diff(birthDate, "years", true);
-
   return memberAge >= MINIMUM_REQUIRED_AGE;
 }
 
@@ -187,6 +186,7 @@ async function updateMember(memberData, token) {
     roomName,
     hasKey,
     isBrazilian,
+    services,
   } = memberData;
 
   const toUpdateMember = await memberRepository.getMemberById(id);
@@ -204,7 +204,6 @@ async function updateMember(memberData, token) {
       existingMember: toUpdateMember,
     });
   }
-
   if (birthDate) {
     if (!isBirthDateValid(birthDate)) {
       throw new MemberTooYoungError();
@@ -229,6 +228,8 @@ async function updateMember(memberData, token) {
       roomName: roomName ?? toUpdateMember.roomName,
       hasKey: hasKey || toUpdateMember.hasKey,
       isBrazilian: isBrazilian ?? toUpdateMember.isBrazilian,
+      services: services ?? toUpdateMember.services,
+
     });
     const activity = {
       operation: "UPDATE",

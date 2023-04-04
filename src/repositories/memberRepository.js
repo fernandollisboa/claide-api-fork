@@ -16,7 +16,8 @@ export async function insertMember({
   roomName,
   hasKey,
   isBrazilian,
-  registrationStatus,
+  services,
+  registrationStatus,  
 }) {
   return await prisma.member.create({
     data: {
@@ -35,6 +36,7 @@ export async function insertMember({
       roomName,
       hasKey,
       isBrazilian,
+      services,
       registrationStatus: {
         create: {
           ...registrationStatus,
@@ -42,7 +44,7 @@ export async function insertMember({
       },
     },
     include: {
-      registrationStatus: true,
+      registrationStatus: true,      
     },
   });
 }
@@ -115,7 +117,6 @@ export async function deactivateMember(id) {
   });
   return member;
 }
-
 export async function getAllMembers({ isActive, orderBy, status, createdBy }) {
   return prisma.member.findMany({
     where: {
@@ -124,6 +125,7 @@ export async function getAllMembers({ isActive, orderBy, status, createdBy }) {
     },
     orderBy: { name: orderBy },
     include: { registrationStatus: true, projectAssociation: true },
+
   });
 }
 
@@ -144,7 +146,8 @@ export async function updateMember({
   roomName,
   hasKey,
   isBrazilian,
-  registrationStatus,
+  services,
+  registrationStatus,  
 }) {
   const updatedMember = await prisma.member.update({
     where: { id },
@@ -164,6 +167,7 @@ export async function updateMember({
       roomName,
       hasKey,
       isBrazilian,
+      services,
       registrationStatus: {
         update: {
           ...registrationStatus,
