@@ -4,8 +4,10 @@ import * as memberUtils from "../utils/memberUtils";
 import MemberTooYoungError from "../errors/MemberTooYoungError";
 import MemberNotFoundError from "../errors/MemberNotFoundError";
 import * as activityRecordService from "./activityRecordService";
-import { getUsername } from "../services/authService";
+import { getUsername, getRole } from "../services/authService";
 import BaseError from "../errors/BaseError";
+import UserUnauthorizedOrNotFoundError from "../errors/UserUnauthorizedOrNotFoundError";
+import MemberNotApproved from "../errors/MemberNotApproved";
 
 const MINIMUM_REQUIRED_AGE = 15;
 
@@ -40,7 +42,7 @@ async function createMember(memberData, token) {
   if (!isBirthDateValid(birthDate)) {
     throw new MemberTooYoungError();
   }
-
+  const registrationStatus = createRegistrationStatus(token);
   const newMember = await memberRepository.insertMember({
     name,
     email,
@@ -56,8 +58,9 @@ async function createMember(memberData, token) {
     lattes,
     roomName,
     hasKey,
-    isBrazilian,
+    isBrazilian,    
     services,
+    registrationStatus,
   });
 
   const activity = {
@@ -73,11 +76,58 @@ async function createMember(memberData, token) {
   return newMember;
 }
 
+function createRegistrationStatus(token) {
+  const role = getRole(token);
+  const status = role.includes("SUPPORT") === true ? "APPROVED" : "PENDING";
+  const creator = getUsername(token);
+  const registrationStatus = {
+    status,
+    createdBy: creator,
+    reviewedBy: role.includes("SUPPORT") === true ? creator : null,
+  };
+
+  return registrationStatus;
+}
+
 function isBirthDateValid(birthDate) {
   const today = dayjs();
   const memberAge = today.diff(birthDate, "years", true);
-
   return memberAge >= MINIMUM_REQUIRED_AGE;
+}
+
+export async function setStatusRegistration(body, id, token) {
+  const { status, comment } = body;
+  const role = getRole(token);
+
+  if (!role.includes("SUPPORT")) {
+    throw new UserUnauthorizedOrNotFoundError(
+      getUsername(token),
+      `User ${getUsername(token)} doesn't have support role`
+    );
+  }
+
+  const member = await getMemberById(Number(id));
+
+  const registrationStatus = {
+    ...member.registrationStatus,
+    status,
+    comment,
+    reviewedBy: getUsername(token),
+  };
+
+  const updatedMember = await memberRepository.updateMember({ ...member, registrationStatus });
+
+  const activity = {
+    operation: "UPDATE",
+    entity: "MEMBER",
+    newValue: updatedMember,
+    idEntity: updatedMember.id,
+    user: getUsername(token),
+  };
+
+  activityRecordService.createActivity(activity);
+
+  return updatedMember;
 }
 
 async function getMemberById(id) {
@@ -91,13 +141,12 @@ async function getMemberById(id) {
 }
 
 async function activateMember(id) {
-  try {
-    const member = await memberRepository.activateMember(id);
-
-    return member;
-  } catch (err) {
-    throw new MemberNotFoundError("memberId", id);
+  const member = await getMemberById(id);
+  if (member.registrationStatus.status !== "APPROVED") {
+    throw new MemberNotApproved(member.name);
   }
+  const memberActived = await memberRepository.activateMember(id);
+  return memberActived;
 }
 
 async function deactivateMember(id) {
@@ -110,8 +159,13 @@ async function deactivateMember(id) {
   }
 }
 
-async function getAllMembers({ isActiveBoolean: isActive, order: orderBy } = {}) {
-  return memberRepository.getAllMembers({ isActive, orderBy });
+async function getAllMembers({
+  isActiveBoolean: isActive,
+  order: orderBy,
+  status_: status,
+  creator: createdBy,
+} = {}) {
+  return memberRepository.getAllMembers({ isActive, orderBy, status, createdBy });
 }
 
 async function updateMember(memberData, token) {
@@ -150,7 +204,6 @@ async function updateMember(memberData, token) {
       existingMember: toUpdateMember,
     });
   }
-
   if (birthDate) {
     if (!isBirthDateValid(birthDate)) {
       throw new MemberTooYoungError();
@@ -176,6 +229,7 @@ async function updateMember(memberData, token) {
       hasKey: hasKey || toUpdateMember.hasKey,
       isBrazilian: isBrazilian ?? toUpdateMember.isBrazilian,
       services: services ?? toUpdateMember.services,
+
     });
     const activity = {
       operation: "UPDATE",

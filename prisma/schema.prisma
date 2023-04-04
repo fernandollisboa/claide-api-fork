@@ -28,14 +28,35 @@ model Member {
   hasKey             Boolean?             @default(false)
   isActive           Boolean?             @default(false)
   isBrazilian        Boolean?             @default(true)
+
+  projectAssociation ProjectAssociation[]  
+  registrationStatus RegistrationStatus?
   ProjectAssociation ProjectAssociation[]
   services           String[]
+
 
   @@map("members")
 }
 
+model RegistrationStatus {
+  id        Int       @id @default(autoincrement())
+  status    StatusType
+  comment   String?
+  createdBy String
+  member Member @relation(fields: [memberId], references: [id])
+  memberId Int @unique
+  reviewedBy String?
+
+  @@unique([id, memberId])
+}
+
+enum StatusType{
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum MemberType {
-  ADMIN
   STUDENT
   SUPPORT
   PROFESSOR
@@ -43,24 +64,17 @@ enum MemberType {
 }
 
 model Project {
-  id                 Int                  @id @default(autoincrement())
-  name               String
-  creationDate       DateTime
-  endDate            DateTime?
-  building           String?
-  room               String?
-  embrapiiCode       String?
-  financier          String?
-  isActive           Boolean              @default(true)
-  ProjectAssociation ProjectAssociation[]
-}
+  id            Int       @id @default(autoincrement())
+  name          String
+  creationDate  DateTime
+  endDate       DateTime?
+  building      String?
+  room          String?
+  embrapiiCode String?
+  financier     String?
+  isActive      Boolean   @default(true)
 
-enum Role {
-  ADMIN
-  STUDENT
-  SUPPORT
-  PROFESSOR
-  EXTERNAL
+  projectAssociation ProjectAssociation[]
 }
 
 model ProjectAssociation {
@@ -79,20 +93,19 @@ model ProjectAssociation {
 model ActivityRecord {
   id        Int           @id @default(autoincrement())
   operation OperationType
-  entity    EntityTipe
-  newValue  Json
-  oldValue  Json?
-  idEntity  Int
-  user      String
-  date      DateTime
-}
+  entity EntityType
+  newValue Json
+  oldValue Json?
+  idEntity Int
+  user String  
+  date DateTime
 
 enum OperationType {
   CREATE
   UPDATE
 }
 
-enum EntityTipe {
+enum EntityType{
   PROJECT
   MEMBER
   PROJECT_ASSOCIATION

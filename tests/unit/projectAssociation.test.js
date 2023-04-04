@@ -11,9 +11,10 @@ import * as projectService from "../../src/services/projectService";
 import * as projectFactory from "../factories/projectFactory";
 import ProjectAssociationDateError from "../../src/errors/ProjectAssociationDateError";
 import ProjectAssociationNotFoundError from "../../src/errors/ProjectAssociationNotFoundError";
-import { createValidMemberWithId } from "../factories/memberFactory";
+import { createValidMemberWithId, setRegistrationStatus } from "../factories/memberFactory";
 import * as authService from "../../src/services/authService";
 import * as activityRecordService from "../../src/services/activityRecordService";
+import * as memberService from "../../src/services/memberService";
 
 describe("project association service", () => {
   describe("createProjectAssociation function", () => {
@@ -22,7 +23,8 @@ describe("project association service", () => {
         expect.assertions(7);
 
         const memberId = faker.datatype.number({ min: 1 });
-        const member = createValidMemberWithId({ id: memberId });
+        const memberNew = createValidMemberWithId({ id: memberId });
+        const member = setRegistrationStatus(memberNew, "APPROVED", "test.test");
 
         const projectId = faker.datatype.number({ min: 1 });
         const project = projectFactory.createValidProjectWithId({
@@ -42,16 +44,21 @@ describe("project association service", () => {
             return validProjectAssociation;
           });
 
-        jest.spyOn(memberRepository, "activateMember").mockImplementationOnce(() => {
+        jest.spyOn(memberService, "activateMember").mockImplementation(() => {
           return member;
         });
 
         jest.spyOn(projectService, "findProjectById").mockImplementationOnce(() => {
           return project;
         });
-        jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
+        jest.spyOn(authService, "getUsername").mockImplementation(() => {
           return "test.test";
         });
+
+        jest.spyOn(authService, "getRole").mockImplementation(() => {
+          return "SUPPORT";
+        });
+
         jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
           return [
             {
@@ -79,8 +86,8 @@ describe("project association service", () => {
         await expect(projectService.findProjectById).toBeCalledTimes(1);
         await expect(projectService.findProjectById).toBeCalledWith(project.id);
 
-        await expect(memberRepository.activateMember).toBeCalledTimes(1);
-        await expect(memberRepository.activateMember).toBeCalledWith(member.id);
+        await expect(memberService.activateMember).toBeCalledTimes(1);
+        await expect(memberService.activateMember).toBeCalledWith(member.id);
 
         await expect(projectAssociationRepository.insertProjectAssociation).toBeCalledTimes(1);
         expect(projectAssociationRepository.insertProjectAssociation).toBeCalledWith(
@@ -96,6 +103,8 @@ describe("project association service", () => {
         expect.assertions(3);
 
         const memberId = faker.datatype.number({ min: 1 });
+        const memberNew = createValidMemberWithId({ id: memberId });
+        const member = setRegistrationStatus(memberNew, "APPROVED", "test.test");
 
         const projectId = faker.datatype.number({ min: 1 });
         const project = projectFactory.createValidProjectWithId({
@@ -108,6 +117,10 @@ describe("project association service", () => {
           projectId,
           memberId,
           startDate: new Date(dayjs(faker.date.past(1, "2005-01-01T00:00:00.000Z"))),
+        });
+
+        jest.spyOn(memberRepository, "getMemberById").mockResolvedValue(() => {
+          return member;
         });
 
         jest.spyOn(projectService, "findProjectById").mockImplementationOnce(() => {
@@ -148,6 +161,10 @@ describe("project association service", () => {
 
         jest.spyOn(projectService, "findProjectById").mockImplementationOnce(() => {
           return project;
+        });
+
+        jest.spyOn(memberRepository, "getMemberById").mockResolvedValue(() => {
+          return member;
         });
 
         const result = projectAssociationService.createProjectAssociation({

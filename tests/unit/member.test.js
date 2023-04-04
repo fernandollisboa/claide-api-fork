@@ -4,7 +4,11 @@ import dayjs from "dayjs";
 
 import * as memberService from "../../src/services/memberService";
 import * as memberRepository from "../../src/repositories/memberRepository";
-import { createValidMember, createValidMemberWithId } from "../factories/memberFactory";
+import {
+  createValidMember,
+  createValidMemberWithId,
+  setRegistrationStatus,
+} from "../factories/memberFactory";
 import MemberTooYoungError from "../../src/errors/MemberTooYoungError";
 import MemberNotFoundError from "../../src/errors/MemberNotFoundError";
 import MemberConflictError from "../../src/errors/MemberConflictError";
@@ -18,7 +22,7 @@ describe("member service", () => {
   describe("insert function", () => {
     describe("given the member data is valid", () => {
       it("should create a new member", async () => {
-        const validMember = createValidMember();
+        const validMember = setRegistrationStatus(createValidMember(), "APPROVED", "test.test");
 
         jest.spyOn(memberRepository, "getMemberByCpf").mockResolvedValueOnce(null);
         jest.spyOn(memberRepository, "getMemberByRg").mockResolvedValueOnce(null);
@@ -30,9 +34,25 @@ describe("member service", () => {
         jest.spyOn(memberRepository, "getMemberByLattes").mockResolvedValueOnce(null);
         jest.spyOn(memberRepository, "getMemberByEmailLsd").mockResolvedValueOnce(null);
 
-        jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
+        jest.spyOn(authService, "getUsername").mockImplementation(() => {
           return "test.test";
         });
+
+        jest.spyOn(authService, "getRole").mockImplementation(() => {
+          return "SUPPORT";
+        });
+
+        //jest.spyOn(memberService, "createRegistrationStatus").mockImplementationOnce(() => {
+        //  return [
+        //    {
+        //      role: "SUPPORT",
+        //      status: "APPROVED",
+        //      creator: "test.test",
+        //      reviewdBy: "support.support",
+        //    },
+        //  ];
+        //});
+
         jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
           return [
             {
@@ -189,8 +209,12 @@ describe("member service", () => {
   });
 
   describe("updateMember function", () => {
-    const existingMember = createValidMemberWithId();
-    const newMember = createValidMemberWithId();
+    const existingMember = setRegistrationStatus(
+      createValidMemberWithId(),
+      "APPROVED",
+      "test.test"
+    );
+    const newMember = setRegistrationStatus(createValidMemberWithId(), "APPROVED", "test.test");
 
     jest.spyOn(memberRepository, "getMemberById").mockResolvedValue(existingMember);
     jest.spyOn(memberRepository, "getMemberByCpf").mockResolvedValue(null);
@@ -283,9 +307,11 @@ describe("member service", () => {
         expect.assertions(3);
         const { birthDate } = newMember;
 
-        jest.spyOn(memberRepository, "updateMember").mockResolvedValueOnce(newMember);
+        jest
+          .spyOn(memberRepository, "updateMember")
+          .mockResolvedValueOnce({ ...newMember, birthDate });
 
-        jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
+        jest.spyOn(authService, "getUsername").mockImplementation(() => {
           return "test.test";
         });
         jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
@@ -301,9 +327,9 @@ describe("member service", () => {
             },
           ];
         });
-        const result = memberService.updateMember(newMember, "validToken");
+        const result = memberService.updateMember({ ...newMember, birthDate }, "validToken");
 
-        await expect(result).resolves.toEqual(newMember);
+        await expect(result).resolves.toEqual({ ...newMember, birthDate });
         expect(memberRepository.updateMember).toBeCalledTimes(1);
         expect(memberRepository.updateMember).toBeCalledWith({
           ...newMember,
