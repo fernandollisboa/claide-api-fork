@@ -143,6 +143,7 @@ async function getMemberById(id) {
 
 async function activateMember(id) {
   const member = await getMemberById(id);
+
   if (member.registrationStatus.status !== "APPROVED") {
     throw new MemberNotApproved(member.name);
   }
@@ -187,6 +188,7 @@ async function updateMember(memberData, token) {
     roomName,
     hasKey,
     isBrazilian,
+    registrationStatus,
   } = memberData;
 
   const toUpdateMember = await memberRepository.getMemberById(id);
@@ -229,6 +231,7 @@ async function updateMember(memberData, token) {
       roomName: roomName ?? toUpdateMember.roomName,
       hasKey: hasKey || toUpdateMember.hasKey,
       isBrazilian: isBrazilian ?? toUpdateMember.isBrazilian,
+      registrationStatus: registrationStatus ?? toUpdateMember.registrationStatus,
     });
     const activity = {
       operation: "UPDATE",
