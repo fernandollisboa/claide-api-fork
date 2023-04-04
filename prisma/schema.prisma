@@ -29,7 +29,6 @@ model Member {
   isActive           Boolean?             @default(false)
   isBrazilian        Boolean?             @default(true)
 
-  projectAssociation ProjectAssociation[]  
   registrationStatus RegistrationStatus?
   ProjectAssociation ProjectAssociation[]
   services           String[]
@@ -99,6 +98,7 @@ model ActivityRecord {
   idEntity Int
   user String  
   date DateTime
+}
 
 enum OperationType {
   CREATE
