@@ -19,21 +19,39 @@ export async function authenticateUser({ username, password }) {
     attributes: ["dn", "sn", "cn"],
     timeLimit: 10,
   };
-  const members = await getMembers(client);
+
+  const professors = await getMembers(client, process.env.LDAP_PROFESSOR_GROUP);
+  const receptionist = await getMembers(client, process.env.LDAP_RECEPTIONIST_GROUP);
+  const support = await getMembers(client, process.env.LDAP_SUPPORT_GROUP);
+
   return new Promise((resolve, reject) => {
-    if (members.err) {
+    if (professors.err || receptionist.err || support.err) {
       reject(new BaseError("Wasn't possible to load the members list", 400));
     }
+
     client.search(process.env.LDAP_SEARCHBASE, opts, (err, resp) => {
       const users = [];
+
       resp.on("searchEntry", (entry) => {
         users.push(entry.object);
-        if (members.member.includes(entry.object.dn)) {
+        const roles = [];
+
+        if (professors.member.includes(entry.object.dn)) {
+          roles.push("PROFESSOR");
+        }
+        if (receptionist.member.includes(entry.object.dn)) {
+          roles.push("RECEPTIONIST");
+        }
+        if (support.member.includes(entry.object.dn)) {
+          roles.push("SUPPORT");
+        }
+
+        if (roles.length > 0) {
           client.bind(entry.objectName, password, function (err) {
             if (err) {
               reject(new BaseError("Invalid Credentials", 403));
             } else {
-              const jwToken = jwt.sign({ username: username }, process.env.JWT_SECRET, {
+              const jwToken = jwt.sign({ username: username, roles }, process.env.JWT_SECRET, {
                 expiresIn: process.env.JWT_EXPIRATION,
               });
               resolve({ username, jwToken });
@@ -52,14 +70,14 @@ export async function authenticateUser({ username, password }) {
   });
 }
 
-async function getMembers(client) {
+async function getMembers(client, ldap_group) {
   const opts = {
     scope: "sub",
     attributes: ["member"],
     timeLimit: 10,
   };
   return new Promise((resolve, reject) => {
-    client.search(process.env.LDAP_GROUP, opts, (err, resp) => {
+    client.search(ldap_group, opts, (err, resp) => {
       const users = [];
       resp.on("searchEntry", (entry) => {
         users.push(entry.object);

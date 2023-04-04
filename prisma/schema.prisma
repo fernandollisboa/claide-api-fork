@@ -10,16 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       Int        @id @default(autoincrement())
-  name     String
-  email    String     @unique
-  password String
-  role     MemberType
-
-  @@map("users")
-}
-
 model Member {
   id                 Int                  @id @default(autoincrement())
   name               String
@@ -30,17 +20,21 @@ model Member {
   rg                 String?
   passport           String?
   phone              String
-  lsdEmail           String?               
+  lsdEmail           String?
   secondaryEmail     String?
   memberType         MemberType
-  lattes             String?               
+  lattes             String?
   roomName           String?
   hasKey             Boolean?             @default(false)
   isActive           Boolean?             @default(false)
   isBrazilian        Boolean?             @default(true)
-  projectAssociation ProjectAssociation[]
-  serviceAssociation String[]
+
+  projectAssociation ProjectAssociation[]  
   registrationStatus RegistrationStatus?
+  ProjectAssociation ProjectAssociation[]
+  services           String[]
+
+
   @@map("members")
 }
 
@@ -91,15 +85,13 @@ model ProjectAssociation {
   memberId  Int
   startDate DateTime
   endDate   DateTime?
-  isActive      Boolean   @default(true)
-
+  isActive  Boolean   @default(true)
 
   @@unique([projectId, memberId])
 }
 
-
 model ActivityRecord {
-  id Int @id @default(autoincrement())
+  id        Int           @id @default(autoincrement())
   operation OperationType
   entity EntityType
   newValue Json
@@ -107,9 +99,8 @@ model ActivityRecord {
   idEntity Int
   user String  
   date DateTime
-}
 
-enum OperationType{
+enum OperationType {
   CREATE
   UPDATE
 }

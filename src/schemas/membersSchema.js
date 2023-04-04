@@ -31,12 +31,13 @@ export const createMemberSchema = joi.object({
   hasKey: joi.boolean().required(),
   isActive: joi.boolean().default(false),
   isBrazilian: joi.boolean().required(),
+  services: joi.array().required(),
 });
 
 export const updateMemberSchema = joi.object({
   name: joi.string(),
   email: joi.string().email(),
-  birthDate: joi.date().iso(),
+  birthDate: joi.date().iso().allow(""),
   username: joi.string().min(3).max(20),
   cpf: joi
     .string()
@@ -59,6 +60,7 @@ export const updateMemberSchema = joi.object({
   roomName: joi.string().allow(""),
   hasKey: joi.boolean(),
   isBrazilian: joi.boolean(),
+  services: joi.array(),
 });
 
 export async function validatePassportForForeigners(body) {
