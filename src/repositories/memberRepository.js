@@ -148,6 +148,8 @@ export async function updateMember({
   services,
   registrationStatus,
 }) {
+  // eslint-disable-next-line no-param-reassign
+  delete registrationStatus.memberId; //TODO isso aqui é uma gambiarra!!
   const updatedMember = await prisma.member.update({
     where: { id },
     data: {

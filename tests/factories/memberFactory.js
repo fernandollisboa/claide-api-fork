@@ -45,3 +45,10 @@ export function createValidMember({
 export function createValidMemberWithId({ id, ...props } = {}) {
   return { id: id ?? faker.datatype.number(), ...createValidMember({ ...props }) };
 }
+
+export function setRegistrationStatus(member, newStatus, creator) {
+  return {
+    ...member,
+    registrationStatus: { ...member.registrationStatus, status: newStatus, createdBy: creator },
+  };
+}
