@@ -11,45 +11,44 @@ datasource db {
 }
 
 model Member {
-  id                 Int                  @id @default(autoincrement())
-  name               String
-  email              String               @unique
-  birthDate          DateTime
-  username           String               @unique
-  cpf                String?
-  rg                 String?
-  passport           String?
-  phone              String
-  lsdEmail           String?
-  secondaryEmail     String?
-  memberType         MemberType
-  lattes             String?
-  roomName           String?
-  hasKey             Boolean?             @default(false)
-  isActive           Boolean?             @default(false)
-  isBrazilian        Boolean?             @default(true)
+  id             Int        @id @default(autoincrement())
+  name           String
+  email          String     @unique
+  birthDate      DateTime
+  username       String     @unique
+  cpf            String?
+  rg             String?
+  passport       String?
+  phone          String
+  lsdEmail       String?
+  secondaryEmail String?
+  memberType     MemberType
+  lattes         String?
+  roomName       String?
+  hasKey         Boolean?   @default(false)
+  isActive       Boolean?   @default(false)
+  isBrazilian    Boolean?   @default(true)
 
-  registrationStatus RegistrationStatus?
-  ProjectAssociation ProjectAssociation[]
+  registrationStatus RegistrationStatus?  @relation("RegistrationStatus")
+  projectAssociation ProjectAssociation[]
   services           String[]
-
 
   @@map("members")
 }
 
 model RegistrationStatus {
-  id        Int       @id @default(autoincrement())
-  status    StatusType
-  comment   String?
-  createdBy String
-  member Member @relation(fields: [memberId], references: [id])
-  memberId Int @unique
+  id         Int        @id @default(autoincrement())
+  status     StatusType
+  comment    String?
+  createdBy  String
+  member     Member     @relation("RegistrationStatus", fields: [memberId], references: [id])
+  memberId   Int        @unique
   reviewedBy String?
 
   @@unique([id, memberId])
 }
 
-enum StatusType{
+enum StatusType {
   PENDING
   APPROVED
   REJECTED
@@ -63,15 +62,15 @@ enum MemberType {
 }
 
 model Project {
-  id            Int       @id @default(autoincrement())
-  name          String
-  creationDate  DateTime
-  endDate       DateTime?
-  building      String?
-  room          String?
+  id           Int       @id @default(autoincrement())
+  name         String
+  creationDate DateTime
+  endDate      DateTime?
+  building     String?
+  room         String?
   embrapiiCode String?
-  financier     String?
-  isActive      Boolean   @default(true)
+  financier    String?
+  isActive     Boolean   @default(true)
 
   projectAssociation ProjectAssociation[]
 }
@@ -92,12 +91,12 @@ model ProjectAssociation {
 model ActivityRecord {
   id        Int           @id @default(autoincrement())
   operation OperationType
-  entity EntityType
-  newValue Json
-  oldValue Json?
-  idEntity Int
-  user String  
-  date DateTime
+  entity    EntityType
+  newValue  Json
+  oldValue  Json?
+  idEntity  Int
+  user      String
+  date      DateTime
 }
 
 enum OperationType {
@@ -105,7 +104,7 @@ enum OperationType {
   UPDATE
 }
 
-enum EntityType{
+enum EntityType {
   PROJECT
   MEMBER
   PROJECT_ASSOCIATION
