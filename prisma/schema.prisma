@@ -33,8 +33,6 @@ model Member {
   projectAssociation ProjectAssociation[]
   services           String[]
 
-  registrationCreations RegistrationStatus[] @relation("RegistrationCreations")
-
   @@map("members")
 }
 
@@ -42,7 +40,6 @@ model RegistrationStatus {
   id         Int        @id @default(autoincrement())
   status     StatusType
   comment    String?
-  creator    Member     @relation("RegistrationCreations", fields: [createdBy], references: [username])
   createdBy  String
   member     Member     @relation("RegistrationStatus", fields: [memberId], references: [id])
   memberId   Int        @unique

@@ -18,6 +18,7 @@ export function createValidMember({
   roomName,
   hasKey,
   isBrazilian,
+  registrationStatus,
 } = {}) {
   const sex = faker.name.sex();
   const fullName = faker.name.fullName(sex);
@@ -40,6 +41,12 @@ export function createValidMember({
     roomName: roomName ?? faker.animal.lion(),
     hasKey: hasKey ?? false,
     isBrazilian: isBrazilian ?? true,
+    registrationStatus: registrationStatus ?? {
+      status: "PENDING",
+      createdBy: faker.name.sex(),
+      comment: "",
+      reviewedBy: null,
+    },
   };
 }
 export function createValidMemberWithId({ id, ...props } = {}) {

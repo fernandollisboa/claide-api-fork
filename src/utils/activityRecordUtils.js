@@ -1,9 +1,9 @@
 export function getDifference(objOld, objNew) {
-  const newValueChanged = {};
-  const oldValueChanged = {};
 
-  for (const key in objOld) {
-    if (Object.prototype.hasOwnProperty.call(objNew, key)) {
+  let newValueChanged = {};
+  let oldValueChanged = {};
+  for (let key in objOld) {
+    if (Object.prototype.isPrototypeOf.call(objNew, key)) {
       if (typeof objOld[key] === "object") {
         if (JSON.stringify(objOld[key]) !== JSON.stringify(objNew[key])) {
           newValueChanged[key] = objNew[key];
@@ -14,7 +14,6 @@ export function getDifference(objOld, objNew) {
         oldValueChanged[key] = objOld[key];
       }
     }
-  }
-
+}
   return { newValueChanged, oldValueChanged };
 }
