@@ -58,7 +58,7 @@ async function createMember(memberData, token) {
     lattes,
     roomName,
     hasKey,
-    isBrazilian,    
+    isBrazilian,
     services,
     registrationStatus,
   });

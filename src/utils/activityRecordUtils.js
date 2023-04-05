@@ -1,4 +1,5 @@
 export function getDifference(objOld, objNew) {
+
   let newValueChanged = {};
   let oldValueChanged = {};
   for (let key in objOld) {
@@ -13,6 +14,6 @@ export function getDifference(objOld, objNew) {
         oldValueChanged[key] = objOld[key];
       }
     }
-  }
+}
   return { newValueChanged, oldValueChanged };
 }

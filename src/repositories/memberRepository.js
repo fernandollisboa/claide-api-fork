@@ -17,7 +17,7 @@ export async function insertMember({
   hasKey,
   isBrazilian,
   services,
-  registrationStatus,  
+  registrationStatus,
 }) {
   return await prisma.member.create({
     data: {
@@ -44,7 +44,7 @@ export async function insertMember({
       },
     },
     include: {
-      registrationStatus: true,      
+      registrationStatus: true,
     },
   });
 }
@@ -125,7 +125,6 @@ export async function getAllMembers({ isActive, orderBy, status, createdBy }) {
     },
     orderBy: { name: orderBy },
     include: { registrationStatus: true, projectAssociation: true },
-
   });
 }
 
@@ -147,8 +146,10 @@ export async function updateMember({
   hasKey,
   isBrazilian,
   services,
-  registrationStatus,  
+  registrationStatus,
 }) {
+  // eslint-disable-next-line no-param-reassign
+  delete registrationStatus.memberId; //TODO isso aqui é uma gambiarra!!
   const updatedMember = await prisma.member.update({
     where: { id },
     data: {
