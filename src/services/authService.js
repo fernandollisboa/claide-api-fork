@@ -51,7 +51,7 @@ export async function authenticateUser({ username, password }) {
             if (err) {
               reject(new BaseError("Invalid Credentials", 403));
             } else {
-              const jwToken = jwt.sign({ username: username, roles }, process.env.JWT_SECRET, {
+              const jwToken = jwt.sign({ username, roles }, process.env.JWT_SECRET, {
                 expiresIn: process.env.JWT_EXPIRATION,
               });
               resolve({ username, jwToken });
@@ -95,4 +95,9 @@ async function getMembers(client, ldap_group) {
 export function getUsername(jwtToken) {
   const payload = jwt.verify(jwtToken, process.env.JWT_SECRET);
   return payload.username;
+}
+
+export function getRole(jwtToken) {
+  const payload = jwt.verify(jwtToken, process.env.JWT_SECRET);
+  return payload.roles;
 }
