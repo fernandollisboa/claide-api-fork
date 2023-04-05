@@ -2,24 +2,24 @@ import * as activityRepository from "../repositories/activityRecordRepository";
 import { getDifference } from "../utils/activityRecordUtils";
 
 export async function createActivity(activity) {
-	let {oldValue,newValue} = activity;
-	
-	if(oldValue && newValue){
-		const {oldValueChanged,newValueChanged} = getDifference(oldValue,newValue);		
-		oldValue = oldValueChanged;
-		newValue = newValueChanged;
-	}
+  let { oldValue, newValue } = activity;
 
-	const newActivity = {
-		...activity,
-		oldValue,
-		newValue,
-		date: new Date(),
-	};
+  if (oldValue && newValue) {
+    const { oldValueChanged, newValueChanged } = getDifference(oldValue, newValue);
+    oldValue = oldValueChanged;
+    newValue = newValueChanged;
+  }
 
-	return await activityRepository.insertActivity(newActivity);
+  const newActivity = {
+    ...activity,
+    oldValue,
+    newValue,
+    date: new Date(),
+  };
+
+  return await activityRepository.insertActivity(newActivity);
 }
 
-export async function getActivities({operationUpperCase,entityUpperCase,order}) {
-	return activityRepository.findAll({operationUpperCase,entityUpperCase,order});
+export async function getActivities({ operationUpperCase, entityUpperCase, order }) {
+  return activityRepository.findAll({ operationUpperCase, entityUpperCase, order });
 }

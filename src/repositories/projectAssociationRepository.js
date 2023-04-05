@@ -63,7 +63,7 @@ export async function updateAssociation({ projectId, memberId, startDate, endDat
       projectId_memberId: { projectId, memberId },
     },
     data: {
-      endDate: endDate || (endDate === "" ? null:undefined),
+      endDate: endDate || (endDate === "" ? null : undefined),
       startDate: startDate || undefined,
       isActive: isActive,
     },
