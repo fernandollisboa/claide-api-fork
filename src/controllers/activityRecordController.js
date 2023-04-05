@@ -16,16 +16,7 @@ export async function getActivities(req, res, next) {
     }
     if (entity) {
       entityUpperCase = entity.toUpperCase();
-      if (
-        ![
-          "PROJECT",
-          "MEMBER",
-          "SERVICE",
-          "UPDATE",
-          "PROJECT_ASSOCIATION",
-          "SERVICE_ASSOCIATION",
-        ].includes(entityUpperCase)
-      ) {
+      if (!["PROJECT", "MEMBER", "UPDATE", "PROJECT_ASSOCIATION"].includes(entityUpperCase)) {
         throw new invalidAtributeError("entity", entityUpperCase);
       }
     }
