@@ -3,8 +3,13 @@ import ldap from "ldapjs";
 import BaseError from "../errors/BaseError";
 import UserUnauthorizedOrNotFoundError from "../errors/UserUnauthorizedOrNotFoundError";
 
-//TO-DO após testar, refatorar isso aqui tudo !!!
 export async function authenticateUser({ username, password }) {
+  // in case of test environment, use mockAuthenticateUser
+  if (process.env.NODE_ENV === "test") {
+    const { default: mockAuthenticateUser } = await import("../mockLdap/mockAuthenticateUser");
+    return await mockAuthenticateUser({ username, password });
+  }
+
   const client = ldap.createClient({
     url: process.env.LDAP_URL,
   });

@@ -49,6 +49,7 @@ export function createValidMember({
     },
   };
 }
+
 export function createValidMemberWithId({ id, ...props } = {}) {
   return { id: id ?? faker.datatype.number(), ...createValidMember({ ...props }) };
 }

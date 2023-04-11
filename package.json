@@ -5,12 +5,18 @@
   "main": "src/server.js",
   "scripts": {
     "prepare": "husky install",
-    "start": "NODE_ENV=PROD node dist/server.js",
-    "dev": "NODE_ENV=DEV nodemon src/server.js",
+    "start": "NODE_ENV=prod node dist/server.js",
+    "dev": "NODE_ENV=dev nodemon src/server.js",
     "build": "sucrase ./src -d ./dist --transforms imports",
     "commit": "cz",
-    "test": "jest --coverage --testPathPattern=tests/unit",
-    "test:dev": "jest --watch --coverage --testPathPattern=tests/unit",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker build -t claide .",
+    "migrate:postgres": "dotenv -e .env.test -- npx prisma migrate deploy",
+    "test": "NODE_ENV=test npm run test:unit",
+    "test:unit": "dotenv -e .env.test jest tests/unit --coverage",
+    "test:int": "npm run docker:up && dotenv -e .env.test prisma migrate deploy && dotenv -e .env.test jest tests/integration -i --coverage ",
+    "test:dev": "NODE_ENV=test jest --watch -i tests/integration",
     "lint": "eslint src",
     "lint:fix": "eslint . --ext .js --fix",
     "swagger-autogen": "node src/swagger.js"
@@ -23,7 +29,6 @@
     "@prisma/client": "^4.4.0",
     "cors": "^2.8.5",
     "dayjs": "^1.11.6",
-    "docker": "^1.0.0",
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
     "joi": "^17.6.4"
@@ -51,6 +56,7 @@
     "prisma": "^4.4.0",
     "randexp": "^0.5.3",
     "sucrase": "^3.28.0",
+    "supertest": "^6.3.3",
     "swagger-autogen": "^2.22.0",
     "swagger-ui-express": "^4.1.6"
   },
