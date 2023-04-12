@@ -33,8 +33,7 @@ export function createValidMember({
     rg: rg ?? new RandExp(/[0-9]{7,11}/).gen(),
     passport: passport ?? new RandExp(/[A-Z]{2}[0-9]{7}/).gen(),
     phone: phone ?? new RandExp(/[0-9]{11,13}/).gen(),
-    lsdEmail:
-      lsdEmail ?? faker.internet.email(firstName, lastName, "lsd.ufcg.edu.br").toLowerCase(),
+    lsdEmail: lsdEmail ?? faker.internet.email(lastName, lastName, "lsd.ufcg.edu.br").toLowerCase(),
     secondaryEmail: secondaryEmail ?? faker.internet.email(firstName, lastName).toLowerCase(),
     memberType: memberType ?? faker.helpers.arrayElement(Object.keys(MemberType)),
     lattes: lattes ?? `https://lattes.cnpq.br/${firstName}${lastName}`.toLowerCase(),

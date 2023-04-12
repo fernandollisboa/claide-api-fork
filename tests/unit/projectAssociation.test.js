@@ -2,7 +2,7 @@
 import { jest } from "@jest/globals";
 import { faker } from "@faker-js/faker";
 import dayjs from "dayjs";
-
+import "../../src/setup";
 import * as projectAssociationService from "../../src/services/projectAssociationService";
 import * as projectAssociationRepository from "../../src/repositories/projectAssociationRepository";
 import * as projectAssociationFactory from "../factories/projectAssociationFactory";

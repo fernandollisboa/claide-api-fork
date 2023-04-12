@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 
 import app from "../../src/app";
 import prisma from "../../src/database/prismaClient";
+
 import "../../src/setup";
 import { describe, it, expect, afterAll, beforeAll } from "@jest/globals";
 import httpStatusCode from "../../src/enum/httpStatusCode";
@@ -98,7 +99,6 @@ describe("POST /members route", () => {
 describe("PUT /members route", () => {
   const authenticatedAgent = createAuthenticatedRequest();
   const memberBody = createTestMemberBody();
-  console.log({ memberBody });
   var _memberId;
   beforeAll(async () => {
     const {

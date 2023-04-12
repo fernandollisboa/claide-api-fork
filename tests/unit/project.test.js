@@ -1,5 +1,6 @@
 import { describe, it, expect, jest } from "@jest/globals";
 import { faker } from "@faker-js/faker";
+import "../../src/setup";
 import * as projectService from "../../src/services/projectService";
 import * as projectRepository from "../../src/repositories/projectRepository";
 import * as projectFactory from "../factories/projectFactory";

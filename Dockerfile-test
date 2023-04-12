@@ -1,0 +1,14 @@
+# Description: Dockerfile for running tests
+FROM node:18.12
+
+# Install dependencies
+WORKDIR /app
+
+# Copy package.json, package-lock.json and rest
+# to the working directory
+COPY package*.json ./
+COPY . . 
+
+# Install dependencies
+RUN npm install
+

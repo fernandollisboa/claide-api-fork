@@ -1,6 +1,6 @@
 import "./setup.js";
 import app from "./app.js";
-import * as https from "https"
+import * as https from "https";
 import * as fs from "fs";
 
 const port = process.env.PORT || 4000;
@@ -10,9 +10,9 @@ const key_path = process.env.KEY_PATH;
 const cert_path = process.env.CERT_PATH;
 
 if (tls) {
-  var privateKey  = fs.readFileSync(key_path, 'utf8');
-  var certificate = fs.readFileSync(cert_path, 'utf8');
-  var credentials = {key: privateKey, cert: certificate};
+  var privateKey = fs.readFileSync(key_path, "utf8");
+  var certificate = fs.readFileSync(cert_path, "utf8");
+  var credentials = { key: privateKey, cert: certificate };
 
   const httpsServer = https.createServer(credentials, app);
 

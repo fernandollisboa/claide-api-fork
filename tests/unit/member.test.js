@@ -1,7 +1,7 @@
 import { describe, it, expect, jest } from "@jest/globals";
 import { faker } from "@faker-js/faker";
 import dayjs from "dayjs";
-
+import "../../src/setup";
 import * as memberService from "../../src/services/memberService";
 import * as memberRepository from "../../src/repositories/memberRepository";
 import {

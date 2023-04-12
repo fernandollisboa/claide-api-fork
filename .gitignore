@@ -1,6 +1,8 @@
 node_modules/
 .env
 .env.test
+.env.dev
 dist/
+certs/
 coverage/
 package-lock.json
