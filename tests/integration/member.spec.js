@@ -94,6 +94,13 @@ describe("POST /members route", () => {
     const secondTry = await authenticatedAgentPostMembers().send(memberBody);
     expect(secondTry.status).toEqual(CONFLICT);
   });
+
+  it("given a member body with duplicate services it should return 400", async () => {
+    const memberBody = createTestMemberBody({ services: ["duplicate", "duplicate"] });
+
+    const { status } = await authenticatedAgent().post("/members").send(memberBody);
+    expect(status).toEqual(BAD_REQUEST);
+  });
 });
 
 describe("PUT /members route", () => {
@@ -152,6 +159,12 @@ describe("PUT /members route", () => {
     expect(status).toEqual(BAD_REQUEST);
   });
 
+  it("given a member body with duplicate services it should return 400", async () => {
+    const newMemberBody = await createTestMemberBody({ services: ["duplicate", "duplicate"] });
+    const { status } = await authenticatedAgent().put(`/members/${_memberId}`).send(newMemberBody);
+    expect(status).toEqual(BAD_REQUEST);
+  });
+
   it("given a member with duplicate name it should return 409", async () => {
     const newMemberBody = createTestMemberBody();
 
@@ -160,7 +173,6 @@ describe("PUT /members route", () => {
     const { status } = await authenticatedAgent()
       .put(`/members/${firstTry.body.id}`)
       .send(memberBody);
-
     expect(status).toEqual(CONFLICT);
   });
 });

@@ -1,6 +1,7 @@
 import MemberConflictError from "../errors/MemberConflictError";
 import * as memberRepository from "../repositories/memberRepository";
 import BaseError from "../errors/BaseError";
+import MemberInvalidServicesError from "../errors/MemberInvalidServicesError";
 
 export async function checkMemberAlreadyExists({
   id,
@@ -51,4 +52,10 @@ export async function checkMemberDocumentsOnUpdate({
   if (!isBrazilian && !passport.trim()) {
     throw new BaseError("A foreigner must have a passport", 422);
   }
+}
+
+export async function checkServices(services) {
+  const servicesSet = new Set(services);
+  if (servicesSet.size !== services.length)
+    throw new MemberInvalidServicesError("Services", services);
 }
