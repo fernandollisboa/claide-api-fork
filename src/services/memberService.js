@@ -213,8 +213,8 @@ async function updateMember(memberData, token) {
     }
   }
 
+  await memberUtils.checkServices(services);
   try {
-    await memberUtils.checkServices(services);
     const updatedMember = await memberRepository.updateMember({
       id,
       name: name || toUpdateMember.name,
