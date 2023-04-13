@@ -42,6 +42,7 @@ async function createMember(memberData, token) {
   if (!isBirthDateValid(birthDate)) {
     throw new MemberTooYoungError();
   }
+  await memberUtils.checkServices(services);
   const registrationStatus = createRegistrationStatus(token);
   const newMember = await memberRepository.insertMember({
     name,
@@ -213,6 +214,7 @@ async function updateMember(memberData, token) {
   }
 
   try {
+    await memberUtils.checkServices(services);
     const updatedMember = await memberRepository.updateMember({
       id,
       name: name || toUpdateMember.name,

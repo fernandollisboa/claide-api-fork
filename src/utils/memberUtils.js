@@ -52,3 +52,9 @@ export async function checkMemberDocumentsOnUpdate({
     throw new BaseError("A foreigner must have a passport", 422);
   }
 }
+
+export async function checkServices(services) {
+  for (let i = 0; i < services.length; i++) {
+    if (services[i] === services[i - 1]) throw new MemberConflictError("services", services[i]);
+  }
+}
