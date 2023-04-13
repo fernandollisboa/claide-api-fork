@@ -15,6 +15,7 @@ import MemberConflictError from "../../src/errors/MemberConflictError";
 // import BaseError from "../../src/errors/BaseError";
 import * as authService from "../../src/services/authService";
 import * as activityRecordService from "../../src/services/activityRecordService";
+import * as memberUtils from "../../src/utils/memberUtils";
 
 const MINIMUM_REQUIRED_AGE = 15;
 
@@ -79,6 +80,12 @@ describe("member service", () => {
 
         jest.spyOn(memberRepository, "getMemberByCpf").mockResolvedValueOnce(duplicateCpfMember);
 
+        jest.spyOn(memberRepository, "getMemberByRg").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberByPassport").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberBySecondaryEmail").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberByLattes").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberByEmailLsd").mockResolvedValueOnce(null);
+
         const result = memberService.createMember(duplicateCpfMember, "token");
 
         await expect(result).rejects.toThrow(MemberConflictError);
@@ -92,6 +99,12 @@ describe("member service", () => {
         const duplicateRgMember = createValidMemberWithId({ rg: "123456789098" });
 
         jest.spyOn(memberRepository, "getMemberByRg").mockResolvedValueOnce(duplicateRgMember);
+
+        jest.spyOn(memberRepository, "getMemberByCpf").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberByPassport").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberBySecondaryEmail").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberByLattes").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberByEmailLsd").mockResolvedValueOnce(null);
 
         const result = memberService.createMember(duplicateRgMember, "token");
 
@@ -108,6 +121,12 @@ describe("member service", () => {
         jest
           .spyOn(memberRepository, "getMemberByPassport")
           .mockResolvedValueOnce(duplicatePassportMember);
+
+        jest.spyOn(memberRepository, "getMemberByCpf").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberByRg").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberBySecondaryEmail").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberByLattes").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberByEmailLsd").mockResolvedValueOnce(null);
 
         const result = memberService.createMember(duplicatePassportMember, "token");
 
@@ -128,6 +147,12 @@ describe("member service", () => {
           .spyOn(memberRepository, "getMemberBySecondaryEmail")
           .mockResolvedValueOnce(duplicateEmailMember);
 
+        jest.spyOn(memberRepository, "getMemberByPassport").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberByCpf").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberByRg").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberByLattes").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberByEmailLsd").mockResolvedValueOnce(null);
+
         const result = memberService.createMember(duplicateEmailMember, "token");
 
         await expect(result).rejects.toThrow(MemberConflictError);
@@ -143,12 +168,10 @@ describe("member service", () => {
         const mockBirthDate = dayjs()
           .subtract(MINIMUM_REQUIRED_AGE, "years")
           .add(1, "days")
-          .toISOString();
-
+          .toISOString(); //;
         const tooYoungMember = createValidMember({ birthDate: mockBirthDate });
-
+        jest.spyOn(memberUtils, "checkMemberAlreadyExists").mockImplementationOnce(() => {});
         const result = memberService.createMember(tooYoungMember, "token");
-
         await expect(result).rejects.toThrow(MemberTooYoungError);
         expect(result).rejects.toEqual(new MemberTooYoungError());
       });
@@ -215,13 +238,6 @@ describe("member service", () => {
       "test.test"
     );
     const newMember = setRegistrationStatus(createValidMemberWithId(), "APPROVED", "test.test");
-
-    jest.spyOn(memberRepository, "getMemberById").mockResolvedValue(existingMember);
-    jest.spyOn(memberRepository, "getMemberByCpf").mockResolvedValue(null);
-    jest.spyOn(memberRepository, "getMemberByRg").mockResolvedValue(null);
-    jest.spyOn(memberRepository, "getMemberByPassport").mockResolvedValue(null);
-    jest.spyOn(memberRepository, "getMemberBySecondaryEmail").mockResolvedValue(null);
-
     describe("given the member is not present", () => {
       it("should not allow the update to proceed", async () => {
         // expect.assertions(2);
@@ -237,17 +253,29 @@ describe("member service", () => {
     describe("given member's data is duplicated", () => {
       it("should not update member's cpf", async () => {
         expect.assertions(2);
+        jest.spyOn(memberRepository, "getMemberById").mockResolvedValueOnce(existingMember);
         jest.spyOn(memberRepository, "getMemberByCpf").mockResolvedValueOnce(existingMember);
+        jest.spyOn(memberRepository, "getMemberByRg").mockResolvedValue(null);
+        jest.spyOn(memberRepository, "getMemberByPassport").mockResolvedValue(null);
+        jest.spyOn(memberRepository, "getMemberBySecondaryEmail").mockResolvedValue(null);
+        jest.spyOn(memberRepository, "getMemberByEmailLsd").mockResolvedValue(null);
+        jest.spyOn(memberRepository, "getMemberByLattes").mockResolvedValue(null);
 
         const result = memberService.updateMember(newMember);
-
         await expect(result).rejects.toThrow(MemberConflictError);
         expect(result).rejects.toEqual(new MemberConflictError("cpf", newMember.cpf));
       });
 
       it("should not update member's rg", async () => {
         expect.assertions(2);
+        jest.spyOn(memberRepository, "getMemberById").mockResolvedValueOnce(existingMember);
         jest.spyOn(memberRepository, "getMemberByRg").mockResolvedValueOnce(existingMember);
+
+        jest.spyOn(memberRepository, "getMemberByCpf").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberByPassport").mockResolvedValue(null);
+        jest.spyOn(memberRepository, "getMemberBySecondaryEmail").mockResolvedValue(null);
+        jest.spyOn(memberRepository, "getMemberByEmailLsd").mockResolvedValue(null);
+        jest.spyOn(memberRepository, "getMemberByLattes").mockResolvedValue(null);
 
         const result = memberService.updateMember(newMember, "token");
 
@@ -257,7 +285,14 @@ describe("member service", () => {
 
       it("should not update member's passport", async () => {
         expect.assertions(2);
+        jest.spyOn(memberRepository, "getMemberById").mockResolvedValueOnce(existingMember);
         jest.spyOn(memberRepository, "getMemberByPassport").mockResolvedValueOnce(existingMember);
+
+        jest.spyOn(memberRepository, "getMemberByCpf").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberByRg").mockResolvedValue(null);
+        jest.spyOn(memberRepository, "getMemberBySecondaryEmail").mockResolvedValue(null);
+        jest.spyOn(memberRepository, "getMemberByEmailLsd").mockResolvedValue(null);
+        jest.spyOn(memberRepository, "getMemberByLattes").mockResolvedValue(null);
 
         const result = memberService.updateMember(newMember, "token");
 
@@ -267,9 +302,16 @@ describe("member service", () => {
 
       it("should not update member's secondary email", async () => {
         expect.assertions(2);
+        jest.spyOn(memberRepository, "getMemberById").mockResolvedValueOnce(existingMember);
         jest
           .spyOn(memberRepository, "getMemberBySecondaryEmail")
           .mockResolvedValueOnce(existingMember);
+
+        jest.spyOn(memberRepository, "getMemberByCpf").mockResolvedValueOnce(null);
+        jest.spyOn(memberRepository, "getMemberByRg").mockResolvedValue(null);
+        jest.spyOn(memberRepository, "getMemberByPassport").mockResolvedValue(null);
+        jest.spyOn(memberRepository, "getMemberByEmailLsd").mockResolvedValue(null);
+        jest.spyOn(memberRepository, "getMemberByLattes").mockResolvedValue(null);
 
         const result = memberService.updateMember(newMember, "token");
 
@@ -294,7 +336,8 @@ describe("member service", () => {
           id,
           birthDate: mockBirthDate,
         });
-
+        jest.spyOn(memberRepository, "getMemberById").mockResolvedValueOnce(existingMember);
+        jest.spyOn(memberUtils, "checkMemberAlreadyExists").mockImplementationOnce(() => {});
         const result = memberService.updateMember(tooYoungMember, "token");
 
         await expect(result).rejects.toThrow(MemberTooYoungError);
@@ -306,7 +349,8 @@ describe("member service", () => {
       it("should call update function", async () => {
         expect.assertions(3);
         const { birthDate } = newMember;
-
+        jest.spyOn(memberRepository, "getMemberById").mockResolvedValueOnce(existingMember);
+        jest.spyOn(memberUtils, "checkMemberAlreadyExists").mockImplementationOnce(() => {});
         jest
           .spyOn(memberRepository, "updateMember")
           .mockResolvedValueOnce({ ...newMember, birthDate });
@@ -314,6 +358,7 @@ describe("member service", () => {
         jest.spyOn(authService, "getUsername").mockImplementation(() => {
           return "test.test";
         });
+
         jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
           return [
             {

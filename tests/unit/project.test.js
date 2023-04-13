@@ -9,6 +9,8 @@ import ProjectInvalidCreationOrEndDateError from "../../src/errors/ProjectInvali
 import ProjectNotFoundError from "../../src/errors/ProjectNotFoundError";
 import * as authService from "../../src/services/authService";
 import * as activityRecordService from "../../src/services/activityRecordService";
+import * as projectAssociationRepository from "../../src/repositories/projectAssociationRepository";
+import * as projectAssociationFactory from "../factories/projectAssociationFactory";
 
 describe("project service", () => {
   describe("createProject function", () => {
@@ -330,6 +332,12 @@ describe("project service", () => {
           creationDate,
           endDate,
         });
+        const startDate = faker.date.between(creationDate, endDate);
+        const endAssociationDate = faker.date.between(startDate, endDate);
+        const association = projectAssociationFactory.createValidProjectAssociation({
+          startDate: startDate,
+          endDate: endAssociationDate,
+        });
 
         jest.spyOn(projectRepository, "findById").mockResolvedValueOnce(existingProject);
         jest
@@ -338,6 +346,12 @@ describe("project service", () => {
         jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
           return "test.test";
         });
+        jest.spyOn(projectAssociationRepository, "findByProjectId").mockResolvedValue(association);
+        jest.spyOn(projectAssociationService, "findByProjectId").mockResolvedValue([association]);
+        jest
+          .spyOn(projectAssociationService, "updateProjectAssociation")
+          .mockResolvedValue(association);
+
         jest.spyOn(activityRecordService, "createActivity").mockImplementationOnce(() => {
           return [
             {
@@ -362,7 +376,7 @@ describe("project service", () => {
     });
 
     describe("given valid end date to change the status of the project", () => {
-      it("should update the status to false and the end date", async () => {
+      it("should update the status to true and the end date", async () => {
         expect.assertions(4);
         const endDate = faker.date.future(5);
         const newProject = projectFactory.createValidProjectWithoutCreationDateWithId({
@@ -375,6 +389,8 @@ describe("project service", () => {
         jest.spyOn(projectRepository, "updateProject").mockImplementationOnce(() => {
           return { ...newProject, isActive: true, creationDate: existingProject.creationDate };
         });
+        jest.spyOn(projectAssociationService, "findByProjectId").mockResolvedValue([]);
+        jest.spyOn(projectAssociationService, "updateProjectAssociation").mockResolvedValue(null);
         jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
           return "test.test";
         });
@@ -414,6 +430,8 @@ describe("project service", () => {
         jest.spyOn(projectRepository, "updateProject").mockImplementationOnce(() => {
           return newProject;
         });
+        jest.spyOn(projectAssociationService, "findByProjectId").mockResolvedValue([]);
+        jest.spyOn(projectAssociationService, "updateProjectAssociation").mockResolvedValue(null);
 
         jest.spyOn(authService, "getUsername").mockImplementationOnce(() => {
           return "test.test";
