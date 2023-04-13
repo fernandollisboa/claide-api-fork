@@ -1,6 +1,7 @@
 import MemberConflictError from "../errors/MemberConflictError";
 import * as memberRepository from "../repositories/memberRepository";
 import BaseError from "../errors/BaseError";
+import MemberInvalidServicesError from "../errors/MemberInvalidServicesError";
 
 export async function checkMemberAlreadyExists({
   id,
@@ -54,7 +55,7 @@ export async function checkMemberDocumentsOnUpdate({
 }
 
 export async function checkServices(services) {
-  for (let i = 0; i < services.length; i++) {
-    if (services[i] === services[i - 1]) throw new MemberConflictError("services", services[i]);
-  }
+  const servicesSet = new Set(services);
+  if (servicesSet.size !== services.length)
+    throw new MemberInvalidServicesError("Services", services);
 }
