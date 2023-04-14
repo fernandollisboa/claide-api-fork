@@ -8,5 +8,6 @@
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
-  "eslint.validate": ["javascript"]
+  "eslint.validate": ["javascript"],
+  "jest.jestCommandLine": "npm run test --"
 }

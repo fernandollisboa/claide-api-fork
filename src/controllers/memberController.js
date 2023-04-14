@@ -3,6 +3,7 @@ import * as memberService from "../services/memberService";
 import InvalidParamError from "../errors/InvalidParamError";
 import InvalidAtributeError from "../errors/InvalidAtributeError";
 import { getUsername } from "../services/authService";
+import { JsonWebTokenError } from "jsonwebtoken";
 
 export async function createMember(req, res, next) {
   const { body } = req;
@@ -29,6 +30,9 @@ export async function createMember(req, res, next) {
 
     return res.status(201).send(createdMember);
   } catch (err) {
+    if (err instanceof JsonWebTokenError) {
+      return res.status(401).send({ message: "Invalid Token" });
+    }
     next(err);
   }
 }
@@ -44,6 +48,9 @@ export async function setStatusRegistration(req, res, next) {
 
     return res.status(200).send(member);
   } catch (err) {
+    if (err instanceof JsonWebTokenError) {
+      return res.status(401).send({ message: "Invalid Token" });
+    }
     next(err);
   }
 }

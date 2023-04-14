@@ -1,0 +1,24 @@
+{
+  "client": "Thunder Client",
+  "environmentName": "claide",
+  "dateExported": "2023-04-13T00:12:19.500Z",
+  "version": "1.0",
+  "variables": [
+    {
+      "name": "baseUrl",
+      "value": "http://localhost:4000"
+    },
+    {
+      "name": "claideToken",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijk3Mjk1ZjhjLTYwNjYtNGRiNC1iYzM3LTU5ZThiZGMzYjg0ZSIsInVzZXJuYW1lIjoiY2xhaWRlLmludGVybm8iLCJyb2xlcyI6WyJTVVBQT1JUIl0sImlhdCI6MTY4MTM0NDA4MiwiZXhwIjoxNjgxMzgwMDgyfQ.YptWICx9E0bZce8hh8y3dNVQEOIbYJtlZqG4CJ2e6vA"
+    },
+    {
+      "name": "memberId",
+      "value": ""
+    },
+    {
+      "name": "projectId",
+      "value": ""
+    }
+  ]
+}

@@ -1,0 +1,525 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "claide",
+  "dateExported": "2023-04-13T00:11:48.279Z",
+  "version": "1.1",
+  "folders": [
+    {
+      "_id": "645d95ea-278f-4f57-9b42-7fdbdd83b3cc",
+      "name": "auth",
+      "containerId": "",
+      "created": "2023-01-24T19:20:21.073Z",
+      "sortNum": 10000,
+      "settings": {
+        "runOptions": {
+          "delay": 0,
+          "iterations": 1,
+          "dataFilePath": ""
+        }
+      }
+    },
+    {
+      "_id": "a1da1f08-d41b-470e-ac45-93869602b3d7",
+      "name": "createAssociation",
+      "containerId": "3916bf17-67b4-4f03-94fd-1a834473404f",
+      "created": "2023-01-27T01:34:08.884Z",
+      "sortNum": 10000
+    },
+    {
+      "_id": "425ad2d6-2f1c-4f12-93c0-001ae5af4d74",
+      "name": "members",
+      "containerId": "",
+      "created": "2023-01-24T19:34:11.945Z",
+      "sortNum": 20000
+    },
+    {
+      "_id": "22ce5d2a-d59b-4c4b-80aa-e6a705fb9ab4",
+      "name": "createMember",
+      "containerId": "425ad2d6-2f1c-4f12-93c0-001ae5af4d74",
+      "created": "2023-01-24T19:34:24.254Z",
+      "sortNum": 30000
+    },
+    {
+      "_id": "89b160a4-fc33-456e-b4ac-3a78a86d5eb2",
+      "name": "getMember",
+      "containerId": "425ad2d6-2f1c-4f12-93c0-001ae5af4d74",
+      "created": "2023-01-26T21:04:36.666Z",
+      "sortNum": 40000
+    },
+    {
+      "_id": "7422e19c-7993-4165-be60-1bacc3d252ef",
+      "name": "projects",
+      "containerId": "",
+      "created": "2023-01-26T21:20:54.250Z",
+      "sortNum": 50000
+    },
+    {
+      "_id": "a316ff49-5a53-464b-b52d-672ca60e897c",
+      "name": "createProject",
+      "containerId": "7422e19c-7993-4165-be60-1bacc3d252ef",
+      "created": "2023-01-26T21:20:59.302Z",
+      "sortNum": 60000
+    },
+    {
+      "_id": "3916bf17-67b4-4f03-94fd-1a834473404f",
+      "name": "associations",
+      "containerId": "",
+      "created": "2023-01-27T02:26:28.444Z",
+      "sortNum": 77500
+    },
+    {
+      "_id": "566341ce-fab5-4a86-a038-6c80768b58c7",
+      "name": "projectMembers",
+      "containerId": "3916bf17-67b4-4f03-94fd-1a834473404f",
+      "created": "2023-01-27T02:26:41.291Z",
+      "sortNum": 110000
+    },
+    {
+      "_id": "776259dd-c53b-4f87-b026-3df6a4e40e5e",
+      "name": "getProjects",
+      "containerId": "7422e19c-7993-4165-be60-1bacc3d252ef",
+      "created": "2023-01-27T02:35:17.759Z",
+      "sortNum": 120000
+    },
+    {
+      "_id": "c9a013e5-467b-4c92-b4ab-e575e9681214",
+      "name": "memberProjects",
+      "containerId": "3916bf17-67b4-4f03-94fd-1a834473404f",
+      "created": "2023-01-27T02:39:41.784Z",
+      "sortNum": 120000
+    },
+    {
+      "_id": "66fe5a5c-1f1e-487b-aa85-d5a0bb2083a1",
+      "name": "getProjects",
+      "containerId": "c9a013e5-467b-4c92-b4ab-e575e9681214",
+      "created": "2023-01-27T02:40:12.941Z",
+      "sortNum": 140000
+    },
+    {
+      "_id": "7e422a9c-d451-4390-8099-787a31edf6a4",
+      "name": "editProject",
+      "containerId": "7422e19c-7993-4165-be60-1bacc3d252ef",
+      "created": "2023-01-27T05:50:09.948Z",
+      "sortNum": 150000
+    },
+    {
+      "_id": "35144089-ea57-4a4d-8fa9-b1193e952228",
+      "name": "editMember",
+      "containerId": "425ad2d6-2f1c-4f12-93c0-001ae5af4d74",
+      "created": "2023-04-12T23:57:32.729Z",
+      "sortNum": 170000
+    }
+  ],
+  "requests": [
+    {
+      "_id": "c40ba860-69c6-4224-8097-574173cc9411",
+      "colId": "a76ef475-2d60-4ae8-93eb-437e2a56c8df",
+      "containerId": "645d95ea-278f-4f57-9b42-7fdbdd83b3cc",
+      "name": "login",
+      "url": "{{baseUrl}}/login",
+      "method": "POST",
+      "sortNum": 20000,
+      "created": "2023-01-24T19:20:27.961Z",
+      "modified": "2023-02-01T23:27:05.034Z",
+      "headers": [],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"username\": \"claide.interno\",\n    \"password\": \"kO3*#a2rBT27w\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "set-env-var",
+          "custom": "json.token",
+          "action": "setto",
+          "value": "{{claideToken}}"
+        }
+      ]
+    },
+    {
+      "_id": "7d522fc5-86bb-45e7-8384-70d8194820ac",
+      "colId": "a76ef475-2d60-4ae8-93eb-437e2a56c8df",
+      "containerId": "22ce5d2a-d59b-4c4b-80aa-e6a705fb9ab4",
+      "name": "createMember 1",
+      "url": "{{baseUrl}}/members",
+      "method": "POST",
+      "sortNum": 30000,
+      "created": "2023-01-24T19:45:05.238Z",
+      "modified": "2023-04-12T23:50:09.499Z",
+      "headers": [],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"Fulano de Tal\",\n  \"email\": \"fulano.tal@ccc.ufcg.edu.br\",\n  \"birthDate\": \"1999-12-28\",\n  \"username\": \"fulano.tal\",\n  \"cpf\": \"12345678331\",\n  \"rg\": \"9876543\",\n  \"passport\": \"AP1234267\",\n  \"phone\": \"12345678912\",\n  \"lsdEmail\": \"fulano.tal@lsd.ufcg.edu.br\",\n  \"secondaryEmail\": \"\",\n  \"memberType\": \"PROFESSOR\",\n  \"lattes\": \"https://lattes.cnpq.br/FulanoDeTal\",\n  \"roomName\": \"Triunfo\",\n  \"hasKey\": true,\n  \"isActive\": false,\n  \"isBrazilian\": true,\n  \"services\": [\"github\"]\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "201"
+        },
+        {
+          "type": "set-env-var",
+          "custom": "json.id",
+          "action": "setto",
+          "value": "{{projectId}}"
+        }
+      ]
+    },
+    {
+      "_id": "b64e8cf2-b544-4a77-8e93-6f27e43a7f02",
+      "colId": "a76ef475-2d60-4ae8-93eb-437e2a56c8df",
+      "containerId": "22ce5d2a-d59b-4c4b-80aa-e6a705fb9ab4",
+      "name": "createMember 2",
+      "url": "{{baseUrl}}/members",
+      "method": "POST",
+      "sortNum": 40000,
+      "created": "2023-01-24T21:42:54.372Z",
+      "modified": "2023-04-12T23:38:39.651Z",
+      "headers": [],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"name\": \"charlinho o maicou\",\n    \"birthDate\": \"1999-05-28T03:00:00.000Z\",\n    \"username\": \"fernando.costf\",\n    \"cpf\": \"12315312312\",\n    \"rg\": \"1231223\",\n    \"phone\": \"3123123\",\n    \"email\": \"alfredoe@email.com\",\n    \"memberType\": \"PROFESSOR\",\n    \"lsdEmail\": \"alfredo@lsd.ufcg.edu.br\",\n    \"lattes\": \"lattes\",\n    \"hasKey\": false,\n    \"passport\": \"\",\n    \"isBrazilian\": true,\n    \"secondaryEmail\": \"\",\n    \"roomName\": \"sala 2\",\n    \"services\": []\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "201"
+        }
+      ]
+    },
+    {
+      "_id": "f276d02a-e5da-475c-ab76-b9d7fe61d382",
+      "colId": "a76ef475-2d60-4ae8-93eb-437e2a56c8df",
+      "containerId": "89b160a4-fc33-456e-b4ac-3a78a86d5eb2",
+      "name": "getMember id=:memberId",
+      "url": "{{baseUrl}}/members/{{memberId}}",
+      "method": "GET",
+      "sortNum": 50000,
+      "created": "2023-01-26T21:04:49.059Z",
+      "modified": "2023-04-12T23:51:04.738Z",
+      "headers": [],
+      "params": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.id",
+          "action": "equal",
+          "value": "{{memberId}}"
+        }
+      ]
+    },
+    {
+      "_id": "a57b06f7-dbdb-46ce-976c-e3231adb186c",
+      "colId": "a76ef475-2d60-4ae8-93eb-437e2a56c8df",
+      "containerId": "a316ff49-5a53-464b-b52d-672ca60e897c",
+      "name": "createProject 1",
+      "url": "{{baseUrl}}/projects/",
+      "method": "POST",
+      "sortNum": 70000,
+      "created": "2023-01-26T21:21:52.025Z",
+      "modified": "2023-04-12T23:43:39.917Z",
+      "headers": [],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"name\": \"projetinhou\",\n    \"creationDate\": \"2022-02-28T03:00:00.000Z\",\n    \"endDate\": \"\",\n    \"room\": \"\",\n    \"building\": \"\",\n    \"embrapiiCode\": \"\",\n    \"financier\": \"\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "201"
+        },
+        {
+          "type": "set-env-var",
+          "custom": "json.id",
+          "action": "setto",
+          "value": "{{projectId}}"
+        }
+      ]
+    },
+    {
+      "_id": "7de20843-6260-4827-8e7f-c0e188799975",
+      "colId": "a76ef475-2d60-4ae8-93eb-437e2a56c8df",
+      "containerId": "a1da1f08-d41b-470e-ac45-93869602b3d7",
+      "name": "createAssociation 1",
+      "url": "{{baseUrl}}/projects/{{projectId}}/members",
+      "method": "POST",
+      "sortNum": 80000,
+      "created": "2023-01-27T01:34:38.333Z",
+      "modified": "2023-04-12T23:52:19.206Z",
+      "headers": [],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"startDate\": \"2023-01-10T03:00:00.000Z\",\n    \"endDate\": \"2023-01-12T03:00:00.000Z\",\n    \"memberId\": {{memberId}}\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "201"
+        }
+      ]
+    },
+    {
+      "_id": "ad95ef97-5796-4437-a725-d01a93732634",
+      "colId": "a76ef475-2d60-4ae8-93eb-437e2a56c8df",
+      "containerId": "566341ce-fab5-4a86-a038-6c80768b58c7",
+      "name": "getProjectMembers",
+      "url": "{{baseUrl}}/projects/6/members",
+      "method": "GET",
+      "sortNum": 90000,
+      "created": "2023-01-27T02:27:24.607Z",
+      "modified": "2023-01-27T02:33:39.710Z",
+      "headers": [],
+      "params": [],
+      "tests": []
+    },
+    {
+      "_id": "fb1ffb21-43f5-4595-9dec-474b17d6ad96",
+      "colId": "a76ef475-2d60-4ae8-93eb-437e2a56c8df",
+      "containerId": "776259dd-c53b-4f87-b026-3df6a4e40e5e",
+      "name": "getProjects 1",
+      "url": "{{baseUrl}}/projects/{{projectId}}",
+      "method": "GET",
+      "sortNum": 100000,
+      "created": "2023-01-27T02:35:24.403Z",
+      "modified": "2023-04-13T00:03:25.132Z",
+      "headers": [],
+      "params": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.id",
+          "action": "equal",
+          "value": "{{projectId}}"
+        }
+      ]
+    },
+    {
+      "_id": "79adade4-89ea-45ac-8d28-d60dd16de918",
+      "colId": "a76ef475-2d60-4ae8-93eb-437e2a56c8df",
+      "containerId": "66fe5a5c-1f1e-487b-aa85-d5a0bb2083a1",
+      "name": "getMemberProjects 1",
+      "url": "{{baseUrl}}/members/{{memberId}}/projects",
+      "method": "GET",
+      "sortNum": 120000,
+      "created": "2023-01-27T02:40:22.658Z",
+      "modified": "2023-04-12T23:53:52.546Z",
+      "headers": [],
+      "params": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.projectId",
+          "action": "equal",
+          "value": "{{projectId}}"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.memberId",
+          "action": "equal",
+          "value": "{{memberId}}"
+        }
+      ]
+    },
+    {
+      "_id": "dd9e22b2-2199-4419-aa18-75801d47f8f6",
+      "colId": "a76ef475-2d60-4ae8-93eb-437e2a56c8df",
+      "containerId": "7e422a9c-d451-4390-8099-787a31edf6a4",
+      "name": "editProject 1",
+      "url": "{{baseUrl}}/projects/{{projectId}}",
+      "method": "PUT",
+      "sortNum": 130000,
+      "created": "2023-01-27T05:50:20.746Z",
+      "modified": "2023-04-12T23:55:40.070Z",
+      "headers": [],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"name\": \"motorola\",\n    \"creationDate\": \"2023-01-01T03:00:00.000Z\",\n    \"endDate\": \"2023-02-11T03:00:00.000Z\",\n    \"room\": \"\",\n    \"building\": \"motox\",\n    \"embrapiiCode\": \"\",\n    \"financier\": \"\"\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.id",
+          "action": "equal",
+          "value": "{{projectId}}"
+        }
+      ]
+    },
+    {
+      "_id": "6e718b67-7dab-4ffa-a295-3c3d9d30dcb0",
+      "colId": "a76ef475-2d60-4ae8-93eb-437e2a56c8df",
+      "containerId": "89b160a4-fc33-456e-b4ac-3a78a86d5eb2",
+      "name": "getMembers",
+      "url": "{{baseUrl}}/members?registrationStatus=APPROVED",
+      "method": "GET",
+      "sortNum": 140000,
+      "created": "2023-01-27T14:58:41.749Z",
+      "modified": "2023-04-13T00:02:51.623Z",
+      "headers": [],
+      "params": [
+        {
+          "name": "registrationStatus",
+          "value": "APPROVED",
+          "isPath": false
+        }
+      ],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "Content-Length",
+          "custom": "",
+          "action": ">=",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "_id": "0ee991bb-6548-46b9-9f32-865ffe829cc9",
+      "colId": "a76ef475-2d60-4ae8-93eb-437e2a56c8df",
+      "containerId": "22ce5d2a-d59b-4c4b-80aa-e6a705fb9ab4",
+      "name": "createMember 3",
+      "url": "{{baseUrl}}/members",
+      "method": "POST",
+      "sortNum": 160000,
+      "created": "2023-04-08T07:57:26.614Z",
+      "modified": "2023-04-12T23:38:38.350Z",
+      "headers": [],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"Dr. Derrick Ferry III\",\n  \"email\": \"Maybelle.Steuber31@yahoo.com\",\n  \"birthDate\": \"1959-10-22T11:51:21.401Z\",\n  \"username\": \"dr..derrick\",\n  \"cpf\": \"68736739969\",\n  \"rg\": \"23315708\",\n  \"passport\": \"PW3063404\",\n  \"phone\": \"394097530657\",\n  \"lsdEmail\": \"dr.derrick51@lsd.ufcg.edu.br\",\n  \"secondaryEmail\": \"dr.69@yahoo.com\",\n  \"memberType\": \"SUPPORT\",\n  \"lattes\": \"https://lattes.cnpq.br/dr.derrick\",\n  \"roomName\": \"Barbary Lion\",\n  \"hasKey\": false,\n  \"isBrazilian\": true,\n  \"services\": []\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "201"
+        }
+      ]
+    },
+    {
+      "_id": "d6db9f01-625d-42fa-b927-9f04c1132ae6",
+      "colId": "a76ef475-2d60-4ae8-93eb-437e2a56c8df",
+      "containerId": "35144089-ea57-4a4d-8fa9-b1193e952228",
+      "name": "editMember 1",
+      "url": "{{baseUrl}}/members/{{memberId}}",
+      "method": "PUT",
+      "sortNum": 180000,
+      "created": "2023-04-12T23:58:14.960Z",
+      "modified": "2023-04-13T00:01:46.668Z",
+      "headers": [],
+      "params": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"Fulano de Tal Ataca Novamente\",\n  \"email\": \"fulano.tal2@ccc.ufcg.edu.br\",\n  \"birthDate\": \"1999-12-28\",\n  \"username\": \"fulano.tal\",\n  \"cpf\": \"12345678331\",\n  \"rg\": \"987543\",\n  \"passport\": \"AP1234267\",\n  \"phone\": \"12345678912\",\n  \"lsdEmail\": \"fulano.tal@lsd.ufcg.edu.br\",\n  \"secondaryEmail\": \"\",\n  \"memberType\": \"PROFESSOR\",\n  \"lattes\": \"https://lattes.cnpq.br/FulanoDeTal\",\n  \"roomName\": \"Triunfo\",\n  \"hasKey\": true,\n  \"isBrazilian\": true,\n  \"services\": [\"github\"]\n}",
+        "form": []
+      },
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "json-query",
+          "custom": "json.id",
+          "action": "equal",
+          "value": "{{memberId}}"
+        }
+      ]
+    },
+    {
+      "_id": "5187bba7-f7c4-4e3a-ac3d-fa435caf92a0",
+      "colId": "a76ef475-2d60-4ae8-93eb-437e2a56c8df",
+      "containerId": "776259dd-c53b-4f87-b026-3df6a4e40e5e",
+      "name": "getProjects",
+      "url": "{{baseUrl}}/projects/",
+      "method": "GET",
+      "sortNum": 190000,
+      "created": "2023-04-13T00:03:00.564Z",
+      "modified": "2023-04-13T00:04:19.224Z",
+      "headers": [],
+      "params": [],
+      "tests": [
+        {
+          "type": "res-code",
+          "custom": "",
+          "action": "equal",
+          "value": "200"
+        },
+        {
+          "type": "Content-Length",
+          "custom": "",
+          "action": ">=",
+          "value": "0"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "headers": [],
+    "auth": {
+      "type": "bearer",
+      "bearer": "{{claideToken}}"
+    },
+    "tests": [],
+    "options": {
+      "baseUrl": "localhost:{{PORT}}"
+    }
+  }
+}

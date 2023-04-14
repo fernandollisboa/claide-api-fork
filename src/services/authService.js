@@ -7,7 +7,7 @@ export async function authenticateUser({ username, password }) {
   // in case of test environment, use mockAuthenticateUser
   if (process.env.NODE_ENV === "test") {
     const { default: mockAuthenticateUser } = await import("../mockLdap/mockAuthenticateUser");
-    return await mockAuthenticateUser({ username, password });
+    return mockAuthenticateUser({ username, password });
   }
 
   const client = ldap.createClient({
@@ -15,7 +15,7 @@ export async function authenticateUser({ username, password }) {
   });
 
   client.on("error", () => {
-    return { err: true, status: 403 };
+    return { err: true, status: 401 };
   });
 
   const opts = {
@@ -31,7 +31,7 @@ export async function authenticateUser({ username, password }) {
 
   return new Promise((resolve, reject) => {
     if (professors.err || receptionist.err || support.err) {
-      reject(new BaseError("Wasn't possible to load the members list", 400));
+      reject(new BaseError("Wasn't possible to load the members list", 500));
     }
 
     client.search(process.env.LDAP_SEARCHBASE, opts, (err, resp) => {
@@ -54,7 +54,7 @@ export async function authenticateUser({ username, password }) {
         if (roles.length > 0) {
           client.bind(entry.objectName, password, function (err) {
             if (err) {
-              reject(new BaseError("Invalid Credentials", 403));
+              reject(new BaseError("Invalid Credentials", 401));
             } else {
               const jwToken = jwt.sign({ username, roles }, process.env.JWT_SECRET, {
                 expiresIn: process.env.JWT_EXPIRATION,
@@ -90,7 +90,7 @@ async function getMembers(client, ldap_group) {
       });
       resp.on("end", () => {
         if (!users.length) {
-          reject(new BaseError("LDAP group not found", 404));
+          reject(new BaseError("LDAP group not found", 500));
         }
       });
     });
@@ -98,11 +98,11 @@ async function getMembers(client, ldap_group) {
 }
 
 export function getUsername(jwtToken) {
-  const payload = jwt.verify(jwtToken, process.env.JWT_SECRET);
-  return payload.username;
+  const { username } = jwt.verify(jwtToken, process.env.JWT_SECRET);
+  return username;
 }
 
 export function getRole(jwtToken) {
-  const payload = jwt.verify(jwtToken, process.env.JWT_SECRET);
-  return payload.roles;
+  const { roles } = jwt.verify(jwtToken, process.env.JWT_SECRET);
+  return roles;
 }

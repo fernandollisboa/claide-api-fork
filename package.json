@@ -6,7 +6,7 @@
   "scripts": {
     "prepare": "husky install",
     "start": "NODE_ENV=prod node dist/server.js",
-    "dev": "NODE_ENV=dev nodemon src/server.js",
+    "dev": "NODE_ENV=test nodemon src/server.js",
     "dev:migrate": "npx prisma migrate dev",
     "build": "npm run swagger && prisma migrate deploy && sucrase ./src -d ./dist --transforms imports",
     "commit": "cz",
@@ -21,7 +21,8 @@
     "test": "jest tests -i --coverage",
     "test:unit": "jest tests/unit --coverage",
     "test:int": "jest tests/integration -i --coverage",
-    "test:dev": "jest tests --verbose --watch",
+    "test:thunder": "npx prisma migrate reset -f && npm run dev -- --exec \"tc --col 'claide' — ui\"",
+    "test:dev": "jest tests/ --verbose --watch",
     "lint": "eslint src",
     "lint:fix": "eslint . --ext .js --fix",
     "swagger": "sucrase-node src/swagger.js"
@@ -43,6 +44,7 @@
     "@babel/preset-env": "^7.20.2",
     "@commitlint/cli": "^17.1.2",
     "@commitlint/config-conventional": "^17.1.0",
+    "@thunderclient/cli": "^1.2.1",
     "babel-jest": "^29.3.1",
     "commitizen": "^4.2.5",
     "cz-conventional-changelog": "^3.3.0",
