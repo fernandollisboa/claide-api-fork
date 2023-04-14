@@ -240,7 +240,7 @@ describe("member service", () => {
     const newMember = setRegistrationStatus(createValidMemberWithId(), "APPROVED", "test.test");
     describe("given the member is not present", () => {
       it("should not allow the update to proceed", async () => {
-        // expect.assertions(2);
+        expect.assertions(3);
         jest.spyOn(memberRepository, "getMemberById").mockResolvedValueOnce(null);
 
         const result = memberService.updateMember(newMember, "token");
