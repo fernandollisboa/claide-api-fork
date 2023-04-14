@@ -100,7 +100,7 @@ export async function setStatusRegistration(body, id, token) {
   const { status, comment } = body;
   const role = getRole(token);
 
-  if (!role.includes("SUPPORT")) {
+  if (status === "APPROVED" && !role.includes("SUPPORT")) {
     throw new UserUnauthorizedOrNotFoundError(
       getUsername(token),
       `User ${getUsername(token)} doesn't have support role`
