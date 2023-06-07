@@ -15,7 +15,10 @@ export default function mockAuthenticateUser({ username, password }) {
   const id = faker.datatype.uuid();
   if (username === "NOT_FOUND") throw new UserUnauthorizedOrNotFoundError(username);
   if (username === "ERROR") throw new Error("Buuu!");
-  const roles = ["SUPPORT", "RECEPTIONIST", "PROFESSOR"];
+
+  const roles = ["RECEPTIONIST", "PROFESSOR"];
+  if (username === "SUPPORT") roles.push("SUPPORT");
+
   const jwToken = jwt.sign({ id, username, roles }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRATION,
   });

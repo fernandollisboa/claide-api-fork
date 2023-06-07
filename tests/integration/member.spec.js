@@ -2,11 +2,11 @@ import { dmmf } from "@prisma/client";
 import supertest from "supertest";
 import { faker } from "@faker-js/faker";
 import dayjs from "dayjs";
+import "../../src/setup";
 
 import app from "../../src/app";
 import prisma from "../../src/database/prismaClient";
 
-import "../../src/setup";
 import { describe, it, expect, afterAll, beforeAll } from "@jest/globals";
 import httpStatusCode from "../../src/enum/httpStatusCode";
 import { createTestMemberBody } from "../helpers/createTestMemberBody";
@@ -16,7 +16,6 @@ const { OK, CREATED, CONFLICT, UNPROCESSABLE_ENTITY, BAD_REQUEST, NOT_FOUND } = 
 
 const agent = supertest.agent(app);
 
-// TODO testar filtros
 function createAuthenticatedRequest() {
   const { jwToken } = mockAuthenticateUser({ username: "test", password: "test" });
 
@@ -43,7 +42,8 @@ describe("POST /members route", () => {
 
   it("should return 201 when passing valid information", async () => {
     const memberBody = createTestMemberBody();
-    const { status } = await authenticatedAgentPostMembers().send(memberBody);
+    const response = await authenticatedAgentPostMembers().send(memberBody);
+    const { status } = response;
     expect(status).toEqual(CREATED);
   });
 
