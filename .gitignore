@@ -1,3 +1,7 @@
 node_modules/
 .env
+.env.dev
 dist/
+certs/
+coverage/
+package-lock.json

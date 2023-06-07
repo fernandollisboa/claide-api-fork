@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   db:
@@ -6,14 +6,42 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: root
-      POSTGRES_DB: claide_db
-    volumes:
-      - ./pgdata:/var/lib/postgresql/data\
+      POSTGRES_DB: claide_test_db, claide_db
     ports:
-      - '5432:5432'
+      - "5433:5432"
+    networks:
+      - claide-net
+    container_name: claide-postgres
   api:
-    image: claide_api
+    image: caetanobca/claide:v1.2
+    container_name: claide-api
     depends_on:
-    - db
-    ports: 
-      - "3000:3000"
+      - db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: claide_test_db
+      DATABASE_URL: postgres://root:postgres@db:5432/claide_db
+    ports:
+      - "8001:4000"
+    volumes:
+      - ./certs:/app/certs
+    networks:
+      - claide-net
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile-test
+    depends_on:
+      - db
+    container_name: claide-tests
+    command: npm run test:migrate
+    environment:
+      DATABASE_URL: postgres://root:postgres@db:5432/claide_test_db
+    ports:
+      - "3001:4000"
+    networks:
+      - claide-net
+networks:
+  claide-net:
+    driver: bridge
